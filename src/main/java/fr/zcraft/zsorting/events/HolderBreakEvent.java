@@ -29,7 +29,7 @@ public class HolderBreakEvent implements Listener{
     			if(bank.getInputs().remove(e.getBlock().getLocation()) != null){
     				e.getPlayer().sendMessage(ChatColor.RED + I.t("This holder was an input of the bank {0}. It has been removed from it.", bank.getName()));
     			}
-    			else if(bank.getOutputs().remove(e.getBlock().getLocation()) != null){
+    			else if(bank.removeOutput(e.getBlock().getLocation())){
     				e.getPlayer().sendMessage(ChatColor.RED + I.t("This holder was an output of the bank {0}. It has been removed from it.", bank.getName()));
     			}
     		}

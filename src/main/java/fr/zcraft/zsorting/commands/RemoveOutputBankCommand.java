@@ -11,7 +11,6 @@ import fr.zcraft.zlib.components.commands.CommandInfo;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorting.ZSorting;
 import fr.zcraft.zsorting.model.Bank;
-import fr.zcraft.zsorting.model.Output;
 
 /**
  * Command triggered to remove an input.
@@ -30,8 +29,7 @@ public class RemoveOutputBankCommand extends ZSortingCommands{
     	if(bank != null) {
         	Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
     		if (block.getState() instanceof InventoryHolder) {
-    			Output output = bank.getOutputs().remove(block.getLocation());
-    			if(output != null)
+    			if(bank.removeOutput(block.getLocation()))
     				success(I.t("This holder is no longer an output."));
     			else
     				error(I.t("This holder is not an output."));

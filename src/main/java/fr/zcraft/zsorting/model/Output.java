@@ -50,4 +50,12 @@ public class Output extends InputOutput implements Serializable{
 	public void setMaterials(List<Material> materials) {
 		this.materials = materials;
 	}
+	
+	/**
+	 * Checks whether an output is an overflow.
+	 * @return {@code true} if the output is an overflow, {@code false} otherwise.
+	 */
+	public boolean isOverflow() {
+		return materials.isEmpty();
+	}
 }

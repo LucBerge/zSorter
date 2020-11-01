@@ -28,7 +28,7 @@ public class ToggleBankCommand extends ZSortingCommands{
         else {
         	bank.setState(!bank.getState());
         	if(bank.getState()) {
-        		if(bank.hasOverflow())
+        		if(!bank.hasOverflow())
         			warning(I.t("The bank does not have any overflow. Some items might clog up the inputs."));
         		success(I.t("The bank has been enabled."));
         	}

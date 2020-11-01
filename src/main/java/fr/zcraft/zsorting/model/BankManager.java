@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.bukkit.Location;
-
 /**
  * The class {@code BankManager} is used to manage banks.
  * @author Lucas
@@ -32,31 +30,5 @@ public class BankManager implements Serializable{
 	 */
 	public Map<String, Bank> getBanks() {
 		return banks;
-	}
-	
-	/**
-	 * Finds a bank from an input location.
-	 * @param location - Location of the chest.
-	 * @return The bank corresponding to the input, {@code null} if none.
-	 */
-	public Bank findBankFromInputLocation(Location location) {
-		for(Bank bank:banks.values()) {
-			if(bank.getInputs().get(location) != null)
-				return bank;
-		}
-		return null;
-	}
-	
-	/**
-	 * Finds a bank from an output location.
-	 * @param location - Location of the chest.
-	 * @return The bank corresponding to the output, {@code null} if none.
-	 */
-	public Bank findBankFromOutputLocation(Location location) {
-		for(Bank bank:banks.values()) {
-			if(bank.getOutputs().get(location) != null)
-				return bank;
-		}
-		return null;
 	}
 }

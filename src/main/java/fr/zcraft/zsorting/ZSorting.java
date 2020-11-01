@@ -12,11 +12,11 @@ import fr.zcraft.zlib.components.commands.Commands;
 import fr.zcraft.zlib.components.i18n.I18n;
 import fr.zcraft.zlib.core.ZPlugin;
 import fr.zcraft.zsorting.commands.CreateBankCommand;
+import fr.zcraft.zsorting.commands.InfoBankCommand;
 import fr.zcraft.zsorting.commands.ListCommand;
 import fr.zcraft.zsorting.commands.RemoveBankCommand;
 import fr.zcraft.zsorting.commands.RemoveInputBankCommand;
 import fr.zcraft.zsorting.commands.RemoveOutputBankCommand;
-import fr.zcraft.zsorting.commands.InfoBankCommand;
 import fr.zcraft.zsorting.commands.SetInputBankCommand;
 import fr.zcraft.zsorting.commands.SetOutputBankCommand;
 import fr.zcraft.zsorting.commands.ToggleBankCommand;
@@ -89,14 +89,14 @@ public final class ZSorting extends ZPlugin implements Listener{
         		RemoveOutputBankCommand.class
         );
         
-		Load();	//Charge les sondages en cours a partir d'un fichier
+		Load();	//Charge les banques a partir d'un fichier
 		
 		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new SortingEvent(), SortingEvent.DELAY, SortingEvent.PERIOD);
     }
 	
     @Override
     public void onDisable() {
-    	Save();	//Sauvegarde les sondages en cours sur un fichier
+    	Save();	//Sauvegarde les banque sur un fichier
     }
 
 	  /*************/
