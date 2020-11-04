@@ -91,7 +91,7 @@ msgid "The bank does not have any overflow. Some items might clog up the inputs.
 msgstr "La banque ne possède pas de trop-plein. Certains items risquent de boucher les entrées."
 
 msgid "The bank has been enabled."
-msgstr "La banque été activée."
+msgstr "La banque a été activée."
 
 msgid "The bank has been disabled."
 msgstr "La banque a été désactivée."
@@ -101,3 +101,9 @@ msgstr "Ce contenant était une entrée de la banque {0}. Il a été supprimé d
 
 msgid "This holder was an output of the bank {0}. It has been removed from it."
 msgstr "Ce contenant était une sortie de la banque {0}. Il a été supprimé de celle-ci."
+
+msgid "\n  {0} inputs"
+msgstr "\n {0} entrées"
+
+msgid "\n  {0} outputs"
+msgstr "\n {0} sorties"

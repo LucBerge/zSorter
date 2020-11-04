@@ -39,15 +39,7 @@ public class SetInputBankCommand extends ZSortingCommands{
         if(bank != null) {
             Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
             if(block.getState() instanceof InventoryHolder) {
-            	Input input = bank.getInputs().get(block.getLocation());
-            	if(input == null) {
-            		input = new Input(bank, block.getLocation(), priority);
-            		bank.getInputs().put(block.getLocation(), input);
-            	}
-            	else {
-            		input.setPriority(priority);
-            	}
-            	bank.sortInputs();
+            	bank.addInput(block.getLocation(), priority);
         		success(I.t("This holder is now an input of priority {0}.", priority));
             }
             else {

@@ -2,6 +2,7 @@ package fr.zcraft.zsorting.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -48,6 +49,7 @@ public class Output extends InputOutput implements Serializable{
 	 * @param materials - List of sorted materials.
 	 */
 	public void setMaterials(List<Material> materials) {
+		Collections.sort(materials);
 		this.materials = materials;
 	}
 	

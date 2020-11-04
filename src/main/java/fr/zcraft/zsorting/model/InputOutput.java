@@ -39,6 +39,19 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	 */
 	public InputOutput(Bank bank, Location location, Integer priority) {
 		super();
+		
+		if(bank == null)
+			throw new IllegalArgumentException("An InputOutput bank cannot be null");
+		
+		if(location == null)
+			throw new IllegalArgumentException("An InputOutput location cannot be null");
+		
+		if(priority == null)
+			throw new IllegalArgumentException("An InputOutput priority cannot be null");
+		
+		if(priority < 1)
+			throw new IllegalArgumentException("An InputOutput priority cannot be less than 1");
+		
 		this.bank = bank;
 		this.location = location;
 		this.priority = priority;
