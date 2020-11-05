@@ -2,11 +2,12 @@ package fr.zcraft.zsorting.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
+import java.util.TreeMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -36,7 +37,7 @@ public class Bank implements Serializable{
 	private boolean state;
 	
 	private Map<Location, Input> locationToInput;
-	private Map<Location, Output> outputs;
+	private Map<Location, Output> locationToOutput;
 	private Map<Material, List<Output>> materialToOutputs;
 	private List<Output> overflows;
 	
@@ -58,8 +59,8 @@ public class Bank implements Serializable{
 		this.description = description;
 		this.state = false;
 		this.locationToInput = new HashMap<Location, Input>();
-		this.outputs = new HashMap<Location, Output>();
-		this.materialToOutputs = new HashMap<Material, List<Output>>();
+		this.locationToOutput = new HashMap<Location, Output>();
+		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();      
 	}
 	
@@ -123,8 +124,8 @@ public class Bank implements Serializable{
 	 * Returns the bank outputs.
 	 * @return The bank outputs.
 	 */
-	public Map<Location, Output> getOutputs() {
-		return outputs;
+	public Map<Location, Output> getLocationToOutput() {
+		return locationToOutput;
 	}
 
 	/**
@@ -147,8 +148,9 @@ public class Bank implements Serializable{
 	 * Add the location has an input. Replace the existing one if it exists.
 	 * @param location - Location of the input.
 	 * @param priority - Priority of the input.
+	 * @return The created input object.
 	 */
-	public void addInput(Location location, int priority) {
+	public Input addInput(Location location, int priority) {
 		Input input = locationToInput.get(location);					//Get the existing input
     	if(input == null) {									//If not input exists
     		input = new Input(this, location, priority);		//Create a new input
@@ -158,6 +160,7 @@ public class Bank implements Serializable{
     		input.setPriority(priority);						//Set the new priority
     	}
     	sortInputs();										//Sort the inputs
+		return input;
 	}
 
 	/**
@@ -172,14 +175,12 @@ public class Bank implements Serializable{
 	/**
 	 * Sorts the inputs by priority.
 	 */
-	public void sortInputs() {
-		locationToInput = locationToInput.entrySet()
-		  .stream()
-		  .sorted(Map.Entry.comparingByValue())
-		  .collect(Collectors.toMap(
-				    Map.Entry::getKey, 
-				    Map.Entry::getValue, 
-				    (oldValue, newValue) -> oldValue, HashMap::new));
+	private void sortInputs() {
+		List<Input> values = new ArrayList<Input>(locationToInput.values());
+		Collections.sort(values);
+		locationToInput = new HashMap<Location, Input>();
+		for (Input value : values)
+			locationToInput.put(value.getLocation(), value);
 	}
 	
 	/**
@@ -187,12 +188,13 @@ public class Bank implements Serializable{
 	 * @param location - Location of the output.
 	 * @param priority - Priority of the output.
 	 * @param materials - Sorted materials of the output.
+	 * @return The created output object.
 	 */
-	public void addOutput(Location location, int priority, List<Material> materials) {
-		Output existingOutput = outputs.get(location);					//Get the existing output
+	public Output addOutput(Location location, int priority, List<Material> materials) {
+		Output existingOutput = locationToOutput.get(location);					//Get the existing output
     	if(existingOutput == null) {									//If no existing output
     		existingOutput = new Output(this, location, priority);			//Create a new output
-    		outputs.put(location, existingOutput);							//Add the new output
+    		locationToOutput.put(location, existingOutput);							//Add the new output
     	}
     	else {															//If the output exists
     		existingOutput.setPriority(priority);							//Set the new priority
@@ -215,6 +217,7 @@ public class Bank implements Serializable{
 		if(existingOutput.isOverflow())									//If output is an overflow
 			overflows.add(existingOutput);									//Add it to the overflow list
     	sortOutputs();													//Sort the outputs
+		return existingOutput;
 	}
 	
 	/**
@@ -223,7 +226,7 @@ public class Bank implements Serializable{
 	 * @return {@code true} if the output has been removed, {@code false} if no output found at this location.
 	 */
 	public boolean removeOutput(Location location) {
-		Output output = outputs.remove(location);								//Get the existing output
+		Output output = locationToOutput.remove(location);								//Get the existing output
 		if(output != null) {													//If the output exists
 			for(Material material:output.getMaterials())							//For each material of the output
 				materialToOutputs.get(material).remove(output);							//Remove the output from the material map
@@ -237,13 +240,11 @@ public class Bank implements Serializable{
 	 * Sorts the outputs by priority.
 	 */
 	public void sortOutputs() {
-		outputs = outputs.entrySet()
-		  .stream()
-		  .sorted(Map.Entry.comparingByValue())
-		  .collect(Collectors.toMap(
-				    Map.Entry::getKey, 
-				    Map.Entry::getValue, 
-				    (oldValue, newValue) -> oldValue, HashMap::new));
+		List<Output> values = new ArrayList<Output>(locationToOutput.values());
+		Collections.sort(values);
+		locationToOutput = new HashMap<Location, Output>();
+		for (Output value : values)
+			locationToOutput.put(value.getLocation(), value);
 	}
 	
 	/**
@@ -257,10 +258,8 @@ public class Bank implements Serializable{
 		if(materialOutputs != null)										//If other outputs are possible
 			possibleOutputs.addAll(materialOutputs);						//Add the outputs
 		possibleOutputs.addAll(overflows);								//Add the overflows
-		return possibleOutputs											//Sort the output by priority
-				.stream()
-				.sorted()
-				.collect(Collectors.toList());
+		Collections.sort(possibleOutputs);								//Sort the output by priority
+		return possibleOutputs;
 	}
 	
 	/**
@@ -324,10 +323,10 @@ public class Bank implements Serializable{
     	}
 
     	text
-    		.then(I.t("\n  {0} outputs", outputs.size()))
+    		.then(I.t("\n  {0} outputs", locationToOutput.size()))
     			.color(ChatColor.GRAY);
     	
-    	for(Output output:outputs.values()) {
+    	for(Output output:locationToOutput.values()) {
     		String materials = "*";
     		if(!output.getMaterials().isEmpty()) {
             	StringJoiner joiner = new StringJoiner(" ");
