@@ -57,22 +57,22 @@ public class OutputTest {
 	public void sortingTest(){
 		Bank bank = new Bank("sortingTestBank", "");
 		
-		Output i1 = new Output(bank, new Location(null, 0, 0, 0), 1);
-		Output i2 = new Output(bank, new Location(null, 0, 0, 0), 2);
-		Output i3 = new Output(bank, new Location(null, 0, 0, 0), 45);
-		Output i4 = new Output(bank, new Location(null, 0, 0, 0), 72);
+		Output o1 = new Output(bank, new Location(null, 0, 0, 0), 1);
+		Output o2 = new Output(bank, new Location(null, 0, 0, 0), 2);
+		Output o3 = new Output(bank, new Location(null, 0, 0, 0), 45);
+		Output o4 = new Output(bank, new Location(null, 0, 0, 0), 72);
 		
 		List<Output> unsortedList = new ArrayList<Output>();
-		unsortedList.add(i4);
-		unsortedList.add(i2);
-		unsortedList.add(i1);
-		unsortedList.add(i3);
+		unsortedList.add(o4);
+		unsortedList.add(o2);
+		unsortedList.add(o1);
+		unsortedList.add(o3);
 		
 		List<Output> sortedList = new ArrayList<Output>();
-		sortedList.add(i1);
-		sortedList.add(i2);
-		sortedList.add(i3);
-		sortedList.add(i4);
+		sortedList.add(o1);
+		sortedList.add(o2);
+		sortedList.add(o3);
+		sortedList.add(o4);
 		
 		Collections.sort(unsortedList);
 		
