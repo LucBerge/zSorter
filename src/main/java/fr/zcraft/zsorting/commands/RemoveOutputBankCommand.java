@@ -25,11 +25,11 @@ public class RemoveOutputBankCommand extends ZSortingCommands{
     	if (args.length < 1)
     		throwInvalidArgument(I.t("A bank name is required."));
 
-    	Bank bank = ZSorting.getInstance().getBankManager().getBanks().get(args[0]);
+    	Bank bank = ZSorting.getInstance().getBankManager().getNameToBank().get(args[0]);
     	if(bank != null) {
         	Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
     		if (block.getState() instanceof InventoryHolder) {
-    			if(bank.removeOutput(block.getLocation()))
+    			if(bank.removeOutput(block.getLocation()) != null)
     				success(I.t("This holder is no longer an output."));
     			else
     				error(I.t("This holder is not an output."));

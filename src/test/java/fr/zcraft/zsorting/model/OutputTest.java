@@ -20,7 +20,7 @@ public class OutputTest {
 	 */
 	@Test
 	public void illegalTest(){
-		Bank bank = new Bank("illegalTestBank", "");
+		Bank bank = new Bank(new BankManager(), "illegalTestBank", "");
 		
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
 			new Output(null, new Location(null, 0, 0, 0), 1);
@@ -55,7 +55,7 @@ public class OutputTest {
 	 */
 	@Test
 	public void sortingTest(){
-		Bank bank = new Bank("sortingTestBank", "");
+		Bank bank = new Bank(new BankManager(), "sortingTestBank", "");
 		
 		Output o1 = new Output(bank, new Location(null, 0, 0, 0), 1);
 		Output o2 = new Output(bank, new Location(null, 0, 0, 0), 2);
@@ -84,7 +84,7 @@ public class OutputTest {
 	 */
 	@Test
 	public void materialsTest() {
-		Bank bank = new Bank("materialsTestBank", "");
+		Bank bank = new Bank(new BankManager(), "materialsTestBank", "");
 
 		Output output = new Output(bank, new Location(null, 0, 0, 0), 1);
 		
@@ -108,7 +108,7 @@ public class OutputTest {
 	 */
 	@Test
 	public void isOverflowTest() {
-		Bank bank = new Bank("isOverflowTestBank", "");
+		Bank bank = new Bank(new BankManager(), "isOverflowTestBank", "");
 		
 		Output output = new Output(bank, new Location(null, 0, 0, 0), 1);
 		Assert.assertEquals(true, output.isOverflow());

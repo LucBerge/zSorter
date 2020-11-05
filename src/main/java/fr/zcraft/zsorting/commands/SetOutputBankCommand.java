@@ -48,11 +48,11 @@ public class SetOutputBankCommand extends ZSortingCommands{
         	}
         }
 
-        Bank bank = ZSorting.getInstance().getBankManager().getBanks().get(args[0]);
+        Bank bank = ZSorting.getInstance().getBankManager().getNameToBank().get(args[0]);
         if(bank != null) {
             Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
             if (block.getState() instanceof InventoryHolder) {
-            	bank.addOutput(block.getLocation(), priority, materials);
+            	bank.setOutput(block.getLocation(), priority, materials);
         		success(I.t("This holder is now an output of priority {0}.", priority));
             }
             else {

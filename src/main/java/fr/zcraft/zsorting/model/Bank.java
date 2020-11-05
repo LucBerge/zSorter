@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zlib.components.rawtext.RawText;
 import fr.zcraft.zlib.components.rawtext.RawTextPart;
+import fr.zcraft.zsorting.ZSortingException;
 
 /**
  * The class {@code Bank} represents a bank in the game.<br><br>
@@ -31,10 +32,12 @@ public class Bank implements Serializable{
 	 * Serial version UID
 	 */
 	private static final long serialVersionUID = 7893484799034097907L;
-	
+
+	private BankManager manager;
 	private String name;
 	private String description;	
-	private boolean state;
+	private boolean enable;
+	private boolean toCompute;
 	
 	private Map<Location, Input> locationToInput;
 	private Map<Location, Output> locationToOutput;
@@ -43,25 +46,47 @@ public class Bank implements Serializable{
 	
 	/**
 	 * Constructor of a bank.
+	 * @param manager - The bank manager.
 	 * @param name - Name of the bank.
 	 * @param description - Short description of the bank.
 	 */
-	public Bank(String name, String description) {
+	public Bank(BankManager manager, String name, String description) {
 		super();
+		
+		if(manager == null)
+			throw new IllegalArgumentException("The bank manager cannot be null.");
 		
 		if(name == null)
 			throw new IllegalArgumentException("The bank name cannot be null.");
 		
 		if(description == null)
 			throw new IllegalArgumentException("The bank description cannot be null.");
-		
+
+		this.manager = manager;
 		this.name = name;
 		this.description = description;
-		this.state = false;
+		this.enable = false;
+		this.toCompute = false;
 		this.locationToInput = new HashMap<Location, Input>();
 		this.locationToOutput = new HashMap<Location, Output>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();      
+	}
+	
+	/**
+	 * Returns the bank manager.
+	 * @return The bank manager.
+	 */
+	public BankManager getManager() {
+		return manager;
+	}
+	
+	/**
+	 * Sets the bank manager.
+	 * @param manager - Bank manager.
+	 */
+	public void setManager(BankManager manager) {
+		this.manager = manager;
 	}
 	
 	/**
@@ -100,20 +125,38 @@ public class Bank implements Serializable{
 	 * Returns the state of the bank.
 	 * @return {@code true} if the bank is enabled, {@code false} otherwise.
 	 */
-	public boolean getState() {
-		return state;
+	public boolean isEnable() {
+		return enable;
 	}
 
 	/**
 	 * Sets the state of the bank.
 	 * @param state - {@code true} to enable the bank, {@code false} to disable it.
 	 */
-	public void setState(boolean state) {
-		this.state = state;
+	public void setEnable(boolean state) {
+		this.enable = state;
 	}
 
 	/**
+	 * Checks whether the bank needs be computed.
+	 * @return {@code true} if the bank has items to sort, {@code false} otherwise.
+	 */
+	public boolean isToCompute() {
+		return toCompute;
+	}
+
+	/**
+	 * Sets the compute state of the bank.
+	 * @param toCompute - {@code true} to specify that the bank has items to be sorted, {@code false} otherwise.
+	 */
+	public void setToCompute(boolean toCompute) {
+		this.toCompute = toCompute;
+	}	
+
+	/**
 	 * Returns the bank inputs.
+	 * Do not use this method if you need to add or remove an input.
+	 * Use the {@code setInput} and {@code removeInput} methods instead.
 	 * @return The bank inputs.
 	 */
 	public Map<Location, Input> getLocationToInput() {
@@ -122,6 +165,8 @@ public class Bank implements Serializable{
 
 	/**
 	 * Returns the bank outputs.
+	 * Do not use this method if you need to add or remove an output.
+	 * Use the {@code setOutput} and {@code removeOutput} methods instead.
 	 * @return The bank outputs.
 	 */
 	public Map<Location, Output> getLocationToOutput() {
@@ -130,6 +175,8 @@ public class Bank implements Serializable{
 
 	/**
 	 * Returns the material to output map.
+	 * Do not use this method if you need to add or remove an output.
+	 * Use the {@code setOutput} and {@code removeOutput} methods instead.
 	 * @return The material to output map.
 	 */
 	public Map<Material, List<Output>> getMaterialToOutputs() {
@@ -145,31 +192,38 @@ public class Bank implements Serializable{
 	}
 
 	/**
-	 * Add the location has an input. Replace the existing one if it exists.
+	 * Sets the location has an input.<br><br>
+	 * If the input already exists, the priority is updated.
 	 * @param location - Location of the input.
 	 * @param priority - Priority of the input.
 	 * @return The created input object.
+	 * @throws ZSortingException if the input is already linked to an other bank.
 	 */
-	public Input addInput(Location location, int priority) {
-		Input input = locationToInput.get(location);					//Get the existing input
-    	if(input == null) {									//If not input exists
-    		input = new Input(this, location, priority);		//Create a new input
-    		locationToInput.put(location, input);						//Add the new input
+	public Input setInput(Location location, int priority) throws ZSortingException {
+		Bank bank = manager.getLocationToBank().putIfAbsent(location, this);						//Get the bank with this input
+		if(bank != null && !equals(bank))															//If the bank is not this one
+			throw new ZSortingException(I.t("Already an input of the bank {0}.", bank.getName()));		//Display error messsage
+		
+		Input input = locationToInput.get(location);												//Get the existing input
+    	if(input == null) {																			//If no input exists
+    		input = new Input(this, location, priority);												//Create a new input
+    		locationToInput.put(location, input);														//Add the new input
+    		manager.getLocationToBank().put(location, this);											//Add the new input location
     	}
-    	else {												//If the input exists
-    		input.setPriority(priority);						//Set the new priority
+    	else {																						//If the input exists
+    		input.setPriority(priority);																//Set the new priority
     	}
-    	sortInputs();										//Sort the inputs
+    	sortInputs();																				//Sort the inputs
 		return input;
 	}
 
 	/**
 	 * Remove an input from a bank.
 	 * @param location - Location of the input.
-	 * @return {@code true} if the input has been removed, {@code false} if no input found at this location.
+	 * @return The removed input object, {@code null} if no input found at this location.
 	 */
-	public boolean removeInput(Location location) {
-		return locationToInput.remove(location) != null;			//Remove the input
+	public Input removeInput(Location location) {
+		return locationToInput.remove(location);			//Remove the input
 	}
 	
 	/**
@@ -184,13 +238,14 @@ public class Bank implements Serializable{
 	}
 	
 	/**
-	 * Add the location has an output. Replace the existing one if it exists.
+	 * Sets the location has an output.<br><br>
+	 * If the output already exists, the priority and the materials are updated.
 	 * @param location - Location of the output.
 	 * @param priority - Priority of the output.
 	 * @param materials - Sorted materials of the output.
 	 * @return The created output object.
 	 */
-	public Output addOutput(Location location, int priority, List<Material> materials) {
+	public Output setOutput(Location location, int priority, List<Material> materials) {
 		Output existingOutput = locationToOutput.get(location);					//Get the existing output
     	if(existingOutput == null) {									//If no existing output
     		existingOutput = new Output(this, location, priority);			//Create a new output
@@ -223,17 +278,17 @@ public class Bank implements Serializable{
 	/**
 	 * Remove an output from a bank.
 	 * @param location - Location of the output.
-	 * @return {@code true} if the output has been removed, {@code false} if no output found at this location.
+	 * @return The removed output object, {@code null} if no output found at this location.
 	 */
-	public boolean removeOutput(Location location) {
-		Output output = locationToOutput.remove(location);								//Get the existing output
+	public Output removeOutput(Location location) {
+		Output output = locationToOutput.remove(location);						//Get the existing output
 		if(output != null) {													//If the output exists
 			for(Material material:output.getMaterials())							//For each material of the output
 				materialToOutputs.get(material).remove(output);							//Remove the output from the material map
 			if(output.isOverflow())													//If output is an overflow
 				overflows.remove(output);												//Remove it to the overflow list
 		}
-		return output != null;
+		return output;
 	}
 	
 	/**
@@ -274,8 +329,8 @@ public class Bank implements Serializable{
 	 * Compute sorting on the bank.
 	 */
 	public void computeSorting() {
-		if(getState()) {																						//If the bank is ON
-    		for(Input input:locationToInput.values()) {																	//For each input in the bank
+		if(isEnable()) {																						//If the bank is ON
+    		for(Input input:locationToInput.values()) {																//For each input in the bank
     			InventoryHolder inputHolder = (InventoryHolder) input.getLocation().getBlock().getState();				//Get the input holder
     			for(ItemStack itemStack: inputHolder.getInventory().getContents()) {									//For each item in the input
     				if(itemStack != null) {																					//If the item is not null
@@ -293,6 +348,9 @@ public class Bank implements Serializable{
     				}
     			}
     		}
+    		
+    		//Run only if all the inputs are empty
+    		toCompute = false;
 		}
 	}
 	
@@ -306,8 +364,8 @@ public class Bank implements Serializable{
     				.style(ChatColor.GOLD)
     			.then(" (" + description + ") ")
     				.color(ChatColor.GRAY)
-    			.then(getState() ? "ON" : "OFF")
-    				.color(state ? ChatColor.GREEN : ChatColor.RED)
+    			.then(isEnable() ? "ON" : "OFF")
+    				.color(enable ? ChatColor.GREEN : ChatColor.RED)
     			.then("\n  " + locationToInput.size() + " inputs")
     				.color(ChatColor.GRAY);
 
@@ -346,5 +404,36 @@ public class Bank implements Serializable{
     				.color(ChatColor.GRAY);
     	}
     	return text.build();
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Bank other = (Bank) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
 	}
 }

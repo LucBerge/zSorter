@@ -10,8 +10,8 @@ import fr.zcraft.zlib.components.commands.CommandException;
 import fr.zcraft.zlib.components.commands.CommandInfo;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorting.ZSorting;
+import fr.zcraft.zsorting.ZSortingException;
 import fr.zcraft.zsorting.model.Bank;
-import fr.zcraft.zsorting.model.Input;
 
 /**
  * Command triggered to remove a bank.
@@ -35,12 +35,16 @@ public class SetInputBankCommand extends ZSortingCommands{
             throwInvalidArgument(I.t("The input priority must be an integer."));
         }
 
-        Bank bank = ZSorting.getInstance().getBankManager().getBanks().get(args[0]);
+        Bank bank = ZSorting.getInstance().getBankManager().getNameToBank().get(args[0]);
         if(bank != null) {
             Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
             if(block.getState() instanceof InventoryHolder) {
-            	bank.addInput(block.getLocation(), priority);
-        		success(I.t("This holder is now an input of priority {0}.", priority));
+            	try {
+					bank.setInput(block.getLocation(), priority);
+	        		success(I.t("This holder is now an input of priority {0}.", priority));
+				} catch (ZSortingException e) {
+					error(e.getMessage());
+				}
             }
             else {
             	error(I.t("An input must be a holder."));

@@ -10,39 +10,50 @@ import org.bukkit.Material;
 import org.junit.Assert;
 import org.junit.Test;
 
+import fr.zcraft.zsorting.ZSortingException;
+
 /**
  * Tests the {@code Bank.class} methods.
  * @author Lucas
  */
 public class BankTest {
-
+	
 	/**
 	 * Tests if wrong constructor arguments are throwing IllegalArgumentException.
 	 */
 	@Test
-	public void illegalTest(){		
+	public void illegalTest(){
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Bank(null, "Description");
+			new Bank(null, "Name", "Description");
+		});
+		
+		Assert.assertThrows(IllegalArgumentException.class, () -> {
+			new Bank(new BankManager(), null, "Description");
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Bank("Name", null);
+			new Bank(new BankManager(), "Name", null);
 		});
 
-		new Bank("Name", "Description");
+		new Bank(new BankManager(), "Name", "Description");
 	}
 
 	/**
 	 * Tests if the inputs are correctly sorted when added to the LocationToInput map
+	 * @throws ZSortingException If the bank already linked to a bank.
 	 */
 	@Test
-	public void inputSortingTest() {
-		Bank bank = new Bank("inputsTestBank", "Description");
+	public void inputSortingTest() throws ZSortingException {
+		Bank bank = new Bank(new BankManager(), "inputsTestBank", "Description");
 		
-		bank.addInput(new Location(null,0 ,0 ,2), 45);
-		bank.addInput(new Location(null,0 ,0 ,1), 2);
-		bank.addInput(new Location(null,0 ,0 ,0), 1);
-		bank.addInput(new Location(null,0 ,0 ,3), 72);
+		bank.setInput(new Location(null,0 ,0 ,2), 45);
+		bank.setInput(new Location(null,0 ,0 ,1), 2);
+		bank.setInput(new Location(null,0 ,0 ,0), 1);
+		bank.setInput(new Location(null,0 ,0 ,3), 72);
+
+		Assert.assertThrows(ZSortingException.class, () -> {
+			bank.setInput(new Location(null,0 ,0 ,1), 9);
+		});
 
 		Input i1 = new Input(bank, new Location(null, 0, 0, 0), 1);
 		Input i2 = new Input(bank, new Location(null, 0, 0, 1), 2);
@@ -71,12 +82,12 @@ public class BankTest {
 	 */
 	@Test
 	public void outputSortingTest() {
-		Bank bank = new Bank("outputsTestBank", "Description");
+		Bank bank = new Bank(new BankManager(), "outputsTestBank", "Description");
 		
-		bank.addOutput(new Location(null,0 ,0 ,2), 45, new ArrayList<Material>());
-		bank.addOutput(new Location(null,0 ,0 ,1), 2, new ArrayList<Material>());
-		bank.addOutput(new Location(null,0 ,0 ,0), 1, new ArrayList<Material>());
-		bank.addOutput(new Location(null,0 ,0 ,3), 72, new ArrayList<Material>());
+		bank.setOutput(new Location(null,0 ,0 ,2), 45, new ArrayList<Material>());
+		bank.setOutput(new Location(null,0 ,0 ,1), 2, new ArrayList<Material>());
+		bank.setOutput(new Location(null,0 ,0 ,0), 1, new ArrayList<Material>());
+		bank.setOutput(new Location(null,0 ,0 ,3), 72, new ArrayList<Material>());
 
 		Output o1 = new Output(bank, new Location(null, 0, 0, 0), 1);
 		Output o2 = new Output(bank, new Location(null, 0, 0, 1), 2);
@@ -104,12 +115,12 @@ public class BankTest {
 	 */
 	@Test
 	public void hasOverflowTest() {
-		Bank bank = new Bank("hasOverflowTestBank", "Description");
+		Bank bank = new Bank(new BankManager(), "hasOverflowTestBank", "Description");
 
-		bank.addOutput(new Location(null, 0, 0, 0), 1, new ArrayList<Material>());
+		bank.setOutput(new Location(null, 0, 0, 0), 1, new ArrayList<Material>());
 		Assert.assertEquals(true, bank.hasOverflow());
 		
-		bank.addOutput(new Location(null, 0, 0, 1), 4, Arrays.asList(Material.AIR));
+		bank.setOutput(new Location(null, 0, 0, 1), 4, Arrays.asList(Material.AIR));
 		Assert.assertEquals(true, bank.hasOverflow());
 		
 		bank.removeOutput(new Location(null, 0, 0, 0));
@@ -121,29 +132,29 @@ public class BankTest {
 	 */
 	@Test
 	public void findOutputsTest() {
-		Bank bank = new Bank("findOutputsTestBank", "Description");
+		Bank bank = new Bank(new BankManager(), "findOutputsTestBank", "Description");
 		
 		//Test when the bank has no outputs
 		Assert.assertEquals(new ArrayList<Output>(), bank.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(0, bank.getMaterialToOutputs().size());
 		
 		//Test when the bank has one output of cobblestone
-		Output coobleStoneOutput1 = bank.addOutput(new Location(null, 0,0,0), 2, Arrays.asList(Material.COBBLESTONE));
+		Output coobleStoneOutput1 = bank.setOutput(new Location(null, 0,0,0), 2, Arrays.asList(Material.COBBLESTONE));
 		Assert.assertEquals(new ArrayList<Output>(), bank.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput1), bank.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the bank has one output of cobblestone and one of iron_block
-		Output ironBlockOutput = bank.addOutput(new Location(null, 0,0,1), 1, Arrays.asList(Material.IRON_BLOCK));
+		Output ironBlockOutput = bank.setOutput(new Location(null, 0,0,1), 1, Arrays.asList(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(ironBlockOutput), bank.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput1), bank.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the bank has two output of cobblestone and one of iron_block
-		Output coobleStoneOutput2 = bank.addOutput(new Location(null, 0,0,2), 1, Arrays.asList(Material.COBBLESTONE));
+		Output coobleStoneOutput2 = bank.setOutput(new Location(null, 0,0,2), 1, Arrays.asList(Material.COBBLESTONE));
 		Assert.assertEquals(Arrays.asList(ironBlockOutput), bank.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput2, coobleStoneOutput1), bank.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the bank has two output of cobblestone, one of iron_block and one overflow
-		Output overflow = bank.addOutput(new Location(null, 0,0,3), 10, Arrays.asList());
+		Output overflow = bank.setOutput(new Location(null, 0,0,3), 10, Arrays.asList());
 		Assert.assertEquals(Arrays.asList(ironBlockOutput, overflow), bank.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput2, coobleStoneOutput1, overflow), bank.findOutputs(Material.COBBLESTONE));
 		

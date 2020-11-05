@@ -24,8 +24,8 @@ public class SortingEvent implements Runnable{
      * Event called every 8 ticks
      */
     public void run() {
-    	for(Bank bank:ZSorting.getInstance().getBankManager().getBanks().values()) {	//For each bank
-    		bank.computeSorting();															//COmpute sorting
+    	for(Bank bank:ZSorting.getInstance().getBankManager().canCompute()) {	//For each bank that needs to compute sorting
+    		bank.computeSorting();													//Compute sorting
     	}
 	}
 }

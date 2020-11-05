@@ -19,7 +19,7 @@ public class InputTest {
 	 */
 	@Test
 	public void illegalTest(){
-		Bank bank = new Bank("illegalTestBank", "");
+		Bank bank = new Bank(new BankManager(), "illegalTestBank", "");
 		
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
 			new Input(null, new Location(null, 0, 0, 0), 1);
@@ -54,7 +54,7 @@ public class InputTest {
 	 */
 	@Test
 	public void sortingTest(){
-		Bank bank = new Bank("sortingTestBank", "");
+		Bank bank = new Bank(new BankManager(), "sortingTestBank", "");
 		
 		Input i1 = new Input(bank, new Location(null, 0, 0, 0), 1);
 		Input i2 = new Input(bank, new Location(null, 0, 0, 0), 2);

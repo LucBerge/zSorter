@@ -20,7 +20,7 @@ public class InfoBankCommand extends ZSortingCommands{
         if (args.length < 1)
             throwInvalidArgument(I.t("A bank name is required."));
 
-        Bank bank = ZSorting.getInstance().getBankManager().getBanks().get(args[0]);
+        Bank bank = ZSorting.getInstance().getBankManager().getNameToBank().get(args[0]);
         
         if(bank == null) {
             error(I.t("There is no bank with this name."));

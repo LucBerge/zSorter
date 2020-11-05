@@ -23,7 +23,7 @@ public class ListCommand extends ZSortingCommands{
     @Override
     protected void run() throws CommandException {
         
-        Collection<Bank> banks = ZSorting.getInstance().getBankManager().getBanks().values();
+        Collection<Bank> banks = ZSorting.getInstance().getBankManager().getNameToBank().values();
         if(banks.isEmpty()) {
         	send(new RawText()
 	    			.then(I.t("No bank found."))
@@ -45,8 +45,8 @@ public class ListCommand extends ZSortingCommands{
             			.command(InfoBankCommand.class, bank.getName())*/
         			.then(" (" + bank.getDescription() + ") ")
         				.color(ChatColor.GRAY)
-            		.then(bank.getState() ? "ON" : "OFF")
-            			.color(bank.getState() ? ChatColor.GREEN : ChatColor.RED);
+            		.then(bank.isEnable() ? "ON" : "OFF")
+            			.color(bank.isEnable() ? ChatColor.GREEN : ChatColor.RED);
         	}
         	send(text.build());
         }

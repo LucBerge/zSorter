@@ -25,11 +25,11 @@ public class HolderBreakEvent implements Listener{
     public void onBlockBreak(BlockBreakEvent e) {
 
     	if(e.getBlock().getState() instanceof InventoryHolder) {
-    		for(Bank bank:ZSorting.getInstance().getBankManager().getBanks().values()) {
-    			if(bank.removeInput(e.getBlock().getLocation())){
+    		for(Bank bank:ZSorting.getInstance().getBankManager().getNameToBank().values()) {
+    			if(bank.removeInput(e.getBlock().getLocation()) != null){
     				e.getPlayer().sendMessage(ChatColor.RED + I.t("This holder was an input of the bank {0}. It has been removed from it.", bank.getName()));
     			}
-    			else if(bank.removeOutput(e.getBlock().getLocation())){
+    			else if(bank.removeOutput(e.getBlock().getLocation()) != null){
     				e.getPlayer().sendMessage(ChatColor.RED + I.t("This holder was an output of the bank {0}. It has been removed from it.", bank.getName()));
     			}
     		}

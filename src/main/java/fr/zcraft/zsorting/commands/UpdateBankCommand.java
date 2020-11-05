@@ -7,14 +7,14 @@ import fr.zcraft.zlib.components.commands.CommandException;
 import fr.zcraft.zlib.components.commands.CommandInfo;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorting.ZSorting;
-import fr.zcraft.zsorting.ZSortingException;
+import fr.zcraft.zsorting.model.Bank;
 
 /**
  * Command triggered to create a bank.
  * @author Lucas
  */
-@CommandInfo (name = "add_bank", usageParameters = "<name> <description>")
-public class CreateBankCommand extends ZSortingCommands{
+@CommandInfo (name = "update_bank", usageParameters = "<name> <description>")
+public class UpdateBankCommand extends ZSortingCommands{
 	
     @Override
     protected void run() throws CommandException {
@@ -26,11 +26,8 @@ public class CreateBankCommand extends ZSortingCommands{
         for (int i = 1; i < args.length; i++)
         	description.add(args[i]);
 
-        try {
-        	ZSorting.getInstance().getBankManager().addBank(args[0], description.toString());
-        	success(I.t("The bank has been created."));
-        } catch (ZSortingException e) {
-        	error(e.getMessage());
-        }
+        Bank bank = ZSorting.getInstance().getBankManager().getNameToBank().get(args[0]);
+        bank.setDescription(description.toString());
+        success(I.t("The bank description has been updated."));
     }
 }
