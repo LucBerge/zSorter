@@ -25,4 +25,9 @@ public class Input extends InputOutput implements Serializable{
 	public Input(Bank bank, Location location, Integer priority) {
 		super(bank, location, priority);
 	}
+
+	@Override
+	public int hashCode() {
+		return super.hashCode();
+	}
 }
