@@ -11,15 +11,15 @@ import org.bukkit.event.Listener;
 import fr.zcraft.zlib.components.commands.Commands;
 import fr.zcraft.zlib.components.i18n.I18n;
 import fr.zcraft.zlib.core.ZPlugin;
-import fr.zcraft.zsorting.commands.CreateBankCommand;
-import fr.zcraft.zsorting.commands.InfoBankCommand;
+import fr.zcraft.zsorting.commands.AddCommand;
+import fr.zcraft.zsorting.commands.InfoCommand;
 import fr.zcraft.zsorting.commands.ListCommand;
-import fr.zcraft.zsorting.commands.RemoveBankCommand;
+import fr.zcraft.zsorting.commands.DeleteCommand;
 import fr.zcraft.zsorting.commands.RemoveInputBankCommand;
 import fr.zcraft.zsorting.commands.RemoveOutputBankCommand;
 import fr.zcraft.zsorting.commands.SetInputBankCommand;
 import fr.zcraft.zsorting.commands.SetOutputBankCommand;
-import fr.zcraft.zsorting.commands.ToggleBankCommand;
+import fr.zcraft.zsorting.commands.ToggleCommand;
 import fr.zcraft.zsorting.events.HolderBreakEvent;
 import fr.zcraft.zsorting.events.ItemMovedEvent;
 import fr.zcraft.zsorting.events.SortingEvent;
@@ -81,10 +81,10 @@ public final class ZSorting extends ZPlugin implements Listener{
         
         Commands.register("zsorting",
         		ListCommand.class,
-        		CreateBankCommand.class,
-        		RemoveBankCommand.class,
-        		InfoBankCommand.class,
-        		ToggleBankCommand.class,
+        		AddCommand.class,
+        		DeleteCommand.class,
+        		InfoCommand.class,
+        		ToggleCommand.class,
         		SetInputBankCommand.class,
         		SetOutputBankCommand.class,
         		RemoveInputBankCommand.class,

@@ -200,20 +200,20 @@ public class Bank implements Serializable{
 	 * @throws ZSortingException if the input is already linked to an other bank.
 	 */
 	public Input setInput(Location location, int priority) throws ZSortingException {
-		Bank bank = manager.getLocationToBank().putIfAbsent(location, this);						//Get the bank with this input
-		if(bank != null && !equals(bank))															//If the bank is not this one
-			throw new ZSortingException(I.t("Already an input of the bank {0}.", bank.getName()));		//Display error messsage
+		Bank bank = manager.getLocationToBank().putIfAbsent(location, this);										//Get the bank with this input
+		if(bank != null && !equals(bank))																			//If the bank is not this one
+			throw new ZSortingException(I.t("This holder is already an input of the bank {0}.", bank.getName()));		//Display error messsage
 		
-		Input input = locationToInput.get(location);												//Get the existing input
-    	if(input == null) {																			//If no input exists
-    		input = new Input(this, location, priority);												//Create a new input
-    		locationToInput.put(location, input);														//Add the new input
-    		manager.getLocationToBank().put(location, this);											//Add the new input location
+		Input input = locationToInput.get(location);																//Get the existing input
+    	if(input == null) {																							//If no input exists
+    		input = new Input(this, location, priority);																//Create a new input
+    		locationToInput.put(location, input);																		//Add the new input
+    		manager.getLocationToBank().put(location, this);															//Add the new input location
     	}
-    	else {																						//If the input exists
-    		input.setPriority(priority);																//Set the new priority
+    	else {																										//If the input exists
+    		input.setPriority(priority);																				//Set the new priority
     	}
-    	sortInputs();																				//Sort the inputs
+    	sortInputs();																								//Sort the inputs
 		return input;
 	}
 
@@ -366,12 +366,12 @@ public class Bank implements Serializable{
     				.color(ChatColor.GRAY)
     			.then(isEnable() ? "ON" : "OFF")
     				.color(enable ? ChatColor.GREEN : ChatColor.RED)
-    			.then("\n  " + locationToInput.size() + " inputs")
+        		.then(I.t("\n  {0} inputs", locationToInput.size()))
     				.color(ChatColor.GRAY);
 
 		for(Input input:locationToInput.values()) {
 			text
-				.then(I.t("\n    ({3})", input.getPriority()))
+				.then("\n    (" + input.getPriority() + ")")
 				.color(ChatColor.AQUA);
 				/*.hover(
 					new RawText()

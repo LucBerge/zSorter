@@ -11,8 +11,8 @@ import fr.zcraft.zsorting.model.Bank;
  * A selection is needed in order to manage inputs and outputs.
  * @author Lucas
  */
-@CommandInfo (name = "info", usageParameters = "<name>")
-public class InfoBankCommand extends ZSortingCommands{
+@CommandInfo (name = "toggle", usageParameters = "<name>")
+public class ToggleCommand extends ZSortingCommands{
 	
     @Override
     protected void run() throws CommandException {
@@ -26,7 +26,14 @@ public class InfoBankCommand extends ZSortingCommands{
             error(I.t("There is no bank with this name."));
         }
         else {
-        	send(bank.toRawText());
+        	bank.setEnable(!bank.isEnable());
+        	if(bank.isEnable()) {
+        		if(!bank.hasOverflow())
+        			warning(I.t("The bank does not have any overflow. Some items might clog up the inputs."));
+        		success(I.t("The bank has been enabled."));
+        	}
+        	else
+        		success(I.t("The bank has been disabled."));
         }
     }
 }

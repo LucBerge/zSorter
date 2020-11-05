@@ -39,7 +39,10 @@ msgstr "Aucune banque n'a été trouvé."
 msgid "Show the informations of the bank {0}"
 msgstr "Voir les informations de la banque {0}"
 
-msgid "The bank as been removed."
+msgid "The bank description has been removed."
+msgstr "La banque a été supprimé"
+
+msgid "The bank has been removed."
 msgstr "La banque a été supprimé"
 
 msgid "This holder is no longer an input."
@@ -68,6 +71,9 @@ msgstr "La priorité d'entrée doit être suppérieure ou égale à 1."
 
 msgid "The input priority must be an integer."
 msgstr "La priorité d'entrée doit être un entier."
+
+msgid ""This holder is already an input of the bank {0}."
+msgstr ""Ce contenant est une entrée de la banque {0}."
 
 msgid "This holder is now an input of priority {0}."
 msgstr "Ce contenant est désormais une entrée de prioritée {0}."

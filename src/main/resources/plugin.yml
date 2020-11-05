@@ -9,10 +9,12 @@ commands:
         description: Manage your banks in game
     list:
         description : List all the banks in the world
-    create:
+    add:
         description : Create a new bank
-    remove:
-        description : Remove a bank
+    update:
+        description : Update a bank description
+    delete:
+        description : Delete a bank
     info:
         description : Display a bank informations
     toggle:
