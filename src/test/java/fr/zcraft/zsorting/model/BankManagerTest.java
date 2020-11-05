@@ -32,12 +32,12 @@ public class BankManagerTest {
 		});
 
 		//Remove a bank and check if one removed
-		manager.removeBank("addRemoveTestBank");
+		manager.deleteBank("addRemoveTestBank");
 		Assert.assertEquals(0,manager.getNameToBank().values().size());
 		
 		//Remove a bank and check if exception thrown
 		Assert.assertThrows(ZSortingException.class, () -> {
-			manager.removeBank("addRemoveTestBank");
+			manager.deleteBank("addRemoveTestBank");
 		});
 	}
 	
@@ -67,12 +67,12 @@ public class BankManagerTest {
 		});
 		
 		//Remove the bank1 and test if the inputs have been removed from the location map
-		manager.removeBank(bank1.getName());
+		manager.deleteBank(bank1.getName());
 		Assert.assertEquals(null, manager.getLocationToBank().get(new Location(null, 0,0,0)));
 		Assert.assertEquals(null, manager.getLocationToBank().get(new Location(null, 0,0,1)));
 		
 		//Remove the bank2 and test if the inputs have been removed from the location map
-		manager.removeBank(bank2.getName());
+		manager.deleteBank(bank2.getName());
 		Assert.assertEquals(null, manager.getLocationToBank().get(new Location(null, 0,0,2)));
 	}
 	

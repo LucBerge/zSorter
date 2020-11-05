@@ -45,7 +45,7 @@ public class BankManager implements Serializable{
 	/**
 	 * Returns the map linking a location to a bank.<br><br>
 	 * Do not use this method if you need to add or remove a bank.
-	 * Use the {@code addBank} and {@code removeBank} methods instead.
+	 * Use the {@code addBank} and {@code deleteBank} methods instead.
 	 * @return The banks of the plugin.
 	 */
 	public Map<Location, Bank> getLocationToBank() {
@@ -73,7 +73,7 @@ public class BankManager implements Serializable{
 	 * @return The removed bank object, {@code null} if no bank has this name.
 	 * @throws ZSortingException  if no bank with this name exists.
 	 */
-	public Bank removeBank(String name) throws ZSortingException {
+	public Bank deleteBank(String name) throws ZSortingException {
 		Bank bank = nameToBank.remove(name);										//Get the existing bank
 		if(bank == null)															//If no bank with has this name
 			throw new ZSortingException(I.t("There is no bank with this name."));		//Display error message

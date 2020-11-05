@@ -20,7 +20,7 @@ public class DeleteCommand extends ZSortingCommands{
     		throwInvalidArgument(I.t("A bank name is required."));
 
     	try {
-    		ZSorting.getInstance().getBankManager().removeBank(args[0]);
+    		ZSorting.getInstance().getBankManager().deleteBank(args[0]);
     		success(I.t("The bank has been removed."));
     	} catch (ZSortingException e) {
     		error(e.getMessage());
