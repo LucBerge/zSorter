@@ -349,7 +349,18 @@ public class Bank implements Serializable{
     			}
     		}
     		
-    		//Run only if all the inputs are empty
+    		//Run only if no item has been sorted. Either because there is nothing to sort or because all the outputs are full.
+    		//THIS MIGHT BE AN ISSUE :
+    		//	1. Create a bank
+    		//	2. Add an input
+    		//	3. Add an output of STONE
+    		//	4. Completely fill the input of STONE
+    		//	5. Completely fill the output of STONE
+    		//	6. Toggle the bank
+    		//	7. Nothing is sorted and the following line is run. The bank does not need to be computed anymore.
+    		//	8. Remove the STONE from the output
+    		//	9. The input is full and the output is empty but nothing is sorted
+    		
     		toCompute = false;
 		}
 	}
