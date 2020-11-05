@@ -4,6 +4,7 @@ import fr.zcraft.zlib.components.commands.CommandException;
 import fr.zcraft.zlib.components.commands.CommandInfo;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorting.ZSorting;
+import fr.zcraft.zsorting.events.SortingTask;
 import fr.zcraft.zsorting.model.Bank;
 
 /**
@@ -30,6 +31,7 @@ public class ToggleCommand extends ZSortingCommands{
         	if(bank.isEnable()) {
         		if(!bank.hasOverflow())
         			warning(I.t("The bank does not have any overflow. Some items might clog up the inputs."));
+        		SortingTask.getInstance().start();
         		success(I.t("The bank has been enabled."));
         	}
         	else

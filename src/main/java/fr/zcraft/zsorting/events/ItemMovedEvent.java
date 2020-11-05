@@ -23,6 +23,7 @@ public class ItemMovedEvent implements Listener{
 		Bank bank = ZSorting.getInstance().getBankManager().getLocationToBank().get(e.getDestination().getLocation());	//Get the bank associated with this location input
 		if(bank != null) {																								//If one bank found
 			bank.setToCompute(true);																						//Set the bank to compute
+			SortingTask.getInstance().start();
 		}
 	}
 }

@@ -22,7 +22,7 @@ import fr.zcraft.zsorting.commands.SetOutputBankCommand;
 import fr.zcraft.zsorting.commands.ToggleCommand;
 import fr.zcraft.zsorting.events.HolderBreakEvent;
 import fr.zcraft.zsorting.events.ItemMovedEvent;
-import fr.zcraft.zsorting.events.SortingEvent;
+import fr.zcraft.zsorting.events.SortingTask;
 import fr.zcraft.zsorting.model.BankManager;
 
 /**
@@ -63,19 +63,15 @@ public final class ZSorting extends ZPlugin implements Listener{
 	public BankManager getBankManager() {
 		return bankManager;
 	}
-
-	  /************/
-	 /** ON/OFF **/
-	/************/
 	
 	@Override
     public void onEnable() {
 		instance = this;
 		
-		saveDefaultConfig();										//Charge config.yml
-        loadComponents(Commands.class, Config.class, I18n.class);	//Charge les classes suivantes
+		saveDefaultConfig();
+        loadComponents(Commands.class, Config.class, I18n.class);
         
-        I18n.setPrimaryLocale(Config.LANGUAGE.get());				//Definit la langue utilisée
+        I18n.setPrimaryLocale(Config.LANGUAGE.get());
         this.getServer().getPluginManager().registerEvents(new HolderBreakEvent(), this);
         this.getServer().getPluginManager().registerEvents(new ItemMovedEvent(), this);
         
@@ -91,28 +87,18 @@ public final class ZSorting extends ZPlugin implements Listener{
         		RemoveOutputBankCommand.class
         );
         
-		Load();	//Charge les banques a partir d'un fichier
-		
-		this.getServer().getScheduler().scheduleSyncRepeatingTask(this, new SortingEvent(), SortingEvent.DELAY, SortingEvent.PERIOD);
+		Load();
+		SortingTask.getInstance().start();
     }
 	
     @Override
     public void onDisable() {
-    	Save();	//Sauvegarde les banque sur un fichier
+    	Save();
     }
-
-	  /*************/
-	 /** SORTING **/
-	/*************/
-   
-    public void sortItems() {
-    	
-    }
-    
-	  /**************/
-	 /** METHODES **/
-	/**************/
 	
+	/**
+	 * Save the bank manager to a file.
+	 */
 	private void Save() {		
 		try {
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(dataFile)));
@@ -124,6 +110,9 @@ public final class ZSorting extends ZPlugin implements Listener{
 		}
 	}
 	
+	/**
+	 * Load the BankManager from a file
+	 */
 	private void Load() {		
 		try {
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(dataFile)));
