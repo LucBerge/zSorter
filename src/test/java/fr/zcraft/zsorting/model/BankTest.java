@@ -51,10 +51,6 @@ public class BankTest {
 		bank.setInput(new Location(null,0 ,0 ,0), 1);
 		bank.setInput(new Location(null,0 ,0 ,3), 72);
 
-		Assert.assertThrows(ZSortingException.class, () -> {
-			bank.setInput(new Location(null,0 ,0 ,1), 9);
-		});
-
 		Input i1 = new Input(bank, new Location(null, 0, 0, 0), 1);
 		Input i2 = new Input(bank, new Location(null, 0, 0, 1), 2);
 		Input i3 = new Input(bank, new Location(null, 0, 0, 2), 45);
