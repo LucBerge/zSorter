@@ -2,18 +2,18 @@ package fr.zcraft.zsorting.model;
 
 import java.util.Arrays;
 
-import org.bukkit.Location;
 import org.junit.Assert;
 import org.junit.Test;
 
 import fr.zcraft.zsorting.ZSortingException;
+import fr.zcraft.zsorting.ZSortingTest;
 
 /**
  * Tests the {@code BankManager.class} methods.
  * @author Lucas
  */
-public class BankManagerTest {
-
+public class BankManagerTest extends ZSortingTest{
+	
 	/**
 	 * Tests if the banks are correctly added and removed from the manager.
 	 * @throws ZSortingException if a ZSorting exception occurs.
@@ -47,33 +47,32 @@ public class BankManagerTest {
 	 */
 	@Test
 	public void findFromLocationTest() throws ZSortingException {
-		BankManager manager = new BankManager();
 		
 		//Create a bank, add 2 inputs and test if the bank if found
 		Bank bank1 = manager.addBank("findFromLocationTestBank1", "Description");
-		bank1.setInput(new Location(null, 0,0,0), 1);
-		bank1.setInput(new Location(null, 0,0,1), 1);
-		Assert.assertEquals(bank1, manager.getLocationToBank().get(new Location(null, 0,0,0)));
-		Assert.assertEquals(bank1, manager.getLocationToBank().get(new Location(null, 0,0,1)));
+		bank1.setInput(inventory0, 1);
+		bank1.setInput(inventory1, 1);
+		Assert.assertEquals(bank1, manager.getInventoryToBank().get(inventory0));
+		Assert.assertEquals(bank1, manager.getInventoryToBank().get(inventory1));
 
 		//Create a bank, add 1 input and test if the bank if found
 		Bank bank2 = manager.addBank("findFromLocationTestBank2", "Description");
-		bank2.setInput(new Location(null, 0,0,2), 1);
-		Assert.assertEquals(bank2, manager.getLocationToBank().get(new Location(null, 0,0,2)));
+		bank2.setInput(inventory2, 1);
+		Assert.assertEquals(bank2, manager.getInventoryToBank().get(inventory2));
 
 		//Add an input and test if exception thrown
 		Assert.assertThrows(ZSortingException.class, () -> {
-			bank2.setInput(new Location(null, 0,0,1), 1);
+			bank2.setInput(inventory1, 1);
 		});
 		
 		//Remove the bank1 and test if the inputs have been removed from the location map
 		manager.deleteBank(bank1.getName());
-		Assert.assertEquals(null, manager.getLocationToBank().get(new Location(null, 0,0,0)));
-		Assert.assertEquals(null, manager.getLocationToBank().get(new Location(null, 0,0,1)));
+		Assert.assertEquals(null, manager.getInventoryToBank().get(inventory0));
+		Assert.assertEquals(null, manager.getInventoryToBank().get(inventory1));
 		
 		//Remove the bank2 and test if the inputs have been removed from the location map
 		manager.deleteBank(bank2.getName());
-		Assert.assertEquals(null, manager.getLocationToBank().get(new Location(null, 0,0,2)));
+		Assert.assertEquals(null, manager.getInventoryToBank().get(inventory2));
 	}
 	
 	/**

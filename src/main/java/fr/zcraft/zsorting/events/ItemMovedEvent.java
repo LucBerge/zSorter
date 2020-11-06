@@ -20,10 +20,10 @@ public class ItemMovedEvent implements Listener{
      */
 	@EventHandler
 	public void onInventoryMoveItem(InventoryMoveItemEvent e) {
-		Bank bank = ZSorting.getInstance().getBankManager().getLocationToBank().get(e.getDestination().getLocation());	//Get the bank associated with this location input
-		if(bank != null) {																								//If one bank found
-			bank.setToCompute(true);																						//Set the bank to compute
-			SortingTask.getInstance().start();
+		Bank bank = ZSorting.getInstance().getBankManager().getInventoryToBank().get(e.getDestination());	//Get the bank associated with this location input
+		if(bank != null) {																					//If one bank found
+			bank.setToCompute(true);																			//Set the bank to compute
+			SortingTask.getInstance().start();																	//Start the task
 		}
 	}
 }

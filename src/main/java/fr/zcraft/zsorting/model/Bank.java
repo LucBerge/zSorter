@@ -10,9 +10,8 @@ import java.util.StringJoiner;
 import java.util.TreeMap;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import fr.zcraft.zlib.components.i18n.I;
@@ -39,8 +38,8 @@ public class Bank implements Serializable{
 	private boolean enable;
 	private boolean toCompute;
 	
-	private Map<Location, Input> locationToInput;
-	private Map<Location, Output> locationToOutput;
+	private Map<Inventory, Input> locationToInput;
+	private Map<Inventory, Output> locationToOutput;
 	private Map<Material, List<Output>> materialToOutputs;
 	private List<Output> overflows;
 	
@@ -67,8 +66,8 @@ public class Bank implements Serializable{
 		this.description = description;
 		this.enable = false;
 		this.toCompute = false;
-		this.locationToInput = new HashMap<Location, Input>();
-		this.locationToOutput = new HashMap<Location, Output>();
+		this.locationToInput = new HashMap<Inventory, Input>();
+		this.locationToOutput = new HashMap<Inventory, Output>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();      
 	}
@@ -159,7 +158,7 @@ public class Bank implements Serializable{
 	 * Use the {@code setInput} and {@code removeInput} methods instead.
 	 * @return The bank inputs.
 	 */
-	public Map<Location, Input> getLocationToInput() {
+	public Map<Inventory, Input> getLocationToInput() {
 		return locationToInput;
 	}
 
@@ -169,7 +168,7 @@ public class Bank implements Serializable{
 	 * Use the {@code setOutput} and {@code removeOutput} methods instead.
 	 * @return The bank outputs.
 	 */
-	public Map<Location, Output> getLocationToOutput() {
+	public Map<Inventory, Output> getLocationToOutput() {
 		return locationToOutput;
 	}
 
@@ -194,21 +193,21 @@ public class Bank implements Serializable{
 	/**
 	 * Sets the location has an input.<br><br>
 	 * If the input already exists, the priority is updated.
-	 * @param location - Location of the input.
+	 * @param inventory - Location of the input.
 	 * @param priority - Priority of the input.
 	 * @return The created input object.
 	 * @throws ZSortingException if the input is already linked to an other bank.
 	 */
-	public Input setInput(Location location, int priority) throws ZSortingException {
-		Bank bank = manager.getLocationToBank().putIfAbsent(location, this);										//Get the bank with this input
+	public Input setInput(Inventory inventory, int priority) throws ZSortingException {
+		Bank bank = manager.getInventoryToBank().putIfAbsent(inventory, this);										//Get the bank with this input
 		if(bank != null && !equals(bank))																			//If the bank is not this one
 			throw new ZSortingException(I.t("This holder is already an input of the bank {0}.", bank.getName()));		//Display error messsage
 		
-		Input input = locationToInput.get(location);																//Get the existing input
+		Input input = locationToInput.get(inventory);																//Get the existing input
     	if(input == null) {																							//If no input exists
-    		input = new Input(this, location, priority);																//Create a new input
-    		locationToInput.put(location, input);																		//Add the new input
-    		manager.getLocationToBank().put(location, this);															//Add the new input location
+    		input = new Input(this, inventory, priority);																//Create a new input
+    		locationToInput.put(inventory, input);																		//Add the new input
+    		manager.getInventoryToBank().put(inventory, this);															//Add the new input location
     	}
     	else {																										//If the input exists
     		input.setPriority(priority);																				//Set the new priority
@@ -219,11 +218,11 @@ public class Bank implements Serializable{
 
 	/**
 	 * Remove an input from a bank.
-	 * @param location - Location of the input.
-	 * @return The removed input object, {@code null} if no input found at this location.
+	 * @param inventory - Inventory of the input.
+	 * @return The removed input object, {@code null} if no input found for this inventory.
 	 */
-	public Input removeInput(Location location) {
-		return locationToInput.remove(location);			//Remove the input
+	public Input removeInput(Inventory inventory) {
+		return locationToInput.remove(inventory);			//Remove the input
 	}
 	
 	/**
@@ -232,24 +231,24 @@ public class Bank implements Serializable{
 	private void sortInputs() {
 		List<Input> values = new ArrayList<Input>(locationToInput.values());
 		Collections.sort(values);
-		locationToInput = new HashMap<Location, Input>();
+		locationToInput = new HashMap<Inventory, Input>();
 		for (Input value : values)
-			locationToInput.put(value.getLocation(), value);
+			locationToInput.put(value.getInventory(), value);
 	}
 	
 	/**
 	 * Sets the location has an output.<br><br>
 	 * If the output already exists, the priority and the materials are updated.
-	 * @param location - Location of the output.
+	 * @param inventory - Inventory of the output.
 	 * @param priority - Priority of the output.
 	 * @param materials - Sorted materials of the output.
 	 * @return The created output object.
 	 */
-	public Output setOutput(Location location, int priority, List<Material> materials) {
-		Output existingOutput = locationToOutput.get(location);					//Get the existing output
+	public Output setOutput(Inventory inventory, int priority, List<Material> materials) {
+		Output existingOutput = locationToOutput.get(inventory);		//Get the existing output
     	if(existingOutput == null) {									//If no existing output
-    		existingOutput = new Output(this, location, priority);			//Create a new output
-    		locationToOutput.put(location, existingOutput);							//Add the new output
+    		existingOutput = new Output(this, inventory, priority);			//Create a new output
+    		locationToOutput.put(inventory, existingOutput);				//Add the new output
     	}
     	else {															//If the output exists
     		existingOutput.setPriority(priority);							//Set the new priority
@@ -277,11 +276,11 @@ public class Bank implements Serializable{
 	
 	/**
 	 * Remove an output from a bank.
-	 * @param location - Location of the output.
+	 * @param inventory - Inventory of the output.
 	 * @return The removed output object, {@code null} if no output found at this location.
 	 */
-	public Output removeOutput(Location location) {
-		Output output = locationToOutput.remove(location);						//Get the existing output
+	public Output removeOutput(Inventory inventory) {
+		Output output = locationToOutput.remove(inventory);						//Get the existing output
 		if(output != null) {													//If the output exists
 			for(Material material:output.getMaterials())							//For each material of the output
 				materialToOutputs.get(material).remove(output);							//Remove the output from the material map
@@ -297,9 +296,9 @@ public class Bank implements Serializable{
 	public void sortOutputs() {
 		List<Output> values = new ArrayList<Output>(locationToOutput.values());
 		Collections.sort(values);
-		locationToOutput = new HashMap<Location, Output>();
+		locationToOutput = new HashMap<Inventory, Output>();
 		for (Output value : values)
-			locationToOutput.put(value.getLocation(), value);
+			locationToOutput.put(value.getInventory(), value);
 	}
 	
 	/**
@@ -331,17 +330,17 @@ public class Bank implements Serializable{
 	public void computeSorting() {
 		if(isEnable()) {																						//If the bank is ON
     		for(Input input:locationToInput.values()) {																//For each input in the bank
-    			InventoryHolder inputHolder = (InventoryHolder) input.getLocation().getBlock().getState();				//Get the input holder
-    			for(ItemStack itemStack: inputHolder.getInventory().getContents()) {									//For each item in the input
+    			Inventory inputInventory = input.getInventory();														//Get the input inventory
+    			for(ItemStack itemStack: inputInventory.getContents()) {												//For each item in the input inventory
     				if(itemStack != null) {																					//If the item is not null
     					List<Output> outputs = findOutputs(itemStack.getType());												//Find the outputs for this item
     					for(Output output:outputs) {																				//For each possible output
-    						InventoryHolder outputHolder = (InventoryHolder) output.getLocation().getBlock().getState();				//Get the output holder
+    						Inventory outputInventory = output.getInventory();															//Get the output inventory
     						ItemStack itemStackToTransfer = itemStack.clone();															//Clone the item to keep the meta data
     						itemStackToTransfer.setAmount(1);																			//Transfer only one item
-    						HashMap<Integer, ItemStack> couldntTransfer = outputHolder.getInventory().addItem(itemStackToTransfer);		//Add the item to the output
+    						HashMap<Integer, ItemStack> couldntTransfer = outputInventory.addItem(itemStackToTransfer);					//Add the item to the output
     						if(couldntTransfer.isEmpty()) {																				//If it has been transfered
-    							inputHolder.getInventory().removeItem(itemStackToTransfer);													//Remove the item from the input
+    							outputInventory.removeItem(itemStackToTransfer);															//Remove the item from the input
     							return;																										//Exit
     						}
     					}

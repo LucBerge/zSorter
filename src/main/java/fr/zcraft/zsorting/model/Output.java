@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.inventory.Inventory;
 
 /**
  * The class {@code Output} represents an output of a bank.
@@ -28,11 +28,11 @@ public class Output extends InputOutput implements Serializable{
 	/**
 	 * Constructor of an output object.
 	 * @param bank - Bank the InputOutput is associated with.
-	 * @param location - Location of the output.
+	 * @param inventory - Location of the output.
 	 * @param priority - Priority of the output.
 	 */
-	public Output(Bank bank, Location location, Integer priority) {
-		super(bank, location, priority);
+	public Output(Bank bank, Inventory inventory, Integer priority) {
+		super(bank, inventory, priority);
 		this.materials = new ArrayList<Material>();
 	}
 

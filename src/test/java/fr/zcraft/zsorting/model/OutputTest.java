@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.junit.Assert;
 import org.junit.Test;
+
+import fr.zcraft.zsorting.ZSortingTest;
 
 /**
  * Tests the {@code Output.class} methods.
  * @author Lucas
  */
-public class OutputTest {
-
+public class OutputTest  extends ZSortingTest{
+	
 	/**
 	 * Tests if wrong constructor arguments are throwing IllegalArgumentException.
 	 */
@@ -23,7 +24,7 @@ public class OutputTest {
 		Bank bank = new Bank(new BankManager(), "illegalTestBank", "");
 		
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(null, new Location(null, 0, 0, 0), 1);
+			new Output(null, inventory0, 1);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
@@ -31,23 +32,23 @@ public class OutputTest {
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(bank, new Location(null, 0, 0, 0), null);
+			new Output(bank, inventory0, null);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(bank, new Location(null, 0, 0, 0), -45);
+			new Output(bank, inventory0, -45);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(bank, new Location(null, 0, 0, 0), -1);
+			new Output(bank, inventory0, -1);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(bank, new Location(null, 0, 0, 0), 0);
+			new Output(bank, inventory0, 0);
 		});
 
-		new Output(bank, new Location(null, 0, 0, 0), 1);
-		new Output(bank, new Location(null, 0, 0, 0), 5);
+		new Output(bank, inventory0, 1);
+		new Output(bank, inventory0, 5);
 	}
 	
 	/**
@@ -57,10 +58,10 @@ public class OutputTest {
 	public void sortingTest(){
 		Bank bank = new Bank(new BankManager(), "sortingTestBank", "");
 		
-		Output o1 = new Output(bank, new Location(null, 0, 0, 0), 1);
-		Output o2 = new Output(bank, new Location(null, 0, 0, 0), 2);
-		Output o3 = new Output(bank, new Location(null, 0, 0, 0), 45);
-		Output o4 = new Output(bank, new Location(null, 0, 0, 0), 72);
+		Output o1 = new Output(bank, inventory0, 1);
+		Output o2 = new Output(bank, inventory0, 2);
+		Output o3 = new Output(bank, inventory0, 45);
+		Output o4 = new Output(bank, inventory0, 72);
 		
 		List<Output> unsortedList = new ArrayList<Output>();
 		unsortedList.add(o4);
@@ -86,7 +87,7 @@ public class OutputTest {
 	public void materialsTest() {
 		Bank bank = new Bank(new BankManager(), "materialsTestBank", "");
 
-		Output output = new Output(bank, new Location(null, 0, 0, 0), 1);
+		Output output = new Output(bank, inventory0, 1);
 		
 		List<Material> unsortedList = new ArrayList<Material>();
 		unsortedList.add(Material.CARROT);
@@ -110,7 +111,7 @@ public class OutputTest {
 	public void isOverflowTest() {
 		Bank bank = new Bank(new BankManager(), "isOverflowTestBank", "");
 		
-		Output output = new Output(bank, new Location(null, 0, 0, 0), 1);
+		Output output = new Output(bank, inventory0, 1);
 		Assert.assertEquals(true, output.isOverflow());
 
 		List<Material> materials = new ArrayList<Material>();

@@ -2,7 +2,7 @@ package fr.zcraft.zsorting.model;
 
 import java.io.Serializable;
 
-import org.bukkit.Location;
+import org.bukkit.inventory.Inventory;
 
 /**
  * The class {@code InputOutput} represents an input or an output of a bank.
@@ -22,9 +22,9 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	private Bank bank;
 	
 	/**
-	 * Location of the InputOutput.
+	 * Inventory of the InputOutput.
 	 */
-	private Location location;
+	private Inventory inventory;
 	
 	/**
 	 * Priority of the InputOutput.
@@ -34,17 +34,17 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	/**
 	 * Constructor of an InputOutput object.
 	 * @param bank - Bank the InputOutput is associated with.
-	 * @param location - Location of the InputOutput.
+	 * @param inventory - Inventory of the InputOutput.
 	 * @param priority - Priority of the InputOutput.
 	 */
-	public InputOutput(Bank bank, Location location, Integer priority) {
+	public InputOutput(Bank bank, Inventory inventory, Integer priority) {
 		super();
 		
 		if(bank == null)
 			throw new IllegalArgumentException("An InputOutput bank cannot be null");
 		
-		if(location == null)
-			throw new IllegalArgumentException("An InputOutput location cannot be null");
+		if(inventory == null)
+			throw new IllegalArgumentException("An InputOutput inventory cannot be null");
 		
 		if(priority == null)
 			throw new IllegalArgumentException("An InputOutput priority cannot be null");
@@ -53,7 +53,7 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 			throw new IllegalArgumentException("An InputOutput priority cannot be less than 1");
 		
 		this.bank = bank;
-		this.location = location;
+		this.inventory = inventory;
 		this.priority = priority;
 	}
 
@@ -85,8 +85,8 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	 * Returns the location of the InputOutput.
 	 * @return Location of the InputOutput.
 	 */
-	public Location getLocation() {
-		return location;
+	public Inventory getInventory() {
+		return inventory;
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((location == null) ? 0 : location.hashCode());
+		result = prime * result + ((inventory == null) ? 0 : inventory.hashCode());
 		result = prime * result + priority;
 		return result;
 	}
@@ -112,10 +112,10 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 		if (getClass() != obj.getClass())
 			return false;
 		InputOutput other = (InputOutput) obj;
-		if (location == null) {
-			if (other.location != null)
+		if (inventory == null) {
+			if (other.inventory != null)
 				return false;
-		} else if (!location.equals(other.location))
+		} else if (!inventory.equals(other.inventory))
 			return false;
 		if (priority != other.priority)
 			return false;

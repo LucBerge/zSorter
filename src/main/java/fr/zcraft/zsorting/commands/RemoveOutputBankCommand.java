@@ -29,7 +29,8 @@ public class RemoveOutputBankCommand extends ZSortingCommands{
     	if(bank != null) {
         	Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
     		if (block.getState() instanceof InventoryHolder) {
-    			if(bank.removeOutput(block.getLocation()) != null)
+            	InventoryHolder holder = (InventoryHolder) block.getState();
+    			if(bank.removeOutput(holder.getInventory()) != null)
     				success(I.t("This holder is no longer an output."));
     			else
     				error(I.t("This holder is not an output."));

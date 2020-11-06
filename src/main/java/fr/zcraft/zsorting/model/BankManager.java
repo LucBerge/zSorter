@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.bukkit.Location;
+import org.bukkit.inventory.Inventory;
 
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorting.ZSortingException;
@@ -24,13 +24,13 @@ public class BankManager implements Serializable{
 	private static final long serialVersionUID = -1782855927147248287L;
 	
 	private Map<String, Bank> nameToBank;
-	private Map<Location, Bank> locationToBank;
+	private Map<Inventory, Bank> locationToBank;
 	
 	/**
 	 * Constructor of a bank manager object.
 	 */
 	public BankManager() {
-		this.locationToBank = new HashMap<Location, Bank>();
+		this.locationToBank = new HashMap<Inventory, Bank>();
 		this.nameToBank = new TreeMap<String, Bank>();
 	}
 	
@@ -48,7 +48,7 @@ public class BankManager implements Serializable{
 	 * Use the {@code addBank} and {@code deleteBank} methods instead.
 	 * @return The banks of the plugin.
 	 */
-	public Map<Location, Bank> getLocationToBank() {
+	public Map<Inventory, Bank> getInventoryToBank() {
 		return locationToBank;
 	}
 	
@@ -79,7 +79,7 @@ public class BankManager implements Serializable{
 			throw new ZSortingException(I.t("There is no bank with this name."));		//Display error message
 		
 		for(Input input:bank.getLocationToInput().values())							//For each input of the bank
-			locationToBank.remove(input.getLocation());									//Remove the input from the location map
+			locationToBank.remove(input.getInventory());								//Remove the input from the location map
 		return bank;
 	}
 	

@@ -29,7 +29,8 @@ public class RemoveInputBankCommand extends ZSortingCommands{
         if(bank != null) {
         	Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
         	if (block.getState() instanceof InventoryHolder) {
-        		if(bank.removeInput(block.getLocation()) != null)
+            	InventoryHolder holder = (InventoryHolder) block.getState();
+        		if(bank.removeInput(holder.getInventory()) != null)
         			success(I.t("This holder is no longer an input."));
         		else
         			error(I.t("This holder is not an input."));

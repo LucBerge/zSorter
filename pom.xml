@@ -70,12 +70,22 @@
             <artifactId>zlib</artifactId>
             <version>0.99-SNAPSHOT</version>
         </dependency>
+        
+		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.13.1</version>
 			<type>jar</type>
 			<scope>test</scope>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.github.seeseemelk/MockBukkit-v1.16 -->
+		<dependency>
+		    <groupId>com.github.seeseemelk</groupId>
+		    <artifactId>MockBukkit-v1.16</artifactId>
+		    <version>0.14.0</version>
+		    <scope>test</scope>
 		</dependency>
     </dependencies>
 </project>

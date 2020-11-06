@@ -2,7 +2,7 @@ package fr.zcraft.zsorting.model;
 
 import java.io.Serializable;
 
-import org.bukkit.Location;
+import org.bukkit.inventory.Inventory;
 
 /**
  * The class {@code Input} represents an input of a bank.
@@ -19,11 +19,11 @@ public class Input extends InputOutput implements Serializable{
 	/**
 	 * Constructor of an output object.
 	 * @param bank - Bank the InputOutput is associated with.
-	 * @param location - Location of the output.
+	 * @param inventory - Location of the output.
 	 * @param priority - Priority of the output.
 	 */
-	public Input(Bank bank, Location location, Integer priority) {
-		super(bank, location, priority);
+	public Input(Bank bank, Inventory inventory, Integer priority) {
+		super(bank, inventory, priority);
 	}
 
 	@Override
