@@ -63,6 +63,30 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>com.github.seeseemelk</groupId>
+      <artifactId>MockBukkit-v1.16</artifactId>
+      <version>0.14.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>spigot-api</artifactId>
+          <groupId>org.spigotmc</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>hamcrest-library</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>commons-io</artifactId>
+          <groupId>commons-io</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>annotations</artifactId>
+          <groupId>org.jetbrains</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
