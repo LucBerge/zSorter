@@ -28,7 +28,7 @@ public class Output extends InputOutput implements Serializable{
 	/**
 	 * Constructor of an output object.
 	 * @param bank - Bank the InputOutput is associated with.
-	 * @param inventory - Location of the output.
+	 * @param inventory - Inventory of the output.
 	 * @param priority - Priority of the output.
 	 */
 	public Output(Bank bank, Inventory inventory, Integer priority) {

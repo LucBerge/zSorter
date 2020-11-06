@@ -7,14 +7,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.java.JavaPluginLoader;
 
 import fr.zcraft.zlib.components.commands.Commands;
 import fr.zcraft.zlib.components.i18n.I18n;
 import fr.zcraft.zlib.core.ZPlugin;
 import fr.zcraft.zsorting.commands.AddCommand;
+import fr.zcraft.zsorting.commands.DeleteCommand;
 import fr.zcraft.zsorting.commands.InfoCommand;
 import fr.zcraft.zsorting.commands.ListCommand;
-import fr.zcraft.zsorting.commands.DeleteCommand;
 import fr.zcraft.zsorting.commands.RemoveInputBankCommand;
 import fr.zcraft.zsorting.commands.RemoveOutputBankCommand;
 import fr.zcraft.zsorting.commands.SetInputBankCommand;
@@ -44,6 +46,28 @@ public final class ZSorting extends ZPlugin implements Listener{
 		return instance;
 	}
 
+	/**
+	 * Constructor of the plugin.
+	 * This constructor is only needed for unit tests purposes with MockBukkit.
+	 */
+	public ZSorting()
+    {
+        super();
+    }
+
+    /**
+	 * Constructor of the plugin.
+	 * This constructor is only needed for unit tests purposes with MockBukkit.
+     * @param loader - The plugin loader.
+     * @param description - The plugin description file.
+     * @param dataFolder - The plugin folder.
+     * @param file - The plugin jar file.
+     */
+    protected ZSorting(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
+    {
+        super(loader, description, dataFolder, file);
+    }
+	
 	private final String dataFile = this.getDataFolder() + "/zsorting.dat";
 	
 	private BankManager bankManager;

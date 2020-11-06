@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -38,8 +39,10 @@ public class Bank implements Serializable{
 	private boolean enable;
 	private boolean toCompute;
 	
-	private Map<Inventory, Input> locationToInput;
-	private Map<Inventory, Output> locationToOutput;
+	private Map<Inventory, Input> inventoryToInput;
+	private Map<Inventory, Output> inventoryToOutput;
+	
+	private List<Input> inputs;
 	private Map<Material, List<Output>> materialToOutputs;
 	private List<Output> overflows;
 	
@@ -66,10 +69,13 @@ public class Bank implements Serializable{
 		this.description = description;
 		this.enable = false;
 		this.toCompute = false;
-		this.locationToInput = new HashMap<Inventory, Input>();
-		this.locationToOutput = new HashMap<Inventory, Output>();
+		
+		this.inventoryToInput = new HashMap<Inventory, Input>();
+		this.inventoryToOutput = new HashMap<Inventory, Output>();
+		
+		this.inputs = new ArrayList<Input>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
-		this.overflows = new ArrayList<Output>();      
+		this.overflows = new ArrayList<Output>();
 	}
 	
 	/**
@@ -133,6 +139,8 @@ public class Bank implements Serializable{
 	 * @param state - {@code true} to enable the bank, {@code false} to disable it.
 	 */
 	public void setEnable(boolean state) {
+		if(enable)		//If enabling the bank
+			commit();		//Commit the bank
 		this.enable = state;
 	}
 
@@ -150,7 +158,7 @@ public class Bank implements Serializable{
 	 */
 	public void setToCompute(boolean toCompute) {
 		this.toCompute = toCompute;
-	}	
+	}
 
 	/**
 	 * Returns the bank inputs.
@@ -158,8 +166,8 @@ public class Bank implements Serializable{
 	 * Use the {@code setInput} and {@code removeInput} methods instead.
 	 * @return The bank inputs.
 	 */
-	public Map<Inventory, Input> getLocationToInput() {
-		return locationToInput;
+	public Map<Inventory, Input> getInventoryToInput() {
+		return inventoryToInput;
 	}
 
 	/**
@@ -168,52 +176,84 @@ public class Bank implements Serializable{
 	 * Use the {@code setOutput} and {@code removeOutput} methods instead.
 	 * @return The bank outputs.
 	 */
-	public Map<Inventory, Output> getLocationToOutput() {
-		return locationToOutput;
+	public Map<Inventory, Output> getInventoryToOutput() {
+		return inventoryToOutput;
 	}
 
 	/**
-	 * Returns the material to output map.
-	 * Do not use this method if you need to add or remove an output.
-	 * Use the {@code setOutput} and {@code removeOutput} methods instead.
-	 * @return The material to output map.
+	 * Returns the inputs of the bank.
+	 * @return List of inputs sorted by priority.
+	 */
+	public List<Input> getInputs() {
+		return inputs;
+	}
+
+	/**
+	 * Returns the map linking a material with all its possible outputs.
+	 * @return Material to outputs mapping.
 	 */
 	public Map<Material, List<Output>> getMaterialToOutputs() {
 		return materialToOutputs;
 	}
 
 	/**
-	 * Returns the bank overflows.
-	 * @return The bank overflows.
+	 * Returns the overflows of the system. An overflow is an output without any material specified.
+	 * @return List of overflow sorted by priority.
 	 */
 	public List<Output> getOverflows() {
 		return overflows;
 	}
 
 	/**
-	 * Sets the location has an input.<br><br>
+	 * Sorts the input outputs by order of priority.
+	 */
+	public void commit() {
+		inputs = inventoryToInput.values().stream().collect(Collectors.toList());
+		Collections.sort(inputs);											//Sort the inputs
+
+		overflows = inventoryToOutput.values().stream().filter(o -> o.isOverflow()).collect(Collectors.toList());
+		Collections.sort(overflows);										//Sort the overflows
+		
+		materialToOutputs = new HashMap<Material, List<Output>>();
+		for(Output output:inventoryToOutput.values()) {						//For each output
+			for(Material material:output.getMaterials()) {						//For each material
+				List<Output> possibleOutputs = materialToOutputs.get(material);		//Get the possible outputs for the given material
+				if(possibleOutputs == null) {										//If none have been found
+					possibleOutputs = new ArrayList<Output>();							//Create a new one
+					materialToOutputs.put(material, possibleOutputs);					//Add it to the map
+				}
+				possibleOutputs.add(output);										//Add the output
+			}
+		}
+		for(List<Output> outputs:materialToOutputs.values()) {		//For each material outputs
+			Collections.sort(outputs);									//Sort the outputs
+		}
+	}
+	
+	/**
+	 * Sets the inventory has an input.<br><br>
 	 * If the input already exists, the priority is updated.
-	 * @param inventory - Location of the input.
+	 * @param inventory - Inventory of the input.
 	 * @param priority - Priority of the input.
 	 * @return The created input object.
 	 * @throws ZSortingException if the input is already linked to an other bank.
 	 */
 	public Input setInput(Inventory inventory, int priority) throws ZSortingException {
+		setEnable(false);																							//Disable the bank
+		
 		Bank bank = manager.getInventoryToBank().putIfAbsent(inventory, this);										//Get the bank with this input
 		if(bank != null && !equals(bank))																			//If the bank is not this one
 			throw new ZSortingException(I.t("This holder is already an input of the bank {0}.", bank.getName()));		//Display error messsage
 		
-		Input input = locationToInput.get(inventory);																//Get the existing input
-    	if(input == null) {																							//If no input exists
-    		input = new Input(this, inventory, priority);																//Create a new input
-    		locationToInput.put(inventory, input);																		//Add the new input
-    		manager.getInventoryToBank().put(inventory, this);															//Add the new input location
+		Input existingInput = inventoryToInput.get(inventory);															//Get the existing input
+    	if(existingInput == null) {																						//If no input exists
+    		existingInput = new Input(this, inventory, priority);															//Create a new input
+    		inventoryToInput.put(inventory, existingInput);																	//Add the new input
     	}
     	else {																										//If the input exists
-    		input.setPriority(priority);																				//Set the new priority
+    		existingInput.setPriority(priority);																				//Set the new priority
     	}
-    	sortInputs();																								//Sort the inputs
-		return input;
+		return existingInput;
 	}
 
 	/**
@@ -222,83 +262,57 @@ public class Bank implements Serializable{
 	 * @return The removed input object, {@code null} if no input found for this inventory.
 	 */
 	public Input removeInput(Inventory inventory) {
-		return locationToInput.remove(inventory);			//Remove the input
+		setEnable(false);																//Disable the bank
+		
+		Input input = inventoryToInput.remove(inventory);								//Get the existing input
+		if(input != null) {																//If the input has been removed
+			manager.getInventoryToBank().remove(inventory);									//Unkink the bank
+		}
+		return input;
 	}
 	
 	/**
-	 * Sorts the inputs by priority.
-	 */
-	private void sortInputs() {
-		List<Input> values = new ArrayList<Input>(locationToInput.values());
-		Collections.sort(values);
-		locationToInput = new HashMap<Inventory, Input>();
-		for (Input value : values)
-			locationToInput.put(value.getInventory(), value);
-	}
-	
-	/**
-	 * Sets the location has an output.<br><br>
+	 * Sets the inventory has an output.<br><br>
 	 * If the output already exists, the priority and the materials are updated.
 	 * @param inventory - Inventory of the output.
 	 * @param priority - Priority of the output.
 	 * @param materials - Sorted materials of the output.
 	 * @return The created output object.
+	 * @throws ZSortingException if the output is already linked to an other bank.
 	 */
-	public Output setOutput(Inventory inventory, int priority, List<Material> materials) {
-		Output existingOutput = locationToOutput.get(inventory);		//Get the existing output
-    	if(existingOutput == null) {									//If no existing output
-    		existingOutput = new Output(this, inventory, priority);			//Create a new output
-    		locationToOutput.put(inventory, existingOutput);				//Add the new output
+	public Output setOutput(Inventory inventory, int priority, List<Material> materials) throws ZSortingException {
+		setEnable(false);																							//Disable the bank
+
+		Bank bank = manager.getInventoryToBank().putIfAbsent(inventory, this);										//Get the bank with this input
+		if(bank != null && !equals(bank))																			//If the bank is not this one
+			throw new ZSortingException(I.t("This holder is already an output of the bank {0}.", bank.getName()));		//Display error messsage
+		
+		Output existingOutput = inventoryToOutput.get(inventory);													//Get the existing output
+    	if(existingOutput == null) {																				//If no existing output
+    		existingOutput = new Output(this, inventory, priority);														//Create a new output
+    		existingOutput.setMaterials(materials); 																	//Add the materials
+    		inventoryToOutput.put(inventory, existingOutput);															//Add the new output
     	}
-    	else {															//If the output exists
-    		existingOutput.setPriority(priority);							//Set the new priority
-    		for(Material material:existingOutput.getMaterials()) {			//For each previous material
-    			materialToOutputs.get(material).remove(existingOutput);			//Remove the output from the material map
-    		}
+    	else {																										//If the output exists
+    		existingOutput.setPriority(priority);																		//Set the new priority
+    		existingOutput.setMaterials(materials); 																	//Set the new materials
     	}
-		for(Material material:materials) {								//For each new material
-			List<Output> existingOutputs = materialToOutputs.get(material);	//Get the existing list
-			if(existingOutputs == null) {									//If no existing list
-				existingOutputs = new ArrayList<Output>();						//Create a new list
-				existingOutputs.add(existingOutput);							//Add the new output to the list
-				materialToOutputs.put(material, existingOutputs);				//Add the list to the map
-			}
-			else {															//If the list exists
-				existingOutputs.add(existingOutput);							//Add the output to the map
-			}
-		}
-		existingOutput.setMaterials(materials);							//Update the materials of the output
-		if(existingOutput.isOverflow())									//If output is an overflow
-			overflows.add(existingOutput);									//Add it to the overflow list
-    	sortOutputs();													//Sort the outputs
 		return existingOutput;
 	}
 	
 	/**
 	 * Remove an output from a bank.
 	 * @param inventory - Inventory of the output.
-	 * @return The removed output object, {@code null} if no output found at this location.
+	 * @return The removed output object, {@code null} if no output found at this inventory.
 	 */
 	public Output removeOutput(Inventory inventory) {
-		Output output = locationToOutput.remove(inventory);						//Get the existing output
+		setEnable(false);														//Disable the bank
+		
+		Output output = inventoryToOutput.remove(inventory);					//Get the existing output
 		if(output != null) {													//If the output exists
-			for(Material material:output.getMaterials())							//For each material of the output
-				materialToOutputs.get(material).remove(output);							//Remove the output from the material map
-			if(output.isOverflow())													//If output is an overflow
-				overflows.remove(output);												//Remove it to the overflow list
+			manager.getInventoryToBank().remove(inventory);							//Unkink the bank
 		}
 		return output;
-	}
-	
-	/**
-	 * Sorts the outputs by priority.
-	 */
-	public void sortOutputs() {
-		List<Output> values = new ArrayList<Output>(locationToOutput.values());
-		Collections.sort(values);
-		locationToOutput = new HashMap<Inventory, Output>();
-		for (Output value : values)
-			locationToOutput.put(value.getInventory(), value);
 	}
 	
 	/**
@@ -329,7 +343,7 @@ public class Bank implements Serializable{
 	 */
 	public void computeSorting() {
 		if(isEnable()) {																						//If the bank is ON
-    		for(Input input:locationToInput.values()) {																//For each input in the bank
+    		for(Input input:inputs) {																				//For each input in the bank
     			Inventory inputInventory = input.getInventory();														//Get the input inventory
     			for(ItemStack itemStack: inputInventory.getContents()) {												//For each item in the input inventory
     				if(itemStack != null) {																					//If the item is not null
@@ -369,6 +383,7 @@ public class Bank implements Serializable{
 	 * @return Bank as RawText.
 	 */
 	public RawText toRawText() {
+		commit();
 		RawTextPart text = new RawText("")
     			.then(name)
     				.style(ChatColor.GOLD)
@@ -376,25 +391,25 @@ public class Bank implements Serializable{
     				.color(ChatColor.GRAY)
     			.then(isEnable() ? "ON" : "OFF")
     				.color(enable ? ChatColor.GREEN : ChatColor.RED)
-        		.then(I.t("\n  {0} inputs", locationToInput.size()))
+        		.then(I.t("\n  {0} inputs", inventoryToInput.size()))
     				.color(ChatColor.GRAY);
 
-		for(Input input:locationToInput.values()) {
+		for(Input input:inventoryToInput.values()) {
 			text
 				.then("\n    (" + input.getPriority() + ")")
 				.color(ChatColor.AQUA);
 				/*.hover(
 					new RawText()
-						.then(String.format("X=%d\nY=%d\nZ=%d", input.getLocation().getX(), input.getLocation().getY(), input.getLocation().getZ()))
+						.then(String.format("X=%d\nY=%d\nZ=%d", input.getInventory().getX(), input.getInventory().getY(), input.getInventory().getZ()))
 							.color(ChatColor.AQUA)
 				);*/
     	}
 
     	text
-    		.then(I.t("\n  {0} outputs", locationToOutput.size()))
+    		.then(I.t("\n  {0} outputs", inventoryToOutput.size()))
     			.color(ChatColor.GRAY);
     	
-    	for(Output output:locationToOutput.values()) {
+    	for(Output output:inventoryToOutput.values()) {
     		String materials = "*";
     		if(!output.getMaterials().isEmpty()) {
             	StringJoiner joiner = new StringJoiner(" ");
@@ -407,7 +422,7 @@ public class Bank implements Serializable{
     				.color(ChatColor.AQUA)
     				/*.hover(
     	    			new RawText()
-        					.then(String.format("{aqua}X=%d\nY=%d\nZ=%d", output.getLocation().getX(), output.getLocation().getY(), output.getLocation().getZ()))))
+        					.then(String.format("{aqua}X=%d\nY=%d\nZ=%d", output.getInventory().getX(), output.getInventory().getY(), output.getInventory().getZ()))))
         						.color(ChatColor.AQUA)
         			)*/
     			.then(String.format(" (%s)",materials))

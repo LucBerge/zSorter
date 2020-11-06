@@ -20,11 +20,10 @@ public class BankManagerTest extends ZSortingTest{
 	 */
 	@Test
 	public void addRemoveTest() throws ZSortingException{
+		//Create a manager, add a bank and test if the bank has been added
 		BankManager manager = new BankManager();
-		
-		//Add a bank and check if the bank is added
 		manager.addBank("addRemoveTestBank", "Description");
-		Assert.assertEquals(1,manager.getNameToBank().values().size());
+		Assert.assertEquals(1, manager.getNameToBank().values().size());
 		
 		//Add a bank and check if exception thrown
 		Assert.assertThrows(ZSortingException.class, () -> {
@@ -42,21 +41,21 @@ public class BankManagerTest extends ZSortingTest{
 	}
 	
 	/**
-	 * Tests if a bank can correctly be found from its input location.
+	 * Tests if a bank can correctly be found from its input inventory.
 	 * @throws ZSortingException if a ZSorting exception occurs.
 	 */
 	@Test
-	public void findFromLocationTest() throws ZSortingException {
+	public void findFromInventoryTest() throws ZSortingException {
 		
 		//Create a bank, add 2 inputs and test if the bank if found
-		Bank bank1 = manager.addBank("findFromLocationTestBank1", "Description");
+		Bank bank1 = manager.addBank("findFromInventoryTestBank1", "Description");
 		bank1.setInput(inventory0, 1);
 		bank1.setInput(inventory1, 1);
 		Assert.assertEquals(bank1, manager.getInventoryToBank().get(inventory0));
 		Assert.assertEquals(bank1, manager.getInventoryToBank().get(inventory1));
 
 		//Create a bank, add 1 input and test if the bank if found
-		Bank bank2 = manager.addBank("findFromLocationTestBank2", "Description");
+		Bank bank2 = manager.addBank("findFromInventoryTestBank2", "Description");
 		bank2.setInput(inventory2, 1);
 		Assert.assertEquals(bank2, manager.getInventoryToBank().get(inventory2));
 
@@ -65,12 +64,12 @@ public class BankManagerTest extends ZSortingTest{
 			bank2.setInput(inventory1, 1);
 		});
 		
-		//Remove the bank1 and test if the inputs have been removed from the location map
+		//Remove the bank1 and test if the inputs have been removed from the inventory map
 		manager.deleteBank(bank1.getName());
 		Assert.assertEquals(null, manager.getInventoryToBank().get(inventory0));
 		Assert.assertEquals(null, manager.getInventoryToBank().get(inventory1));
 		
-		//Remove the bank2 and test if the inputs have been removed from the location map
+		//Remove the bank2 and test if the inputs have been removed from the inventory map
 		manager.deleteBank(bank2.getName());
 		Assert.assertEquals(null, manager.getInventoryToBank().get(inventory2));
 	}

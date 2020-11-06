@@ -27,12 +27,7 @@ public class ZSortingTest {
 	 * Load the manager and the inventories.
 	 */
 	@BeforeClass
-	public void load() {
-		manager = new BankManager();
-		inventory0 = server.createInventory(null, 0);
-		inventory1 = server.createInventory(null, 1);
-		inventory2 = server.createInventory(null, 2);
-		inventory3 = server.createInventory(null, 3);
+	public static void load() {
 	}
 	
 	/**
@@ -43,6 +38,11 @@ public class ZSortingTest {
 	{
 	    server = MockBukkit.mock();
 	    plugin = (ZSorting) MockBukkit.load(ZSorting.class);
+		manager = new BankManager();
+		inventory0 = server.createInventory(null, 9);
+		inventory1 = server.createInventory(null, 9);
+		inventory2 = server.createInventory(null, 9);
+		inventory3 = server.createInventory(null, 9);
 	}
 
 	/**

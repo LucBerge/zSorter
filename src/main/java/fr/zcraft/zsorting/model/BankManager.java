@@ -24,13 +24,13 @@ public class BankManager implements Serializable{
 	private static final long serialVersionUID = -1782855927147248287L;
 	
 	private Map<String, Bank> nameToBank;
-	private Map<Inventory, Bank> locationToBank;
+	private Map<Inventory, Bank> inventoryToBank;
 	
 	/**
 	 * Constructor of a bank manager object.
 	 */
 	public BankManager() {
-		this.locationToBank = new HashMap<Inventory, Bank>();
+		this.inventoryToBank = new HashMap<Inventory, Bank>();
 		this.nameToBank = new TreeMap<String, Bank>();
 	}
 	
@@ -43,13 +43,13 @@ public class BankManager implements Serializable{
 	}
 	
 	/**
-	 * Returns the map linking a location to a bank.<br><br>
+	 * Returns the map linking a inventory to a bank.<br><br>
 	 * Do not use this method if you need to add or remove a bank.
 	 * Use the {@code addBank} and {@code deleteBank} methods instead.
 	 * @return The banks of the plugin.
 	 */
 	public Map<Inventory, Bank> getInventoryToBank() {
-		return locationToBank;
+		return inventoryToBank;
 	}
 	
 	/**
@@ -75,11 +75,13 @@ public class BankManager implements Serializable{
 	 */
 	public Bank deleteBank(String name) throws ZSortingException {
 		Bank bank = nameToBank.remove(name);										//Get the existing bank
-		if(bank == null)															//If no bank with has this name
+		if(bank == null)															//If no bank has this name
 			throw new ZSortingException(I.t("There is no bank with this name."));		//Display error message
 		
-		for(Input input:bank.getLocationToInput().values())							//For each input of the bank
-			locationToBank.remove(input.getInventory());								//Remove the input from the location map
+		for(Input input:bank.getInventoryToInput().values())							//For each input of the bank
+			inventoryToBank.remove(input.getInventory());								//Remove the input from the inventory to bank map
+		for(Input input:bank.getInventoryToInput().values())							//For each ouput of the bank
+			inventoryToBank.remove(input.getInventory());								//Remove the output from the inventory to bank map
 		return bank;
 	}
 	

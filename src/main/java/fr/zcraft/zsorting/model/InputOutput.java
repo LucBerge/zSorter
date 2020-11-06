@@ -82,8 +82,8 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	}
 
 	/**
-	 * Returns the location of the InputOutput.
-	 * @return Location of the InputOutput.
+	 * Returns the inventory of the InputOutput.
+	 * @return Inventory of the InputOutput.
 	 */
 	public Inventory getInventory() {
 		return inventory;

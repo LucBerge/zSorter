@@ -1,6 +1,6 @@
 package fr.zcraft.zsorting.model;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +47,6 @@ public class InputTest extends ZSortingTest{
 		});
 
 		new Input(bank, inventory0, 1);
-		new Input(bank, inventory0, 5);
 	}
 	
 	/**
@@ -55,27 +54,15 @@ public class InputTest extends ZSortingTest{
 	 */
 	@Test
 	public void sortingTest(){
+		
+		//Create a list of inputs and test if they are ordered by priority
 		Bank bank = new Bank(new BankManager(), "sortingTestBank", "");
-		
-		Input i1 = new Input(bank, inventory0, 1);
-		Input i2 = new Input(bank, inventory0, 2);
-		Input i3 = new Input(bank, inventory0, 45);
-		Input i4 = new Input(bank, inventory0, 72);
-		
-		List<Input> unsortedList = new ArrayList<Input>();
-		unsortedList.add(i4);
-		unsortedList.add(i2);
-		unsortedList.add(i1);
-		unsortedList.add(i3);
-		
-		List<Input> sortedList = new ArrayList<Input>();
-		sortedList.add(i1);
-		sortedList.add(i2);
-		sortedList.add(i3);
-		sortedList.add(i4);
-		
-		Collections.sort(unsortedList);
-		
-		Assert.assertEquals(sortedList, unsortedList);
+		Input i0 = new Input(bank, inventory0, 1);
+		Input i1 = new Input(bank, inventory1, 2);
+		Input i2 = new Input(bank, inventory2, 45);
+		Input i3 = new Input(bank, inventory3, 72);
+		List<Input> list = Arrays.asList(i3,i1,i2,i0);
+		Collections.sort(list);
+		Assert.assertEquals(Arrays.asList(i0,i1,i2,i3), list);
 	}
 }

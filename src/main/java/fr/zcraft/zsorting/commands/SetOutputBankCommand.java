@@ -12,6 +12,7 @@ import fr.zcraft.zlib.components.commands.CommandException;
 import fr.zcraft.zlib.components.commands.CommandInfo;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorting.ZSorting;
+import fr.zcraft.zsorting.ZSortingException;
 import fr.zcraft.zsorting.model.Bank;
 
 /**
@@ -52,9 +53,13 @@ public class SetOutputBankCommand extends ZSortingCommands{
         if(bank != null) {
             Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
             if (block.getState() instanceof InventoryHolder) {
-        		InventoryHolder holder = (InventoryHolder) block.getState();
-            	bank.setOutput(holder.getInventory(), priority, materials);
-        		success(I.t("This holder is now an output of priority {0}.", priority));
+            	try {
+            		InventoryHolder holder = (InventoryHolder) block.getState();
+					bank.setOutput(holder.getInventory(), priority, materials);
+	        		success(I.t("This holder is now an output of priority {0}.", priority));
+				} catch (ZSortingException e) {
+					error(e.getMessage());
+				}
             }
             else {
             	error(I.t("An output must be a holder."));
