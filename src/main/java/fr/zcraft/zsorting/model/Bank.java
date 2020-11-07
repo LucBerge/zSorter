@@ -331,6 +331,14 @@ public class Bank implements Serializable{
 	}
 	
 	/**
+	 * Checks whether a bank has at least one input.
+	 * @return {@code true} if the bank has an input, {@code false} otherwise.
+	 */
+	public boolean hasInput() {
+		return inputs.size() > 0;
+	}
+	
+	/**
 	 * Checks whether a bank has at least one overflow.
 	 * @return {@code true} if the bank has an overflow, {@code false} otherwise.
 	 */

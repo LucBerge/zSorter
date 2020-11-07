@@ -99,6 +99,9 @@ msgstr "Ce contenant est désormais une sortie de prioritée {0}."
 msgid "The bank does not have any overflow. Some items might clog up the inputs."
 msgstr "La banque ne possède pas de trop-plein. Certains items risquent de boucher les entrées."
 
+msgid "The bank does not have any input."
+msgstr "La banque ne possède pas d'entrée."
+
 msgid "The bank has been enabled."
 msgstr "La banque a été activée."
 
