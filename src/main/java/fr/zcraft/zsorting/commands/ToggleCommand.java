@@ -29,6 +29,7 @@ public class ToggleCommand extends ZSortingCommands{
         else {
         	bank.setEnable(!bank.isEnable());
         	if(bank.isEnable()) {
+        		bank.setToCompute(true);
         		if(!bank.hasOverflow())
         			warning(I.t("The bank does not have any overflow. Some items might clog up the inputs."));
         		SortingTask.getInstance().start();
