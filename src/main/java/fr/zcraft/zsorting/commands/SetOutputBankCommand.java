@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import fr.zcraft.zlib.components.commands.CommandException;
@@ -13,7 +14,6 @@ import fr.zcraft.zlib.components.commands.CommandInfo;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorting.ZSorting;
 import fr.zcraft.zsorting.ZSortingException;
-import fr.zcraft.zsorting.model.Bank;
 
 /**
  * Command triggered to remove a bank.
@@ -24,10 +24,14 @@ public class SetOutputBankCommand extends ZSortingCommands{
 	
     @Override
     protected void run() throws CommandException {     
-
+    	//Check the number of arguments
         if (args.length < 2)
             throwInvalidArgument(I.t("A bank name and an output priority are required."));
-        
+
+        //Get the name
+        String name = args[0];
+
+        //Get the priority
         int priority = 0;
         try {
         	priority = Integer.parseInt(args[1]);
@@ -36,9 +40,9 @@ public class SetOutputBankCommand extends ZSortingCommands{
         }catch(NumberFormatException e) {
             throwInvalidArgument(I.t("The output priority must be an integer."));
         }
-        
-        List<Material> materials = new ArrayList<Material>();
 
+        //Get the materials
+        List<Material> materials = new ArrayList<Material>();
         if (args.length > 2) {
         	for (int i = 2; i < args.length; i++) {
         		Material material = Material.getMaterial(args[i].toUpperCase());
@@ -48,25 +52,20 @@ public class SetOutputBankCommand extends ZSortingCommands{
         			error(I.t("Could not found material {0} : Ignored.", args[i]));
         	}
         }
+        
+        //Get the inventory from location
+        Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
+        if(!(block.getState() instanceof InventoryHolder))
+        	throwInvalidArgument(I.t("An output must be a holder."));
+        Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
 
-        Bank bank = ZSorting.getInstance().getBankManager().getNameToBank().get(args[0]);
-        if(bank != null) {
-            Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
-            if (block.getState() instanceof InventoryHolder) {
-            	try {
-            		InventoryHolder holder = (InventoryHolder) block.getState();
-					bank.setOutput(holder.getInventory(), priority, materials);
-	        		success(I.t("This holder is now an output of priority {0}.", priority));
-				} catch (ZSortingException e) {
-					error(e.getMessage());
-				}
-            }
-            else {
-            	error(I.t("An output must be a holder."));
-            }
+        //Try to add the output to the bank
+        try {
+        	ZSorting.getInstance().getBankManager().setOutput(name, inventory, priority, materials);
+        	success(I.t("This holder is now an output of priority {0}.", priority));
         }
-        else {
-        	error(I.t("There is no bank with this name."));
+        catch(ZSortingException e) {
+        	error(e.getMessage());
         }
     }
 }

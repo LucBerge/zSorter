@@ -18,12 +18,11 @@ public class Input extends InputOutput implements Serializable{
 
 	/**
 	 * Constructor of an output object.
-	 * @param bank - Bank the InputOutput is associated with.
 	 * @param inventory - Inventory of the output.
 	 * @param priority - Priority of the output.
 	 */
-	public Input(Bank bank, Inventory inventory, Integer priority) {
-		super(bank, inventory, priority);
+	public Input(Inventory inventory, Integer priority) {
+		super(inventory, priority);
 	}
 
 	@Override

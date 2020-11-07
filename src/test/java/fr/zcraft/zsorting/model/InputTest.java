@@ -20,33 +20,27 @@ public class InputTest extends ZSortingTest{
 	 */
 	@Test
 	public void illegalTest(){
-		Bank bank = new Bank(new BankManager(), "illegalTestBank", "");
-		
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(null, inventory0, 1);
+			new Input(null, 1);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(bank, null, 1);
+			new Input(inventory0, null);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(bank, inventory0, null);
+			new Input(inventory0, -45);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(bank, inventory0, -45);
+			new Input(inventory0, -1);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(bank, inventory0, -1);
+			new Input(inventory0, 0);
 		});
 
-		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(bank, inventory0, 0);
-		});
-
-		new Input(bank, inventory0, 1);
+		new Input(inventory0, 1);
 	}
 	
 	/**
@@ -56,11 +50,10 @@ public class InputTest extends ZSortingTest{
 	public void sortingTest(){
 		
 		//Create a list of inputs and test if they are ordered by priority
-		Bank bank = new Bank(new BankManager(), "sortingTestBank", "");
-		Input i0 = new Input(bank, inventory0, 1);
-		Input i1 = new Input(bank, inventory1, 2);
-		Input i2 = new Input(bank, inventory2, 45);
-		Input i3 = new Input(bank, inventory3, 72);
+		Input i0 = new Input(inventory0, 1);
+		Input i1 = new Input(inventory1, 2);
+		Input i2 = new Input(inventory2, 45);
+		Input i3 = new Input(inventory3, 72);
 		List<Input> list = Arrays.asList(i3,i1,i2,i0);
 		Collections.sort(list);
 		Assert.assertEquals(Arrays.asList(i0,i1,i2,i3), list);

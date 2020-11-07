@@ -18,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zlib.components.rawtext.RawText;
 import fr.zcraft.zlib.components.rawtext.RawTextPart;
-import fr.zcraft.zsorting.ZSortingException;
 
 /**
  * The class {@code Bank} represents a bank in the game.<br><br>
@@ -33,7 +32,6 @@ public class Bank implements Serializable{
 	 */
 	private static final long serialVersionUID = 7893484799034097907L;
 
-	private BankManager manager;
 	private String name;
 	private String description;	
 	private boolean enable;
@@ -52,11 +50,8 @@ public class Bank implements Serializable{
 	 * @param name - Name of the bank.
 	 * @param description - Short description of the bank.
 	 */
-	public Bank(BankManager manager, String name, String description) {
+	public Bank(String name, String description) {
 		super();
-		
-		if(manager == null)
-			throw new IllegalArgumentException("The bank manager cannot be null.");
 		
 		if(name == null)
 			throw new IllegalArgumentException("The bank name cannot be null.");
@@ -64,7 +59,6 @@ public class Bank implements Serializable{
 		if(description == null)
 			throw new IllegalArgumentException("The bank description cannot be null.");
 
-		this.manager = manager;
 		this.name = name;
 		this.description = description;
 		this.enable = false;
@@ -76,22 +70,6 @@ public class Bank implements Serializable{
 		this.inputs = new ArrayList<Input>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();
-	}
-	
-	/**
-	 * Returns the bank manager.
-	 * @return The bank manager.
-	 */
-	public BankManager getManager() {
-		return manager;
-	}
-	
-	/**
-	 * Sets the bank manager.
-	 * @param manager - Bank manager.
-	 */
-	public void setManager(BankManager manager) {
-		this.manager = manager;
 	}
 	
 	/**
@@ -236,22 +214,17 @@ public class Bank implements Serializable{
 	 * @param inventory - Inventory of the input.
 	 * @param priority - Priority of the input.
 	 * @return The created input object.
-	 * @throws ZSortingException if the input is already linked to an other bank.
 	 */
-	public Input setInput(Inventory inventory, int priority) throws ZSortingException {
+	public Input setInput(Inventory inventory, int priority) {
 		setEnable(false);																							//Disable the bank
-		
-		Bank bank = manager.getInventoryToBank().putIfAbsent(inventory, this);										//Get the bank with this input
-		if(bank != null && !equals(bank))																			//If the bank is not this one
-			throw new ZSortingException(I.t("This holder is already an input of the bank {0}.", bank.getName()));		//Display error messsage
 		
 		Input existingInput = inventoryToInput.get(inventory);															//Get the existing input
     	if(existingInput == null) {																						//If no input exists
-    		existingInput = new Input(this, inventory, priority);															//Create a new input
+    		existingInput = new Input(inventory, priority);																	//Create a new input
     		inventoryToInput.put(inventory, existingInput);																	//Add the new input
     	}
-    	else {																										//If the input exists
-    		existingInput.setPriority(priority);																				//Set the new priority
+    	else {																											//If the input exists
+    		existingInput.setPriority(priority);																			//Set the new priority
     	}
 		return existingInput;
 	}
@@ -262,13 +235,8 @@ public class Bank implements Serializable{
 	 * @return The removed input object, {@code null} if no input found for this inventory.
 	 */
 	public Input removeInput(Inventory inventory) {
-		setEnable(false);																//Disable the bank
-		
-		Input input = inventoryToInput.remove(inventory);								//Get the existing input
-		if(input != null) {																//If the input has been removed
-			manager.getInventoryToBank().remove(inventory);									//Unkink the bank
-		}
-		return input;
+		setEnable(false);
+		return inventoryToInput.remove(inventory);
 	}
 	
 	/**
@@ -278,18 +246,13 @@ public class Bank implements Serializable{
 	 * @param priority - Priority of the output.
 	 * @param materials - Sorted materials of the output.
 	 * @return The created output object.
-	 * @throws ZSortingException if the output is already linked to an other bank.
 	 */
-	public Output setOutput(Inventory inventory, int priority, List<Material> materials) throws ZSortingException {
+	public Output setOutput(Inventory inventory, int priority, List<Material> materials) {
 		setEnable(false);																							//Disable the bank
-
-		Bank bank = manager.getInventoryToBank().putIfAbsent(inventory, this);										//Get the bank with this input
-		if(bank != null && !equals(bank))																			//If the bank is not this one
-			throw new ZSortingException(I.t("This holder is already an output of the bank {0}.", bank.getName()));		//Display error messsage
 		
 		Output existingOutput = inventoryToOutput.get(inventory);													//Get the existing output
     	if(existingOutput == null) {																				//If no existing output
-    		existingOutput = new Output(this, inventory, priority);														//Create a new output
+    		existingOutput = new Output(inventory, priority);															//Create a new output
     		existingOutput.setMaterials(materials); 																	//Add the materials
     		inventoryToOutput.put(inventory, existingOutput);															//Add the new output
     	}
@@ -306,13 +269,8 @@ public class Bank implements Serializable{
 	 * @return The removed output object, {@code null} if no output found at this inventory.
 	 */
 	public Output removeOutput(Inventory inventory) {
-		setEnable(false);														//Disable the bank
-		
-		Output output = inventoryToOutput.remove(inventory);					//Get the existing output
-		if(output != null) {													//If the output exists
-			manager.getInventoryToBank().remove(inventory);							//Unkink the bank
-		}
-		return output;
+		setEnable(false);
+		return inventoryToOutput.remove(inventory);
 	}
 	
 	/**

@@ -22,47 +22,39 @@ public class OutputTest  extends ZSortingTest{
 	 */
 	@Test
 	public void illegalTest(){
-		Bank bank = new Bank(new BankManager(), "illegalTestBank", "");
-		
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(null, inventory0, 1);
+			new Output(null, 1);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(bank, null, 1);
+			new Output(inventory0, null);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(bank, inventory0, null);
+			new Output(inventory0, -45);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(bank, inventory0, -45);
+			new Output(inventory0, -1);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(bank, inventory0, -1);
+			new Output(inventory0, 0);
 		});
 
-		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(bank, inventory0, 0);
-		});
-
-		new Output(bank, inventory0, 1);
+		new Output(inventory0, 1);
 	}
 	
 	/**
 	 * Tests if a list of output is order by priority.
 	 */
 	@Test
-	public void sortingTest(){
-		Bank bank = new Bank(new BankManager(), "sortingTestBank", "");
-		
+	public void sortingTest(){		
 		//Create a list of outputs and test if they are ordered by priority
-		Output o0 = new Output(bank, inventory0, 1);
-		Output o1 = new Output(bank, inventory1, 2);
-		Output o2 = new Output(bank, inventory2, 45);
-		Output o3 = new Output(bank, inventory3, 72);
+		Output o0 = new Output(inventory0, 1);
+		Output o1 = new Output(inventory1, 2);
+		Output o2 = new Output(inventory2, 45);
+		Output o3 = new Output(inventory3, 72);
 		List<Output> list = Arrays.asList(o3,o1,o2,o0);
 		Collections.sort(list);
 		Assert.assertEquals(Arrays.asList(o0,o1,o2,o3), list);
@@ -73,10 +65,8 @@ public class OutputTest  extends ZSortingTest{
 	 */
 	@Test
 	public void materialsTest() {
-		Bank bank = new Bank(new BankManager(), "materialsTestBank", "");
-
 		//Create an output, add materials and test if they are order by name
-		Output output = new Output(bank, inventory0, 1);
+		Output output = new Output(inventory0, 1);
 		output.setMaterials(Arrays.asList(Material.CARROT, Material.PAPER, Material.ICE));
 		Assert.assertEquals(Arrays.asList(Material.CARROT, Material.ICE, Material.PAPER), output.getMaterials());
 	}
@@ -85,11 +75,9 @@ public class OutputTest  extends ZSortingTest{
 	 * Checks if the isOverflow method returns the expected value.
 	 */
 	@Test
-	public void isOverflowTest() {
-		Bank bank = new Bank(new BankManager(), "isOverflowTestBank", "");
-		
+	public void isOverflowTest() {		
 		//Create an output and test if it is an overflow
-		Output output = new Output(bank, inventory0, 1);
+		Output output = new Output(inventory0, 1);
 		Assert.assertEquals(true, output.isOverflow());
 
 		//Set materials and test if it is not an overflow

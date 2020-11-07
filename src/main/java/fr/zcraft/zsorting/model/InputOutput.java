@@ -15,11 +15,6 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 3179098898886096938L;
-
-	/**
-	 * The bank associated with the InputOutput.
-	 */
-	private Bank bank;
 	
 	/**
 	 * Inventory of the InputOutput.
@@ -33,15 +28,11 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 
 	/**
 	 * Constructor of an InputOutput object.
-	 * @param bank - Bank the InputOutput is associated with.
 	 * @param inventory - Inventory of the InputOutput.
 	 * @param priority - Priority of the InputOutput.
 	 */
-	public InputOutput(Bank bank, Inventory inventory, Integer priority) {
+	public InputOutput(Inventory inventory, Integer priority) {
 		super();
-		
-		if(bank == null)
-			throw new IllegalArgumentException("An InputOutput bank cannot be null");
 		
 		if(inventory == null)
 			throw new IllegalArgumentException("An InputOutput inventory cannot be null");
@@ -52,17 +43,8 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 		if(priority < 1)
 			throw new IllegalArgumentException("An InputOutput priority cannot be less than 1");
 		
-		this.bank = bank;
 		this.inventory = inventory;
 		this.priority = priority;
-	}
-
-	/**
-	 * Returns the bank of the InputOutput.
-	 * @return Bank of the InputOutput.
-	 */
-	public Bank getBank() {
-		return bank;
 	}
 
 	/**

@@ -20,20 +20,16 @@ public class BankTest extends ZSortingTest {
 	 * Tests if wrong constructor arguments are throwing IllegalArgumentException.
 	 */
 	@Test
-	public void illegalTest(){
+	public void illegalTest(){		
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Bank(null, "Name", "Description");
-		});
-		
-		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Bank(new BankManager(), null, "Description");
+			new Bank(null, "Description");
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Bank(new BankManager(), "Name", null);
+			new Bank("Name", null);
 		});
 
-		new Bank(new BankManager(), "Name", "Description");
+		new Bank("Name", "Description");
 	}
 
 	/**
@@ -44,7 +40,7 @@ public class BankTest extends ZSortingTest {
 	public void inputSortingTest() throws ZSortingException {
 		
 		//Create a bank, add input inventories and test if the inputs are empty
-		Bank bank = new Bank(new BankManager(), "inputsTestBank", "Description");
+		Bank bank = new Bank("inputsTestBank", "Description");
 		Input i2 = bank.setInput(inventory2, 45);
 		Input i1 = bank.setInput(inventory1, 2);
 		Input i0 = bank.setInput(inventory0, 1);
@@ -72,7 +68,7 @@ public class BankTest extends ZSortingTest {
 	public void outputSortingTest() throws ZSortingException {
 		
 		//Create a bank, add output inventories and test if the overflows are empty
-		Bank bank = new Bank(new BankManager(), "outputsTestBank", "Description");
+		Bank bank = new Bank("outputsTestBank", "Description");
 		Output o2 = bank.setOutput(inventory2, 45, new ArrayList<Material>());
 		Output o1 = bank.setOutput(inventory1, 2, new ArrayList<Material>());
 		Output o0 = bank.setOutput(inventory0, 1, new ArrayList<Material>());
@@ -100,7 +96,7 @@ public class BankTest extends ZSortingTest {
 	public void hasOverflowTest() throws ZSortingException {
 		
 		//Create a bank, add an output, commit and test if the bank has an overflow
-		Bank bank = new Bank(new BankManager(), "hasOverflowTestBank", "Description");
+		Bank bank = new Bank("hasOverflowTestBank", "Description");
 		bank.setOutput(inventory0, 1, new ArrayList<Material>());
 		bank.commit();
 		Assert.assertEquals(true, bank.hasOverflow());
@@ -123,7 +119,7 @@ public class BankTest extends ZSortingTest {
 	@Test
 	public void findOutputsTest() throws ZSortingException {
 		//Create a bank and test if the bank has no outputs for IRON_BLOCK
-		Bank bank = new Bank(new BankManager(), "findOutputsTestBank", "Description");
+		Bank bank = new Bank("findOutputsTestBank", "Description");
 		Assert.assertEquals(new ArrayList<Output>(), bank.findOutputs(Material.IRON_BLOCK));
 		
 		//Test when the bank has one output of cobblestone

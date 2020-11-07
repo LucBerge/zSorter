@@ -27,12 +27,11 @@ public class Output extends InputOutput implements Serializable{
 
 	/**
 	 * Constructor of an output object.
-	 * @param bank - Bank the InputOutput is associated with.
 	 * @param inventory - Inventory of the output.
 	 * @param priority - Priority of the output.
 	 */
-	public Output(Bank bank, Inventory inventory, Integer priority) {
-		super(bank, inventory, priority);
+	public Output(Inventory inventory, Integer priority) {
+		super(inventory, priority);
 		this.materials = new ArrayList<Material>();
 	}
 

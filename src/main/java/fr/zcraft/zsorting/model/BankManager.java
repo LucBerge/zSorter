@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 
 import fr.zcraft.zlib.components.i18n.I;
@@ -62,8 +63,8 @@ public class BankManager implements Serializable{
 	 * @throws ZSortingException if a bank with this name already exists.
 	 */
 	public Bank addBank(String name, String description) throws ZSortingException {
-		Bank bank = new Bank(this, name, description);									//Create a new bank
-		if(nameToBank.putIfAbsent(name, bank) != null)									//If a bank with this name already exists
+		Bank bank = new Bank(name, description);										//Create a new bank
+		if(nameToBank.putIfAbsent(name, bank) != null)										//If a bank with this name already exists
 			throw new ZSortingException(I.t("A bank with this name already exists"));
 		return bank;
 	}
@@ -84,6 +85,85 @@ public class BankManager implements Serializable{
 		for(Input input:bank.getInventoryToInput().values())							//For each ouput of the bank
 			inventoryToBank.remove(input.getInventory());								//Remove the output from the inventory to bank map
 		return bank;
+	}
+	
+	/**
+	 * Sets a new bank input.
+	 * @param name - Name of the bank.
+	 * @param inventory - Input inventory.
+	 * @param priority - Priority of the input.
+	 * @throws ZSortingException if a ZSorting exception occurs.
+	 */
+	public void setInput(String name, Inventory inventory, int priority) throws ZSortingException {
+		Bank bank = nameToBank.get(name);
+		if(bank == null)
+			throw new ZSortingException(I.t("There is no bank with this name."));
+
+		Bank existingBank = inventoryToBank.putIfAbsent(inventory, bank);											//Get the bank with this input
+		if(existingBank != null && !bank.equals(existingBank))															//If the bank is not this one
+			throw new ZSortingException(I.t("This holder is already an input of the bank {0}.", bank.getName()));			//Display error messsage
+		
+		bank.setInput(inventory, priority);
+	}
+	
+	/**
+	 * Remove an input from a bank.
+	 * @param name - Name of the bank.
+	 * @param inventory - Inventory of the input.
+	 * @return The removed input object, {@code null} if no input found for this inventory.
+	 * @throws ZSortingException if a ZSorting exception occurs.
+	 */
+	public Input removeInput(String name, Inventory inventory) throws ZSortingException {
+		Bank bank = nameToBank.get(name);
+		if(bank == null)
+			throw new ZSortingException(I.t("There is no bank with this name."));
+		
+		Input input = bank.removeInput(inventory);
+		if(input == null)
+			throw new ZSortingException(I.t("This holder is not an input."));
+			
+		inventoryToBank.remove(inventory);			//Unkink the bank
+		return input;
+	}
+	
+	/**
+	 * Sets a new bank output.
+	 * @param name - Name of the bank.
+	 * @param inventory - Output inventory.
+	 * @param priority - Priority of the output.
+	 * @param materials - Materials of the output.
+	 * @throws ZSortingException if a ZSorting exception occurs.
+	 */
+	public void setOutput(String name, Inventory inventory, int priority, List<Material> materials) throws ZSortingException {
+		Bank bank = nameToBank.get(name);
+		if(bank == null)
+			throw new ZSortingException(I.t("There is no bank with this name."));
+
+		Bank existingBank = inventoryToBank.putIfAbsent(inventory, bank);											//Get the bank with this input
+		if(existingBank != null && !bank.equals(existingBank))															//If the bank is not this one
+			throw new ZSortingException(I.t("This holder is already an input of the bank {0}.", bank.getName()));			//Display error messsage
+		
+		bank.setOutput(inventory, priority, materials);
+	}
+	
+	/**
+	 * Remove an output from a bank.
+	 * @param name - Name of the bank.
+	 * @param inventory - Inventory of the output.
+	 * @return The removed output object, {@code null} if no output found for this inventory.
+	 * @throws ZSortingException if a ZSorting exception occurs.
+	 */
+	public Output removeOutput(String name, Inventory inventory) throws ZSortingException {
+		Bank bank = nameToBank.get(name);
+		if(bank == null)
+			throw new ZSortingException(I.t("There is no bank with this name."));
+		
+		Output output = bank.removeOutput(inventory);
+		if(output == null)
+			throw new ZSortingException(I.t("This holder is not an output."));
+		
+		inventoryToBank.remove(inventory);									//Unkink the bank
+		return output;
 	}
 	
 	/**
