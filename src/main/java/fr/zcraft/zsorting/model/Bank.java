@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zlib.components.rawtext.RawText;
 import fr.zcraft.zlib.components.rawtext.RawTextPart;
+import fr.zcraft.zsorting.ZSortingException;
 
 /**
  * The class {@code Bank} represents a bank in the game.<br><br>
@@ -214,8 +215,13 @@ public class Bank implements Serializable{
 	 * @param inventory - Inventory of the input.
 	 * @param priority - Priority of the input.
 	 * @return The created input object.
+	 * @throws ZSortingException if a ZSorting exception occurs.
 	 */
-	public Input setInput(Inventory inventory, int priority) {
+	public Input setInput(Inventory inventory, int priority) throws ZSortingException {
+		Output output = inventoryToOutput.get(inventory);															//Get the existing output
+		if(output != null)																							//If exists
+			throw new ZSortingException(I.t("This holder is already an output."));										//Display error message
+		
 		setEnable(false);																							//Disable the bank
 		
 		Input existingInput = inventoryToInput.get(inventory);															//Get the existing input
@@ -246,8 +252,13 @@ public class Bank implements Serializable{
 	 * @param priority - Priority of the output.
 	 * @param materials - Sorted materials of the output.
 	 * @return The created output object.
+	 * @throws ZSortingException if a ZSorting exception occurs.
 	 */
-	public Output setOutput(Inventory inventory, int priority, List<Material> materials) {
+	public Output setOutput(Inventory inventory, int priority, List<Material> materials) throws ZSortingException {
+		Input input = inventoryToInput.get(inventory);																//Get the existing input
+		if(input != null)																							//If exists
+			throw new ZSortingException(I.t("This holder is already an input."));										//Display error message
+		
 		setEnable(false);																							//Disable the bank
 		
 		Output existingOutput = inventoryToOutput.get(inventory);													//Get the existing output
@@ -366,7 +377,7 @@ public class Bank implements Serializable{
 				.color(ChatColor.AQUA)
 				.hover(
 					new RawText()
-						.then(String.format("X=%1$,.0f\nY=%1$,.0f\nZ=%1$,.0f", input.getInventory().getLocation().getX(), input.getInventory().getLocation().getY(), input.getInventory().getLocation().getZ()))
+						.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getInventory().getLocation().getX(), input.getInventory().getLocation().getY(), input.getInventory().getLocation().getZ()))
 							.color(ChatColor.AQUA)
 				);
     	}
@@ -388,7 +399,7 @@ public class Bank implements Serializable{
     				.color(ChatColor.AQUA)
     				.hover(
     	    			new RawText()
-        					.then(String.format("X=%1$,.0f\nY=%1$,.0f\nZ=%1$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
+        					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
         						.color(ChatColor.AQUA)
         			)
     			.then(String.format(" (%s)",materials))

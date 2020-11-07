@@ -101,7 +101,7 @@ public class BankManager implements Serializable{
 
 		Bank existingBank = inventoryToBank.putIfAbsent(inventory, bank);											//Get the bank with this input
 		if(existingBank != null && !bank.equals(existingBank))															//If the bank is not this one
-			throw new ZSortingException(I.t("This holder is already an input of the bank {0}.", bank.getName()));			//Display error messsage
+			throw new ZSortingException(I.t("This holder is already in use by the bank {0}.", bank.getName()));			//Display error messsage
 		
 		bank.setInput(inventory, priority);
 	}
@@ -141,7 +141,7 @@ public class BankManager implements Serializable{
 
 		Bank existingBank = inventoryToBank.putIfAbsent(inventory, bank);											//Get the bank with this input
 		if(existingBank != null && !bank.equals(existingBank))															//If the bank is not this one
-			throw new ZSortingException(I.t("This holder is already an input of the bank {0}.", bank.getName()));			//Display error messsage
+			throw new ZSortingException(I.t("This holder is already in use by the bank {0}.", bank.getName()));			//Display error messsage
 		
 		bank.setOutput(inventory, priority, materials);
 	}

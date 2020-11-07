@@ -72,8 +72,11 @@ msgstr "La priorité d'entrée doit être suppérieure ou égale à 1."
 msgid "The input priority must be an integer."
 msgstr "La priorité d'entrée doit être un entier."
 
-msgid "This holder is already an input of the bank {0}."
-msgstr "Ce contenant est une entrée de la banque {0}."
+msgid "This holder is already in use by the bank {0}."
+msgstr "Ce contenant est déjà utilisé par la banque {0}."
+
+msgid "This holder is already an input."
+msgstr "Ce contenant est déjà une entrée."
 
 msgid "This holder is now an input of priority {0}."
 msgstr "Ce contenant est désormais une entrée de prioritée {0}."
@@ -90,8 +93,8 @@ msgstr "La priorité de sortie doit être un entier."
 msgid "Could not found material {0} : Ignored."
 msgstr "Impossible de trouver le matériaux {0} : Ignoré."
 
-msgid "This holder is already an output of the bank {0}."
-msgstr "Ce contenant est une sortie de la banque {0}."
+msgid "This holder is already an output."
+msgstr "Ce contenant est déjà une sortie."
 
 msgid "This holder is now an output of priority {0}."
 msgstr "Ce contenant est désormais une sortie de prioritée {0}."
