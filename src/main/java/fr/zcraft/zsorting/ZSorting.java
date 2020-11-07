@@ -24,9 +24,10 @@ import fr.zcraft.zsorting.commands.SetOutputBankCommand;
 import fr.zcraft.zsorting.commands.ToggleCommand;
 import fr.zcraft.zsorting.commands.UpdateCommand;
 import fr.zcraft.zsorting.events.HolderBreakEvent;
-import fr.zcraft.zsorting.events.ItemMovedEvent;
-import fr.zcraft.zsorting.events.SortingTask;
+import fr.zcraft.zsorting.events.InventoryEvent;
+import fr.zcraft.zsorting.events.ItemMoveEvent;
 import fr.zcraft.zsorting.model.BankManager;
+import fr.zcraft.zsorting.tasks.SortingTask;
 
 /**
  * The ZSorting main class.
@@ -98,7 +99,8 @@ public final class ZSorting extends ZPlugin implements Listener{
         
         I18n.setPrimaryLocale(Config.LANGUAGE.get());
         this.getServer().getPluginManager().registerEvents(new HolderBreakEvent(), this);
-        this.getServer().getPluginManager().registerEvents(new ItemMovedEvent(), this);
+        this.getServer().getPluginManager().registerEvents(new InventoryEvent(), this);
+        this.getServer().getPluginManager().registerEvents(new ItemMoveEvent(), this);
         
         Commands.register("zsorting",
         		ListCommand.class,

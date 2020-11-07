@@ -4,8 +4,8 @@ import fr.zcraft.zlib.components.commands.CommandException;
 import fr.zcraft.zlib.components.commands.CommandInfo;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorting.ZSorting;
-import fr.zcraft.zsorting.events.SortingTask;
 import fr.zcraft.zsorting.model.Bank;
+import fr.zcraft.zsorting.tasks.SortingTask;
 
 /**
  * Command triggered to select a bank.<br><br>

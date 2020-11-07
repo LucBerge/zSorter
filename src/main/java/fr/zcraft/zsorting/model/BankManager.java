@@ -11,6 +11,7 @@ import org.bukkit.inventory.Inventory;
 
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorting.ZSortingException;
+import fr.zcraft.zsorting.tasks.SortingTask;
 
 /**
  * The class {@code BankManager} is used to manage banks.
@@ -95,5 +96,21 @@ public class BankManager implements Serializable{
 				.stream()
 				.filter(b -> b.isToCompute())
 				.collect(Collectors.toList());
+	}
+	
+	/**
+	 * Compute the bank associated with this inventory.
+	 * Don't do anything if the inventory is not an input.
+	 * @param inventory - Inventory of the bank to compute.
+	 */
+	public void computeBank(Inventory inventory) {
+		Bank bank = inventoryToBank.get(inventory);						//Get the bank associated with this inventory
+		if(bank != null) {												//If no bank found
+			Input input = bank.getInventoryToInput().get(inventory);		//Get the input inked to this inventory
+			if(input != null) {												//If no input found
+				bank.setToCompute(true);										//Set the bank to compute
+				SortingTask.getInstance().start();								//Start the task
+			}
+		}
 	}
 }

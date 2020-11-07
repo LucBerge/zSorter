@@ -139,7 +139,7 @@ public class Bank implements Serializable{
 	 * @param state - {@code true} to enable the bank, {@code false} to disable it.
 	 */
 	public void setEnable(boolean state) {
-		if(enable)		//If enabling the bank
+		if(state)		//If enabling the bank
 			commit();		//Commit the bank
 		this.enable = state;
 	}
@@ -354,7 +354,7 @@ public class Bank implements Serializable{
     						itemStackToTransfer.setAmount(1);																			//Transfer only one item
     						HashMap<Integer, ItemStack> couldntTransfer = outputInventory.addItem(itemStackToTransfer);					//Add the item to the output
     						if(couldntTransfer.isEmpty()) {																				//If it has been transfered
-    							outputInventory.removeItem(itemStackToTransfer);															//Remove the item from the input
+    							inputInventory.removeItem(itemStackToTransfer);																//Remove the item from the input
     							return;																										//Exit
     						}
     					}
@@ -397,12 +397,12 @@ public class Bank implements Serializable{
 		for(Input input:inventoryToInput.values()) {
 			text
 				.then("\n    (" + input.getPriority() + ")")
-				.color(ChatColor.AQUA);
-				/*.hover(
+				.color(ChatColor.AQUA)
+				.hover(
 					new RawText()
-						.then(String.format("X=%d\nY=%d\nZ=%d", input.getInventory().getX(), input.getInventory().getY(), input.getInventory().getZ()))
+						.then(String.format("X=%1$,.0f\nY=%1$,.0f\nZ=%1$,.0f", input.getInventory().getLocation().getX(), input.getInventory().getLocation().getY(), input.getInventory().getLocation().getZ()))
 							.color(ChatColor.AQUA)
-				);*/
+				);
     	}
 
     	text
@@ -420,11 +420,11 @@ public class Bank implements Serializable{
     		text
     			.then(String.format("\n    (%d)", output.getPriority()))
     				.color(ChatColor.AQUA)
-    				/*.hover(
+    				.hover(
     	    			new RawText()
-        					.then(String.format("{aqua}X=%d\nY=%d\nZ=%d", output.getInventory().getX(), output.getInventory().getY(), output.getInventory().getZ()))))
+        					.then(String.format("X=%1$,.0f\nY=%1$,.0f\nZ=%1$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
         						.color(ChatColor.AQUA)
-        			)*/
+        			)
     			.then(String.format(" (%s)",materials))
     				.color(ChatColor.GRAY);
     	}

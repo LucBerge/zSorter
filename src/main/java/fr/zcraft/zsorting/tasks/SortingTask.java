@@ -1,4 +1,4 @@
-package fr.zcraft.zsorting.events;
+package fr.zcraft.zsorting.tasks;
 
 import java.util.List;
 
