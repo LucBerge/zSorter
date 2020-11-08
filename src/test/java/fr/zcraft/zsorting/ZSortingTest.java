@@ -51,6 +51,6 @@ public class ZSortingTest {
 	@After
 	public void tearDown()
 	{
-	    MockBukkit.unmock();
+	    MockBukkit.unload();
 	}
 }

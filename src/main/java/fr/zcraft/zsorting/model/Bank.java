@@ -1,5 +1,7 @@
 package fr.zcraft.zsorting.model;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,8 +48,8 @@ public class Bank implements Serializable{
 	private boolean toCompute;
 	private int speed;
 	
-	private Map<Inventory, Input> inventoryToInput;
-	private Map<Inventory, Output> inventoryToOutput;
+	private transient Map<Inventory, Input> inventoryToInput;
+	private transient Map<Inventory, Output> inventoryToOutput;
 	
 	private List<Input> inputs;
 	private Map<Material, List<Output>> materialToOutputs;
@@ -529,5 +531,25 @@ public class Bank implements Serializable{
 		} else if (!name.equals(other.name))
 			return false;
 		return true;
+	}
+
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException
+	{
+		ois.defaultReadObject();
+		inventoryToInput = new HashMap<Inventory, Input>();
+		for(Input input:inputs) {
+			inventoryToInput.putIfAbsent(input.getInventory(), input);
+		}
+		inventoryToOutput = new HashMap<Inventory, Output>();
+		for(List<Output> outputs:materialToOutputs.values()) {
+			for(Output output:outputs) {
+				inventoryToOutput.putIfAbsent(output.getInventory(), output);
+			}
+		}
+		for(Output overflow:overflows) {
+			inventoryToOutput.putIfAbsent(overflow.getInventory(), overflow);
+		}
+		if(enable)
+			toCompute = true;
 	}
 }

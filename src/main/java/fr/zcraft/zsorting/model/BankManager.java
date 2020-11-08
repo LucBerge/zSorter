@@ -1,5 +1,7 @@
 package fr.zcraft.zsorting.model;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +28,7 @@ public class BankManager implements Serializable{
 	private static final long serialVersionUID = -1782855927147248287L;
 	
 	private Map<String, Bank> nameToBank;
-	private Map<Inventory, Bank> inventoryToBank;
+	private transient Map<Inventory, Bank> inventoryToBank;
 	
 	/**
 	 * Constructor of a bank manager object.
@@ -212,5 +214,22 @@ public class BankManager implements Serializable{
 			}
 		}
 		return computed;
+	}
+	
+
+
+	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException
+	{
+		ois.defaultReadObject();
+
+		inventoryToBank = new HashMap<Inventory, Bank>();
+		for(Bank bank:nameToBank.values()) {
+			for(Input input:bank.getInventoryToInput().values()) {
+				inventoryToBank.putIfAbsent(input.getInventory(), bank);
+			}
+			for(Output output:bank.getInventoryToOutput().values()) {
+				inventoryToBank.putIfAbsent(output.getInventory(), bank);
+			}
+		}
 	}
 }

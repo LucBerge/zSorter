@@ -1,7 +1,15 @@
 package fr.zcraft.zsorting.model;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
+import org.bukkit.Material;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -102,5 +110,36 @@ public class BankManagerTest extends ZSortingTest{
 		//Set the bank2 canCompute flag to false and tests if no bank found
 		bank2.setToCompute(false);
 		Assert.assertEquals(Arrays.asList(), manager.canCompute());
+	}
+	
+	/**
+	 * Tests if a bankManage object is correctly serialized and deserialized.
+	 * @throws ZSortingException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	@Test
+	public void serializationTest() throws ZSortingException, FileNotFoundException, IOException, ClassNotFoundException {
+		BankManager manager = new BankManager();
+		Bank bank = manager.addBank("test", "Simple test bank");
+		manager.setInput("test", inventory0, 1);
+		manager.setOutput("test", inventory1, 1, Arrays.asList(Material.IRON_INGOT));
+		manager.setOutput("test", inventory2, 1, Arrays.asList());
+
+		bank.setSpeed(64);
+		bank.commit();
+
+		//Serialization
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("serializationTest.dat")));
+		oos.writeObject(manager);
+		oos.close();
+
+		//Dezerialisation
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("serializationTest.dat")));
+		BankManager deserializedManager = (BankManager) ois.readObject();
+		ois.close();
+		
+		Assert.assertEquals(manager, deserializedManager);
 	}
 }

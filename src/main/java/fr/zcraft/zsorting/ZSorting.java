@@ -3,6 +3,7 @@ package fr.zcraft.zsorting;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
@@ -130,10 +131,9 @@ public final class ZSorting extends ZPlugin implements Listener{
 	 * Save the bank manager to a file.
 	 */
 	private void Save() {		
-		try {
+		try {			
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(dataFile)));
 			oos.writeObject(bankManager);
-			oos.flush();
 			oos.close();
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -141,14 +141,14 @@ public final class ZSorting extends ZPlugin implements Listener{
 	}
 	
 	/**
-	 * Load the BankManager from a file
+	 * Load the BankManager from a file.
 	 */
 	private void Load() {		
-		try {
+		try {			
 			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(dataFile)));
 			bankManager = (BankManager) ois.readObject();
 			ois.close();
-		}catch(Exception e) {
+		}catch(IOException | ClassNotFoundException e) {
 			bankManager = new BankManager();
 		}
 	}	
