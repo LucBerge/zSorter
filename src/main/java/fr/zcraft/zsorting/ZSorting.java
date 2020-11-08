@@ -21,6 +21,7 @@ import fr.zcraft.zsorting.commands.RemoveInputBankCommand;
 import fr.zcraft.zsorting.commands.RemoveOutputBankCommand;
 import fr.zcraft.zsorting.commands.SetInputBankCommand;
 import fr.zcraft.zsorting.commands.SetOutputBankCommand;
+import fr.zcraft.zsorting.commands.SpeedCommand;
 import fr.zcraft.zsorting.commands.ToggleCommand;
 import fr.zcraft.zsorting.commands.UpdateCommand;
 import fr.zcraft.zsorting.events.HolderBreakEvent;
@@ -106,6 +107,7 @@ public final class ZSorting extends ZPlugin implements Listener{
         		ListCommand.class,
         		AddCommand.class,
         		UpdateCommand.class,
+        		SpeedCommand.class,
         		DeleteCommand.class,
         		InfoCommand.class,
         		ToggleCommand.class,

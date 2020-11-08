@@ -182,15 +182,35 @@ public class BankManager implements Serializable{
 	 * Compute the bank associated with this inventory.
 	 * Don't do anything if the inventory is not an input.
 	 * @param inventory - Inventory of the bank to compute.
+	 * @return {@code true} if the bank has been computed, {@code false} otherwise.
 	 */
-	public void computeBank(Inventory inventory) {
+	public boolean computeBank(Inventory inventory) {
+		boolean computed = false;
 		Bank bank = inventoryToBank.get(inventory);						//Get the bank associated with this inventory
-		if(bank != null) {												//If no bank found
-			Input input = bank.getInventoryToInput().get(inventory);		//Get the input inked to this inventory
-			if(input != null) {												//If no input found
+		if(bank != null && bank.isEnable()) {							//If bank found and enable
+			Input input = bank.getInventoryToInput().get(inventory);		//Get the input linked to this inventory
+			if(input != null) {												//If input found
 				bank.setToCompute(true);										//Set the bank to compute
 				SortingTask.getInstance().start();								//Start the task
+				computed = true;
+			}
+			else {
+				Output output = bank.getInventoryToOutput().get(inventory);		//Get the output linked to this inventory
+				if(output != null) {											//If output found
+					
+					boolean clogging = output.getMaterials()
+							.stream()
+							.filter(bank.getCloggingUpMaterials()::contains)
+							.count() > 0;
+
+					if(clogging || output.isOverflow()) {							//If one of the output material was clogging up the inputs or if it is an overflow
+						bank.setToCompute(true);										//Set the bank to compute
+						SortingTask.getInstance().start();								//Start the task
+						computed = true;
+					}
+				}
 			}
 		}
+		return computed;
 	}
 }

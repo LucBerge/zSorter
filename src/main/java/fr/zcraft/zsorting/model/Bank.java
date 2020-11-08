@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -19,6 +20,9 @@ import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zlib.components.rawtext.RawText;
 import fr.zcraft.zlib.components.rawtext.RawTextPart;
 import fr.zcraft.zsorting.ZSortingException;
+import fr.zcraft.zsorting.commands.SpeedCommand;
+import fr.zcraft.zsorting.commands.ToggleCommand;
+import fr.zcraft.zsorting.commands.UpdateCommand;
 
 /**
  * The class {@code Bank} represents a bank in the game.<br><br>
@@ -33,10 +37,16 @@ public class Bank implements Serializable{
 	 */
 	private static final long serialVersionUID = 7893484799034097907L;
 
+	/**
+	 * The default speed of a bank.
+	 */
+	public static final int DEFAULT_SPEED = 1;
+	
 	private String name;
 	private String description;	
 	private boolean enable;
 	private boolean toCompute;
+	private int speed;
 	
 	private Map<Inventory, Input> inventoryToInput;
 	private Map<Inventory, Output> inventoryToOutput;
@@ -44,6 +54,7 @@ public class Bank implements Serializable{
 	private List<Input> inputs;
 	private Map<Material, List<Output>> materialToOutputs;
 	private List<Output> overflows;
+	private List<Material> cloggingUpMaterials;
 	
 	/**
 	 * Constructor of a bank.
@@ -64,6 +75,7 @@ public class Bank implements Serializable{
 		this.description = description;
 		this.enable = false;
 		this.toCompute = false;
+		this.speed = DEFAULT_SPEED;
 		
 		this.inventoryToInput = new HashMap<Inventory, Input>();
 		this.inventoryToOutput = new HashMap<Inventory, Output>();
@@ -71,6 +83,7 @@ public class Bank implements Serializable{
 		this.inputs = new ArrayList<Input>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();
+		this.cloggingUpMaterials = new ArrayList<Material>();
 	}
 	
 	/**
@@ -120,6 +133,8 @@ public class Bank implements Serializable{
 	public void setEnable(boolean state) {
 		if(state)		//If enabling the bank
 			commit();		//Commit the bank
+		else
+			this.toCompute = false;
 		this.enable = state;
 	}
 
@@ -137,6 +152,22 @@ public class Bank implements Serializable{
 	 */
 	public void setToCompute(boolean toCompute) {
 		this.toCompute = toCompute;
+	}
+	
+	/**
+	 * Returns the sorting speed of the bank.
+	 * @return Sorting speed, between 1 and 64.
+	 */
+	public int getSpeed() {
+		return speed;
+	}
+
+	/**
+	 * Sets the sorting speed of the bank.
+	 * @param speed - Speed sorting of the bank.
+	 */
+	public void setSpeed(int speed) {
+		this.speed = speed;
 	}
 
 	/**
@@ -181,6 +212,14 @@ public class Bank implements Serializable{
 	 */
 	public List<Output> getOverflows() {
 		return overflows;
+	}
+
+	/**
+	 * Returns the materials that are clogging up the inputs.
+	 * @return List of materials that clog up the inputs.
+	 */
+	public List<Material> getCloggingUpMaterials() {
+		return cloggingUpMaterials;
 	}
 
 	/**
@@ -324,17 +363,29 @@ public class Bank implements Serializable{
     			Inventory inputInventory = input.getInventory();														//Get the input inventory
     			for(ItemStack itemStack: inputInventory.getContents()) {												//For each item in the input inventory
     				if(itemStack != null) {																					//If the item is not null
+    					ItemStack itemStackToTransfer = itemStack.clone();														//Clone the item to keep the metadata
+    					if(itemStackToTransfer.getAmount() > speed)																//If the number of items in the stack is over the speed limit
+							itemStackToTransfer.setAmount(speed);																	//Set to the speed limit
     					List<Output> outputs = findOutputs(itemStack.getType());												//Find the outputs for this item
-    					for(Output output:outputs) {																				//For each possible output
-    						Inventory outputInventory = output.getInventory();															//Get the output inventory
-    						ItemStack itemStackToTransfer = itemStack.clone();															//Clone the item to keep the meta data
-    						itemStackToTransfer.setAmount(1);																			//Transfer only one item
-    						HashMap<Integer, ItemStack> couldntTransfer = outputInventory.addItem(itemStackToTransfer);					//Add the item to the output
-    						if(couldntTransfer.isEmpty()) {																				//If it has been transfered
-    							inputInventory.removeItem(itemStackToTransfer);																//Remove the item from the input
-    							return;																										//Exit
-    						}
+    					for(Output output:outputs) {																			//For each possible output
+    						Inventory outputInventory = output.getInventory();														//Get the output inventory
+    						int amountToTransfer = itemStackToTransfer.getAmount();													//Get the amount to transfer
+    						HashMap<Integer, ItemStack> couldntTransferMap = outputInventory.addItem(itemStackToTransfer);			//Add the item to the output
+    						if(couldntTransferMap.isEmpty()) {																		//If everything has been transfered
+        						inputInventory.removeItem(itemStackToTransfer);															//Remove the item from the input
+    							if(cloggingUpMaterials.contains(itemStack.getType()))													//If the stored item was clogging up the inputs
+    	    						cloggingUpMaterials.remove(itemStack.getType());														//Not clogging up anymore
+    							return;																									//Exit
+    						}		
+    						ItemStack itemStackToRemove = itemStackToTransfer.clone();												//Create the stacke to remove
+    						itemStackToRemove.setAmount(amountToTransfer - itemStackToTransfer.getAmount());						//Set the amount to remove
+    						inputInventory.removeItem(itemStackToRemove);															//Remove the item from the input
+    						itemStackToTransfer.setAmount(itemStackToTransfer.getAmount());											//Define the new amount to transfert
     					}
+    					
+    					//Run only if no output has been found for this item
+    					if(!cloggingUpMaterials.contains(itemStack.getType()))
+    						cloggingUpMaterials.add(itemStack.getType());
     				}
     			}
     		}
@@ -364,46 +415,89 @@ public class Bank implements Serializable{
 		RawTextPart text = new RawText("")
     			.then(name)
     				.style(ChatColor.GOLD)
+    			.then(isEnable() ? " ON" : " OFF")
+    				.color(enable ? ChatColor.GREEN : ChatColor.RED)
+	    			.hover(new RawText()
+	        				.then(I.t("Toggle the bank {0}.", name)))
+	        			.command(ToggleCommand.class, name)
+		        .then(toCompute ? " RUNNING " : "")
+		        	.color(ChatColor.AQUA)
     			.then(" (" + description + ") ")
     				.color(ChatColor.GRAY)
-    			.then(isEnable() ? "ON" : "OFF")
-    				.color(enable ? ChatColor.GREEN : ChatColor.RED)
-        		.then(I.t("\n  {0} inputs", inventoryToInput.size()))
+    				.hover(new RawText()
+	        				.then(I.t("Update the description")))
+	        			.suggest(UpdateCommand.class, name)
+    			.then("\n  " + I.t("speed: {0}", speed))
+					.color(ChatColor.GRAY)
+					.hover(new RawText()
+	        				.then(I.t("Change the sorting speed")))
+	        			.suggest(SpeedCommand.class, name)
+        		.then("\n  " + I.t("{0} input(s):", inventoryToInput.size()) + "\n  ")
     				.color(ChatColor.GRAY);
-
-		for(Input input:inventoryToInput.values()) {
+		
+		List<Input> inputs = inventoryToInput
+				.values()
+				.stream()
+				.sorted()
+				.collect(Collectors.toList());				
+				
+		for(Input input:inputs) {
 			text
-				.then("\n    (" + input.getPriority() + ")")
-				.color(ChatColor.AQUA)
-				.hover(
-					new RawText()
-						.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getInventory().getLocation().getX(), input.getInventory().getLocation().getY(), input.getInventory().getLocation().getZ()))
-							.color(ChatColor.AQUA)
-				);
+				.then("  " + input.getPriority())
+					.color(ChatColor.AQUA)
+					.hover(
+						new RawText()
+							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getInventory().getLocation().getX(), input.getInventory().getLocation().getY(), input.getInventory().getLocation().getZ()))
+								.color(ChatColor.AQUA)
+					);
     	}
 
     	text
-    		.then(I.t("\n  {0} outputs", inventoryToOutput.size()))
+    		.then("\n  " + I.t("{0} overflow(s):", overflows.size()) + "\n  ")
     			.color(ChatColor.GRAY);
+				
+		for(Output overflow:overflows) {
+			text
+				.then("  " + overflow.getPriority())
+					.color(ChatColor.AQUA)
+					.hover(
+						new RawText()
+							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", overflow.getInventory().getLocation().getX(), overflow.getInventory().getLocation().getY(), overflow.getInventory().getLocation().getZ()))
+								.color(ChatColor.AQUA)
+					);
+		}
+
     	
-    	for(Output output:inventoryToOutput.values()) {
-    		String materials = "*";
-    		if(!output.getMaterials().isEmpty()) {
-            	StringJoiner joiner = new StringJoiner(" ");
-            	for(Material material:output.getMaterials())
-            		joiner.add(material.name().toLowerCase());
-            	materials = joiner.toString();
-    		}
+		List<Output> outputs = inventoryToOutput
+				.values()
+				.stream()
+				.sorted()
+				.filter(o -> !o.isOverflow())
+				.collect(Collectors.toList());
+		
+    	text
+    		.then("\n  " + I.t("{0} output(s):", outputs.size()))
+    			.color(ChatColor.GRAY);	
+    	
+    	for(Output output:outputs) {
     		text
-    			.then(String.format("\n    (%d)", output.getPriority()))
+    			.then("\n    " + output.getPriority())
     				.color(ChatColor.AQUA)
     				.hover(
     	    			new RawText()
         					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
         						.color(ChatColor.AQUA)
-        			)
-    			.then(String.format(" (%s)",materials))
-    				.color(ChatColor.GRAY);
+        			);
+    		
+    		List<Material> materials = output.getMaterials()
+    											.stream()
+    											.sorted()
+    											.collect(Collectors.toList());
+    		
+    		for(Material material:materials)
+    			text
+    				.then(" " + material.name().toLowerCase())
+    					.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN);
     	}
     	return text.build();
 	}

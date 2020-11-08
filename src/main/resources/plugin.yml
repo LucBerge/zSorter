@@ -13,6 +13,8 @@ commands:
         description : Create a new bank
     update:
         description : Update a bank description
+    speed:
+        description : Change the sorting speed (number of item per tick).
     delete:
         description : Delete a bank
     info:

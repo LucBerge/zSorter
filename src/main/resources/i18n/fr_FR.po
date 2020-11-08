@@ -117,8 +117,41 @@ msgstr "Ce contenant était une entrée de la banque {0}. Il a été supprimé d
 msgid "This holder was an output of the bank {0}. It has been removed from it."
 msgstr "Ce contenant était une sortie de la banque {0}. Il a été supprimé de celle-ci."
 
-msgid "\n  {0} inputs"
-msgstr "\n {0} entrées"
+msgid "{0} input(s):"
+msgstr "{0} entrée(s):"
 
-msgid "\n  {0} outputs"
-msgstr "\n {0} sorties"
+msgid "{0} overflow(s):"
+msgstr "{0} trop-plein(s):"
+
+msgid "{0} output(s):"
+msgstr "{0} sortie(s):"
+
+msgid "A bank name and a sorting speed are required."
+msgstr "Un nom de banque et une vitesse de tri sont requis."
+
+msgid "The sorting speed must be between 1 and 64."
+msgstr "La vitesse de tri doit être comprise entre 1 et 64."
+
+msgid "The sorting speed must be an integer."
+msgstr "La vitesse de tri doit être un entier."
+
+msgid "The sorting speed of the bank has been set to {0}."
+msgstr "La vitesse de tri de la banque a été définit à {0}."
+
+msgid "Show the informations of the bank {0}."
+msgstr "Voir les informations de la banque {0}."
+
+msgid "Toggle the bank {0}."
+msgstr "Changer la banque {0} d'état."
+
+msgid "speed: {0}"
+msgstr "vitesse: {0}
+
+msgid "speed: {0}"
+msgstr "vitesse: {0}"
+
+msgid "Change the description"
+msgstr "Changer la description"
+
+msgid "Change the sorting speed"
+msgstr "Changer la vitesse de tri"

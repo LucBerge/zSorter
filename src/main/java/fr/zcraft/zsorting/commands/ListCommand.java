@@ -38,15 +38,22 @@ public class ListCommand extends ZSortingCommands{
         	
         	for(Bank bank:banks) {
         		text
-        			.then("\n     " + bank.getName())
+        			.then("\n- " + bank.getName())
         				.color(ChatColor.GOLD)
-            			/*.hover(new RawText()
-            					.then(I.t("Show the informations of the bank {0}", bank.getName())))
-            			.command(InfoBankCommand.class, bank.getName())*/
+            			.hover(new RawText()
+            				.then(I.t("Show the informations of the bank {0}.", bank.getName())))
+            			.command(InfoCommand.class, bank.getName())
+            		.then(bank.isEnable() ? " ON" : " OFF")
+            			.color(bank.isEnable() ? ChatColor.GREEN : ChatColor.RED)
+		    			.hover(new RawText()
+		        				.then(I.t("Toggle the bank {0}.", bank.getName())))
+		        			.command(ToggleCommand.class, bank.getName())
+		        	.then(bank.isToCompute() ? " RUNNING " : "")
+		        		.color(ChatColor.AQUA)
         			.then(" (" + bank.getDescription() + ") ")
-        				.color(ChatColor.GRAY)
-            		.then(bank.isEnable() ? "ON" : "OFF")
-            			.color(bank.isEnable() ? ChatColor.GREEN : ChatColor.RED);
+        				.color(ChatColor.GRAY).hover(new RawText()
+    	        				.then(I.t("Update the description")))
+    	        			.suggest(UpdateCommand.class, bank.getName());
         	}
         	send(text.build());
         }

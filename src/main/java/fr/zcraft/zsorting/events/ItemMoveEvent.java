@@ -19,6 +19,8 @@ public class ItemMoveEvent implements Listener{
      */
 	@EventHandler
 	public void onInventoryMoveItem(InventoryMoveItemEvent e) {
-		ZSorting.getInstance().getBankManager().computeBank(e.getDestination());
+		boolean computed = ZSorting.getInstance().getBankManager().computeBank(e.getDestination());	//Try to compute the bank with this input
+		if(!computed)																				//If no computed
+			ZSorting.getInstance().getBankManager().computeBank(e.getSource());							//Try to compute the bank with this output
 	}
 }

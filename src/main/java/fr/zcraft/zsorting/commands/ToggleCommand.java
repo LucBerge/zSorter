@@ -29,15 +29,13 @@ public class ToggleCommand extends ZSortingCommands{
         else {
         	bank.setEnable(!bank.isEnable());
         	if(bank.isEnable()) {
-        		if(bank.hasInput()){
-            		bank.setToCompute(true);
-            		if(!bank.hasOverflow())
-            			warning(I.t("The bank does not have any overflow. Some items might clog up the inputs."));
-            		SortingTask.getInstance().start();
-            		success(I.t("The bank has been enabled."));
-        		}
-        		else 
-        			warning(I.t("The bank does not have any input."));
+            	bank.setToCompute(true);
+            	if(!bank.hasInput())
+            		warning(I.t("The bank does not have any input."));
+            	if(!bank.hasOverflow())
+            		warning(I.t("The bank does not have any overflow. Some items might clog up the inputs."));
+            	SortingTask.getInstance().start();
+            	success(I.t("The bank has been enabled."));
         	}
         	else
         		success(I.t("The bank has been disabled."));

@@ -7,8 +7,7 @@ import fr.zcraft.zsorting.ZSorting;
 import fr.zcraft.zsorting.model.Bank;
 
 /**
- * Command triggered to select a bank.<br><br>
- * A selection is needed in order to manage inputs and outputs.
+ * Command triggered to display a bank informations.
  * @author Lucas
  */
 @CommandInfo (name = "info", usageParameters = "<name>")
