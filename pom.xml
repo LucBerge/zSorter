@@ -69,6 +69,7 @@
             <groupId>fr.zcraft</groupId>
             <artifactId>zlib</artifactId>
             <version>0.99-SNAPSHOT</version>
+            <scope>compile</scope>
         </dependency>
         
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
