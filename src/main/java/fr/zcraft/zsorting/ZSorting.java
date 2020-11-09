@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import fr.zcraft.zlib.components.commands.Commands;
 import fr.zcraft.zlib.components.i18n.I18n;
 import fr.zcraft.zlib.core.ZPlugin;
+import fr.zcraft.zlib.tools.PluginLogger;
 import fr.zcraft.zsorting.commands.AddCommand;
 import fr.zcraft.zsorting.commands.DeleteCommand;
 import fr.zcraft.zsorting.commands.InfoCommand;
@@ -72,16 +73,18 @@ public final class ZSorting extends ZPlugin implements Listener{
         super(loader, description, dataFolder, file);
     }
 	
-	private final String dataFile = this.getDataFolder() + "/zsorting.dat";
+	private final String dataPath = this.getDataFolder() + "/zsorting.dat";
 	
 	private BankManager bankManager;
+	
+	private boolean enable = true;
 	
 	/**
 	 * Returns the data file of the plugin.
 	 * @return The data file of the plugin.
 	 */
-	public String getDataFile() {
-		return dataFile;
+	public String getDataPath() {
+		return dataPath;
 	}
 	
 	/**
@@ -90,6 +93,14 @@ public final class ZSorting extends ZPlugin implements Listener{
 	 */
 	public BankManager getBankManager() {
 		return bankManager;
+	}
+	
+	/**
+	 * Checks whether the plugin is enable or not.
+	 * @return {@code true} if the plugin is enable, {@code false} otherwise.
+	 */
+	public boolean isEnable() {
+		return enable;
 	}
 	
 	@Override
@@ -118,38 +129,55 @@ public final class ZSorting extends ZPlugin implements Listener{
         		RemoveOutputBankCommand.class
         );
         
-		Load();
-		SortingTask.getInstance().start();
+		if(load()) {
+			SortingTask.getInstance().start();
+		}
     }
 	
     @Override
     public void onDisable() {
-    	Save();
+    	save();
     }
 	
 	/**
-	 * Save the bank manager to a file.
+	 * Save the bank manager to a file. Doesn't do anything if the plugin is disabled.
 	 */
-	private void Save() {		
-		try {			
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(dataFile)));
-			oos.writeObject(bankManager);
-			oos.close();
-		}catch (Exception e) {
-			e.printStackTrace();
+	private void save() {
+		if(enable) {
+			try {			
+				ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(dataPath)));
+				oos.writeObject(bankManager);
+				oos.close();
+			}catch (Exception e) {
+				PluginLogger.error("Couldn't save the bank manager instance on the file %s.", e, dataPath);
+			}
 		}
 	}
 	
 	/**
 	 * Load the BankManager from a file.
+	 * @return {@code true} if the data is successfully loaded, {@code false} otherwise.
 	 */
-	private void Load() {		
-		try {			
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File(dataFile)));
-			bankManager = (BankManager) ois.readObject();
-			ois.close();
-		}catch(IOException | ClassNotFoundException e) {
+	private boolean load() {
+		File dataFile = new File(dataPath);
+		if(dataFile.exists()) {
+			try {			
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(dataFile));
+				bankManager = (BankManager) ois.readObject();
+				ois.close();
+			}catch(IOException | ClassNotFoundException e) {
+				PluginLogger.warning("Cannot read the content of the file {0}. The file might be corrupted.", dataPath);
+				PluginLogger.warning("To prevent all lose of data, the plugin is temporary disabled.");
+				PluginLogger.warning("To enable it, you can either :");
+				PluginLogger.warning("- Fix the file (and keep your data)");
+				PluginLogger.warning("- Remove the file (and loose your data)");
+				enable = false;
+				return false;
+			}
+		}
+		else {
 			bankManager = new BankManager();
 		}
+		return true;
 	}	
 }

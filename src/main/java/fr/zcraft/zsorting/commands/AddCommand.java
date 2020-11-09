@@ -18,16 +18,22 @@ public class AddCommand extends ZSortingCommands{
 	
     @Override
     protected void run() throws CommandException {
+    	checkEnable();
 
+    	//Check the number of arguments
         if (args.length < 2)
             throwInvalidArgument(I.t("A bank name and a description are required."));
 
+        //Get the name
+        String name = args[0];
+        
+        //Get the bank description
         final StringJoiner description = new StringJoiner(" ");
         for (int i = 1; i < args.length; i++)
         	description.add(args[i]);
 
         try {
-        	ZSorting.getInstance().getBankManager().addBank(args[0], description.toString());
+        	ZSorting.getInstance().getBankManager().addBank(name, description.toString());
         	success(I.t("The bank has been created."));
         } catch (ZSortingException e) {
         	error(e.getMessage());

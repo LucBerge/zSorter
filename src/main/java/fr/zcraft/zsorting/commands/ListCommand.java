@@ -22,8 +22,11 @@ public class ListCommand extends ZSortingCommands{
 	
     @Override
     protected void run() throws CommandException {
-        
+    	checkEnable();
+
+        //Get the banks
         Collection<Bank> banks = ZSorting.getInstance().getBankManager().getNameToBank().values();
+        
         if(banks.isEmpty()) {
         	send(new RawText()
 	    			.then(I.t("No bank found."))

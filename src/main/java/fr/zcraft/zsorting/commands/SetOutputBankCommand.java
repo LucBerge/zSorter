@@ -23,7 +23,9 @@ import fr.zcraft.zsorting.ZSortingException;
 public class SetOutputBankCommand extends ZSortingCommands{
 	
     @Override
-    protected void run() throws CommandException {     
+    protected void run() throws CommandException {
+    	checkEnable();
+    	
     	//Check the number of arguments
         if (args.length < 2)
             throwInvalidArgument(I.t("A bank name and an output priority are required."));

@@ -15,6 +15,8 @@ public class InfoCommand extends ZSortingCommands{
 	
     @Override
     protected void run() throws CommandException {
+    	checkEnable();
+    	
     	//Check the number of arguments
         if (args.length < 1)
             throwInvalidArgument(I.t("A bank name is required."));

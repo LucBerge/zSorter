@@ -17,11 +17,17 @@ public class ToggleCommand extends ZSortingCommands{
 	
     @Override
     protected void run() throws CommandException {
+    	checkEnable();
 
+    	//Check the number of arguments
         if (args.length < 1)
             throwInvalidArgument(I.t("A bank name is required."));
 
-        Bank bank = ZSorting.getInstance().getBankManager().getNameToBank().get(args[0]);
+        //Get the name
+        String name = args[0];
+
+        //Get the bank from the name
+        Bank bank = ZSorting.getInstance().getBankManager().getNameToBank().get(name);
         
         if(bank == null) {
             error(I.t("There is no bank with this name."));

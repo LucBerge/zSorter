@@ -22,6 +22,8 @@ public class SetInputBankCommand extends ZSortingCommands{
 	
     @Override
     protected void run() throws CommandException {
+    	checkEnable();
+    	
     	//Check the number of arguments
         if (args.length < 2)
             throwInvalidArgument(I.t("A bank name and an input priority are required."));

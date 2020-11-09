@@ -15,6 +15,8 @@ public class SpeedCommand extends ZSortingCommands{
 	
     @Override
     protected void run() throws CommandException {
+    	checkEnable();
+    	
     	//Check the number of arguments
         if (args.length < 2)
             throwInvalidArgument(I.t("A bank name and a sorting speed are required."));
