@@ -427,7 +427,7 @@ public class Bank implements Serializable{
 	    			.hover(new RawText()
 	        				.then(I.t("Toggle the bank {0}", name)))
 	        			.command(ToggleCommand.class, name)
-		        .then(toCompute ? " RUNNING " : "")
+		        .then(toCompute ? " RUNNING" : "")
 		        	.color(ChatColor.AQUA)
     			.then(" (" + description + ") ")
     				.color(ChatColor.GRAY)
@@ -525,7 +525,7 @@ public class Bank implements Serializable{
 														.map(o -> o.getMaterials())
 														.flatMap(List::stream)
 														.distinct()
-														.sorted()
+														.sorted((m1, m2) -> m1.name().compareTo(m2.name()))
 														.collect(Collectors.toList());
     		
 	    	text

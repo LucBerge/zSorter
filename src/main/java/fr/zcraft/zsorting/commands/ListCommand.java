@@ -48,7 +48,7 @@ public class ListCommand extends ZSortingCommands{
 		    			.hover(new RawText()
 		        				.then(I.t("Toggle the bank {0}", bank.getName())))
 		        			.command(ToggleCommand.class, bank.getName())
-		        	.then(bank.isToCompute() ? " RUNNING " : "")
+		        	.then(bank.isToCompute() ? " RUNNING" : "")
 		        		.color(ChatColor.AQUA)
         			.then(" (" + bank.getDescription() + ") ")
         				.color(ChatColor.GRAY).hover(new RawText()
