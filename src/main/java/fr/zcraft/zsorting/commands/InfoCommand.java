@@ -24,7 +24,7 @@ public class InfoCommand extends ZSortingCommands{
         
         //Get the mode
         int mode = 0;
-        if(args.length > 2) {
+        if(args.length > 1) {
         	try {
         		mode = Integer.parseInt(args[1]);
                 if (mode < 0 || 1 < mode)
