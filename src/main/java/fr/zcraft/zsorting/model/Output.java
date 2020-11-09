@@ -24,6 +24,11 @@ public class Output extends InputOutput implements Serializable{
 	 * List of items that can be sorted here.
 	 */
 	private List<Material> materials;
+	
+	/**
+	 * Specify whether the output is full or not.
+	 */
+	private boolean full;
 
 	/**
 	 * Constructor of an output object.
@@ -33,6 +38,7 @@ public class Output extends InputOutput implements Serializable{
 	public Output(Inventory inventory, Integer priority) {
 		super(inventory, priority);
 		this.materials = new ArrayList<Material>();
+		this.full = false;
 	}
 
 	/**
@@ -52,6 +58,22 @@ public class Output extends InputOutput implements Serializable{
 		this.materials = materials;
 	}
 	
+	/**
+	 * Checks whether the output is full or not.
+	 * @return {@code true} if the output is full, {@code false} otherwise.
+	 */
+	public boolean isFull() {
+		return full;
+	}
+
+	/**
+	 * Defines whether the output is full or not.
+	 * @param full - {@code true} if the output is full, {@code false} otherwise.
+	 */
+	public void setFull(boolean full) {
+		this.full = full;
+	}
+
 	/**
 	 * Checks whether an output is an overflow.
 	 * @return {@code true} if the output is an overflow, {@code false} otherwise.

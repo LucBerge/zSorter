@@ -372,35 +372,41 @@ public class Bank implements Serializable{
     						int amountToTransfer = itemStackToTransfer.getAmount();													//Get the amount to transfer
     						HashMap<Integer, ItemStack> couldntTransferMap = outputInventory.addItem(itemStackToTransfer);			//Add the item to the output
     						if(couldntTransferMap.isEmpty()) {																		//If everything has been transfered
+    							
+    							//Run only if all the item fit in the output
+    							
         						inputInventory.removeItem(itemStackToTransfer);															//Remove the item from the input
+        						if(input.isCloggedUp())																					//If the input is clogged up
+        							input.setCloggedUp(false); 																				//Not clogged up anymore
+        						if(output.isFull())																						//If the output was full
+        							output.setFull(false); 																					//Not full anymore
     							if(cloggingUpMaterials.contains(itemStack.getType()))													//If the stored item was clogging up the inputs
-    	    						cloggingUpMaterials.remove(itemStack.getType());														//Not clogging up anymore
+    								cloggingUpMaterials.remove(itemStack.getType());														//Not clogging up anymore
     							return;																									//Exit
-    						}		
-    						ItemStack itemStackToRemove = itemStackToTransfer.clone();												//Create the stacke to remove
+    						}
+    						
+    						//Run only if the output is full
+    						
+    						if(!output.isFull())																					//If the output was not full
+    							output.setFull(true); 																					//Now is it's full
+    						
+    						ItemStack itemStackToRemove = itemStackToTransfer.clone();												//Create the stack to remove
     						itemStackToRemove.setAmount(amountToTransfer - itemStackToTransfer.getAmount());						//Set the amount to remove
     						inputInventory.removeItem(itemStackToRemove);															//Remove the item from the input
-    						itemStackToTransfer.setAmount(itemStackToTransfer.getAmount());											//Define the new amount to transfert
+    						itemStackToTransfer.setAmount(itemStackToTransfer.getAmount());											//Define the new amount to transfer
     					}
     					
-    					//Run only if no output has been found for this item
-    					if(!cloggingUpMaterials.contains(itemStack.getType()))
-    						cloggingUpMaterials.add(itemStack.getType());
+    					//Run only if this item is clogging up.
+
+						if(!input.isCloggedUp())																	//If the input is not clogging up
+							input.setCloggedUp(true); 																	//Set the input to clogged up
+    					if(!cloggingUpMaterials.contains(itemStack.getType()))										//If the material is not in the list
+    						cloggingUpMaterials.add(itemStack.getType());												//Add the material to the list
     				}
     			}
     		}
     		
     		//Run only if no item has been sorted. Either because there is nothing to sort or because all the outputs are full.
-    		//THIS MIGHT BE AN ISSUE :
-    		//	1. Create a bank
-    		//	2. Add an input
-    		//	3. Add an output of STONE
-    		//	4. Completely fill the input of STONE
-    		//	5. Completely fill the output of STONE
-    		//	6. Toggle the bank
-    		//	7. Nothing is sorted and the following line is run. The bank does not need to be computed anymore.
-    		//	8. Remove the STONE from the output
-    		//	9. The input is full and the output is empty but nothing is sorted
     		
     		toCompute = false;
 		}
@@ -408,9 +414,10 @@ public class Bank implements Serializable{
 	
 	/**
 	 * Returns the bank as a RawText to display it.
+	 * @param byOutput - {@code true} to display by outputs, {@code false} to display be items.
 	 * @return Bank as RawText.
 	 */
-	public RawText toRawText() {
+	public RawText toRawText(boolean byOutput) {
 		commit();
 		RawTextPart text = new RawText("")
     			.then(name)
@@ -418,7 +425,7 @@ public class Bank implements Serializable{
     			.then(isEnable() ? " ON" : " OFF")
     				.color(enable ? ChatColor.GREEN : ChatColor.RED)
 	    			.hover(new RawText()
-	        				.then(I.t("Toggle the bank {0}.", name)))
+	        				.then(I.t("Toggle the bank {0}", name)))
 	        			.command(ToggleCommand.class, name)
 		        .then(toCompute ? " RUNNING " : "")
 		        	.color(ChatColor.AQUA)
@@ -444,11 +451,11 @@ public class Bank implements Serializable{
 		for(Input input:inputs) {
 			text
 				.then("  " + input.getPriority())
-					.color(ChatColor.AQUA)
+					.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
 					.hover(
 						new RawText()
 							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getInventory().getLocation().getX(), input.getInventory().getLocation().getY(), input.getInventory().getLocation().getZ()))
-								.color(ChatColor.AQUA)
+								.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
 					);
     	}
 
@@ -459,45 +466,97 @@ public class Bank implements Serializable{
 		for(Output overflow:overflows) {
 			text
 				.then("  " + overflow.getPriority())
-					.color(ChatColor.AQUA)
+					.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
 					.hover(
 						new RawText()
 							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", overflow.getInventory().getLocation().getX(), overflow.getInventory().getLocation().getY(), overflow.getInventory().getLocation().getZ()))
-								.color(ChatColor.AQUA)
+								.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
 					);
 		}
-
-    	
-		List<Output> outputs = inventoryToOutput
-				.values()
-				.stream()
-				.sorted()
-				.filter(o -> !o.isOverflow())
-				.collect(Collectors.toList());
 		
-    	text
-    		.then("\n  " + I.t("{0} output(s):", outputs.size()))
-    			.color(ChatColor.GRAY);	
-    	
-    	for(Output output:outputs) {
-    		text
-    			.then("\n    " + output.getPriority())
-    				.color(ChatColor.AQUA)
-    				.hover(
-    	    			new RawText()
-        					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
-        						.color(ChatColor.AQUA)
-        			);
+		//if display by output
+		if(byOutput) {
+			List<Output> outputs = inventoryToOutput
+					.values()
+					.stream()
+					.filter(o -> !o.isOverflow())
+					.sorted()
+					.collect(Collectors.toList());
+			
+	    	text
+	    		.then("\n  " + I.t("{0} output(s):", outputs.size()))
+	    			.color(ChatColor.GRAY);	
+	    	
+	    	for(Output output:outputs) {
+	    		text
+	    			.then("\n    " + output.getPriority())
+						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+	    				.hover(
+	    	    			new RawText()
+	        					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
+	        						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+	        			);
+	    		
+	    		List<Material> materials = output.getMaterials()
+	    											.stream()
+	    											.sorted()
+	    											.collect(Collectors.toList());
+	    		
+	    		for(Material material:materials) {
+	    			text
+	    				.then(" " + material.name().toLowerCase())
+	    					.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN);
+	    			if(cloggingUpMaterials.contains(material)) {
+	    				text
+		    				.hover(
+		        	    			new RawText()
+		            					.then(I.t("This material is clogging up one of the inputs"))
+		            						.color(ChatColor.RED)
+		            			);
+	    			}
+	    		}
+			}
+    	}
+    	else{	//if display by items
+    		List<Material> sortedMaterials = inventoryToOutput
+														.values()
+														.stream()
+														.filter(o -> !o.isOverflow())
+														.map(o -> o.getMaterials())
+														.flatMap(List::stream)
+														.distinct()
+														.sorted()
+														.collect(Collectors.toList());
     		
-    		List<Material> materials = output.getMaterials()
-    											.stream()
-    											.sorted()
-    											.collect(Collectors.toList());
-    		
-    		for(Material material:materials)
-    			text
-    				.then(" " + material.name().toLowerCase())
-    					.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN);
+	    	text
+	    		.then("\n  " + I.t("{0} material(s):", sortedMaterials.size()))
+	    			.color(ChatColor.GRAY);
+	    	
+	    	for(Material material:sortedMaterials) {
+	    		
+	    		text
+				.then("\n    " + material.name().toLowerCase())
+					.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN);
+				if(cloggingUpMaterials.contains(material)) {
+					text
+	    				.hover(
+	        	    			new RawText()
+	            					.then(I.t("This material is clogging up one of the inputs"))
+	            						.color(ChatColor.RED)
+	            			);
+				}
+				
+				for(Output output: materialToOutputs.get(material)) {
+					text
+	    			.then("  " + output.getPriority())
+						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+	    				.hover(
+	    	    			new RawText()
+	        					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
+	        						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+	        			);
+				}
+	    	}
     	}
     	return text.build();
 	}

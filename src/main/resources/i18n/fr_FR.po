@@ -126,6 +126,9 @@ msgstr "{0} trop-plein(s):"
 msgid "{0} output(s):"
 msgstr "{0} sortie(s):"
 
+msgid "{0} material(s):"
+msgstr "{0} matériaux:"
+
 msgid "A bank name and a sorting speed are required."
 msgstr "Un nom de banque et une vitesse de tri sont requis."
 
@@ -138,11 +141,11 @@ msgstr "La vitesse de tri doit être un entier."
 msgid "The sorting speed of the bank has been set to {0}."
 msgstr "La vitesse de tri de la banque a été définit à {0}."
 
-msgid "Show the informations of the bank {0}."
-msgstr "Voir les informations de la banque {0}."
+msgid "Show the informations of the bank {0}"
+msgstr "Voir les informations de la banque {0}"
 
-msgid "Toggle the bank {0}."
-msgstr "Changer la banque {0} d'état."
+msgid "Toggle the bank {0}"
+msgstr "Changer la banque {0} d'état"
 
 msgid "speed: {0}"
 msgstr "vitesse: {0}
@@ -155,3 +158,12 @@ msgstr "Changer la description"
 
 msgid "Change the sorting speed"
 msgstr "Changer la vitesse de tri"
+
+msgid "This material is clogging up one of the inputs"
+msgstr "Ce matériaux bouche une des entrées"
+
+msgid "The display mode must be 0 or 1."
+msgstr "Le mode d'affichage doit être 0 ou 1."
+
+msgid "The display mode must be an integer."
+msgstr "Le mode d'affichage doit être un entier."
