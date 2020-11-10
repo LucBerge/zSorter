@@ -15,7 +15,7 @@ public class Config extends Configuration
 	/**
 	 * The default language of the plugin.
 	 */
-	static public final ConfigurationItem<Locale> LANGUAGE = item("language", Locale.FRENCH);
+	static public final ConfigurationItem<Locale> LANGUAGE = item("language", Locale.class);
 	
     /**
      * The maximum number of sorter per map
