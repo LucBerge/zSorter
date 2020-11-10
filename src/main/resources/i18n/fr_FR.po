@@ -129,16 +129,16 @@ msgstr "{0} sortie(s):"
 msgid "{0} material(s):"
 msgstr "{0} matériaux:"
 
-msgid "A sorter name and a sorter speed are required."
+msgid "A sorter name and a sorting speed are required."
 msgstr "Un nom de trieur et une vitesse de tri sont requis."
 
-msgid "The sorter speed must be between 1 and 64."
+msgid "The sorting speed must be between 1 and 64."
 msgstr "La vitesse de tri doit être comprise entre 1 et 64."
 
-msgid "The sorter speed must be an integer."
+msgid "The sorting speed must be an integer."
 msgstr "La vitesse de tri doit être un entier."
 
-msgid "The sorter speed of the sorter has been set to {0}."
+msgid "The sorting speed of the sorter has been set to {0}."
 msgstr "La vitesse de tri du trieur a été définit à {0}."
 
 msgid "Show the informations of the sorter {0}"
@@ -156,7 +156,7 @@ msgstr "vitesse: {0}"
 msgid "Change the description"
 msgstr "Changer la description"
 
-msgid "Change the sorter speed"
+msgid "Change the sorting speed"
 msgstr "Changer la vitesse de tri"
 
 msgid "This material is clogging up one of the inputs"
