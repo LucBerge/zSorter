@@ -1,11 +1,11 @@
 name: zSorter
-version: 0.1
+version: 0.2
 main: fr.zcraft.zsorter.ZSorter
 description: Create and manage sorters in game.
 author: MrDomoo
 
 commands:
-    zsorter:
+    sorter:
         description: Manage your sorters in game
     list:
         description : List all the sorters in the world
@@ -38,5 +38,5 @@ permissions:
             zsorter.admin: true
 
     zsorter.admin:
-        description: "Allow you to modify all the sorters on the map."
+        description: "Allows you to modify all the sorters on the server."
         default: op

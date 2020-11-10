@@ -115,7 +115,7 @@ public final class ZSorter extends ZPlugin implements Listener{
         this.getServer().getPluginManager().registerEvents(new InventoryEvent(), this);
         this.getServer().getPluginManager().registerEvents(new ItemMoveEvent(), this);
         
-        Commands.register("zsorter",
+        Commands.register("sorter",
         		ListCommand.class,
         		AddCommand.class,
         		UpdateCommand.class,
