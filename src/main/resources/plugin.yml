@@ -1,42 +1,42 @@
-name: zSorting
+name: zSorter
 version: 0.1
-main: fr.zcraft.zsorting.ZSorting
-description: Create and manage banks in game.
+main: fr.zcraft.zsorter.ZSorter
+description: Create and manage sorters in game.
 author: MrDomoo
 
 commands:
-    zsorting:
-        description: Manage your banks in game
+    zsorter:
+        description: Manage your sorters in game
     list:
-        description : List all the banks in the world
+        description : List all the sorters in the world
     add:
-        description : Create a new bank
+        description : Create a new sorter
     update:
-        description : Update a bank description
+        description : Update a sorter description
     speed:
-        description : Change the sorting speed (number of item per tick).
+        description : Change the sorter speed (number of item per tick).
     delete:
-        description : Delete a bank
+        description : Delete a sorter
     info:
-        description : Display a bank informations
+        description : Display a sorter informations
     toggle:
-        description : Enable/Disable a bank
+        description : Enable/Disable a sorter
     set_input:
-        description : Add an input to a bank
+        description : Add an input to a sorter
     set_output:
-        description : Add an output to a bank
+        description : Add an output to a sorter
     remove_input:
-        description : Delete a bank input
+        description : Delete a sorter input
     remove_output:
-        description : Delete a bank output
+        description : Delete a sorter output
         
 # Permissions section generated using https://amaury.carrade.eu/tools/generators/bukkit/permissions.html
 permissions:
-    zsorting.*:
+    zsorter.*:
         default: false
         children:
-            zsorting.admin: true
+            zsorter.admin: true
 
-    zsorting.admin:
-        description: "Allow you to modify all the banks on the map."
+    zsorter.admin:
+        description: "Allow you to modify all the sorters on the map."
         default: op

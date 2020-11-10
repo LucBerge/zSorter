@@ -1,11 +1,11 @@
 #Plugin language
 language: fr_FR
 
-#Maximum of banks per map
-max_banks: 100
+#Maximum of sorters per map
+max_sorters: 100
 
-#Maximum of input per bank
+#Maximum of input per sorter
 max_inputs: 100
 
-#Maximum of output per bank
+#Maximum of output per sorter
 max_ouputs: 10000

@@ -18,32 +18,32 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "Language: fr_FR\n"
 
-msgid "A bank name and a description are required."
-msgstr "Un nom de banque et une description sont requis."
+msgid "A sorter name and a description are required."
+msgstr "Un nom de trieur et une description sont requis."
 
-msgid "The bank has been created and selected."
-msgstr "La banque a été créé."
+msgid "The sorter has been created and selected."
+msgstr "Le trieur a été créé."
 
-msgid "A bank with this name already exists."
-msgstr "Une banque avec ce nom existe déjà."
+msgid "A sorter with this name already exists."
+msgstr "Un trieur avec ce nom existe déjà."
 
-msgid "A bank name is required."
-msgstr "Un nom de banque est requis."
+msgid "A sorter name is required."
+msgstr "Un nom de trieur est requis."
 
-msgid "There is no bank with this name."
-msgstr "Il n'existe aucune banque à ce nom."
+msgid "There is no sorter with this name."
+msgstr "Il n'existe aucun trieur à ce nom."
 
-msgid "No bank found."
-msgstr "Aucune banque n'a été trouvé."
+msgid "No sorter found."
+msgstr "Aucun trieur n'a été trouvé."
 
-msgid "Show the informations of the bank {0}"
-msgstr "Voir les informations de la banque {0}"
+msgid "Show the informations of the sorter {0}"
+msgstr "Voir les informations du trieur {0}"
 
-msgid "The bank description has been removed."
-msgstr "La banque a été supprimé"
+msgid "The sorter description has been updated."
+msgstr "La description du trieur a été mise à jour."
 
-msgid "The bank has been removed."
-msgstr "La banque a été supprimé"
+msgid "The sorter has been removed."
+msgstr "Le trieur a été supprimé"
 
 msgid "This holder is no longer an input."
 msgstr "Ce contenant n'est plus une entrée."
@@ -63,8 +63,8 @@ msgstr "Ce contenant n'est pas une sortie."
 msgid "An output must be a holder."
 msgstr "Une sortie doit être un contenant."
 
-msgid "A bank name and an input priority are required."
-msgstr "Un nom de banque et une priorité d'entrée sont requis."
+msgid "A sorter name and an input priority are required."
+msgstr "Un nom de trieur et une priorité d'entrée sont requis."
 
 msgid "The input priority must be higher or equal to 1."
 msgstr "La priorité d'entrée doit être suppérieure ou égale à 1."
@@ -72,8 +72,8 @@ msgstr "La priorité d'entrée doit être suppérieure ou égale à 1."
 msgid "The input priority must be an integer."
 msgstr "La priorité d'entrée doit être un entier."
 
-msgid "This holder is already in use by the bank {0}."
-msgstr "Ce contenant est déjà utilisé par la banque {0}."
+msgid "This holder is already in use by the sorter {0}."
+msgstr "Ce contenant est déjà utilisé par le trieur {0}."
 
 msgid "This holder is already an input."
 msgstr "Ce contenant est déjà une entrée."
@@ -81,8 +81,8 @@ msgstr "Ce contenant est déjà une entrée."
 msgid "This holder is now an input of priority {0}."
 msgstr "Ce contenant est désormais une entrée de prioritée {0}."
 
-msgid "A bank name and an output priority are required."
-msgstr "Un nom de banque et une priorité de sortie sont requis."
+msgid "A sorter name and an output priority are required."
+msgstr "Un nom de trieur et une priorité de sortie sont requis."
 
 msgid "The output priority must be higher or equal to 1."
 msgstr "La priorité de sortie doit être suppérieure ou égale à 1."
@@ -99,23 +99,23 @@ msgstr "Ce contenant est déjà une sortie."
 msgid "This holder is now an output of priority {0}."
 msgstr "Ce contenant est désormais une sortie de prioritée {0}."
 
-msgid "The bank does not have any overflow. Some items might clog up the inputs."
-msgstr "La banque ne possède pas de trop-plein. Certains items risquent de boucher les entrées."
+msgid "The sorter does not have any overflow. Some items might clog up the inputs."
+msgstr "Le trieur ne possède pas de trop-plein. Certains items risquent de boucher les entrées."
 
-msgid "The bank does not have any input."
-msgstr "La banque ne possède pas d'entrée."
+msgid "The sorter does not have any input."
+msgstr "Le trieur ne possède pas d'entrée."
 
-msgid "The bank has been enabled."
-msgstr "La banque a été activée."
+msgid "The sorter has been enabled."
+msgstr "Le trieur a été activée."
 
-msgid "The bank has been disabled."
-msgstr "La banque a été désactivée."
+msgid "The sorter has been disabled."
+msgstr "Le trieur a été désactivée."
 
-msgid "This holder was an input of the bank {0}. It has been removed from it."
-msgstr "Ce contenant était une entrée de la banque {0}. Il a été supprimé de celle-ci."
+msgid "This holder was an input of the sorter {0}. It has been removed from it."
+msgstr "Ce contenant était une entrée du trieur {0}. Il a été supprimé de celui-ci."
 
-msgid "This holder was an output of the bank {0}. It has been removed from it."
-msgstr "Ce contenant était une sortie de la banque {0}. Il a été supprimé de celle-ci."
+msgid "This holder was an output of the sorter {0}. It has been removed from it."
+msgstr "Ce contenant était une sortie du trieur {0}. Il a été supprimé de celui-ci."
 
 msgid "{0} input(s):"
 msgstr "{0} entrée(s):"
@@ -129,23 +129,23 @@ msgstr "{0} sortie(s):"
 msgid "{0} material(s):"
 msgstr "{0} matériaux:"
 
-msgid "A bank name and a sorting speed are required."
-msgstr "Un nom de banque et une vitesse de tri sont requis."
+msgid "A sorter name and a sorter speed are required."
+msgstr "Un nom de trieur et une vitesse de tri sont requis."
 
-msgid "The sorting speed must be between 1 and 64."
+msgid "The sorter speed must be between 1 and 64."
 msgstr "La vitesse de tri doit être comprise entre 1 et 64."
 
-msgid "The sorting speed must be an integer."
+msgid "The sorter speed must be an integer."
 msgstr "La vitesse de tri doit être un entier."
 
-msgid "The sorting speed of the bank has been set to {0}."
-msgstr "La vitesse de tri de la banque a été définit à {0}."
+msgid "The sorter speed of the sorter has been set to {0}."
+msgstr "La vitesse de tri du trieur a été définit à {0}."
 
-msgid "Show the informations of the bank {0}"
-msgstr "Voir les informations de la banque {0}"
+msgid "Show the informations of the sorter {0}"
+msgstr "Voir les informations du trieur {0}"
 
-msgid "Toggle the bank {0}"
-msgstr "Changer la banque {0} d'état"
+msgid "Toggle the sorter {0}"
+msgstr "Changer le trieur {0} d'état"
 
 msgid "speed: {0}"
 msgstr "vitesse: {0}
@@ -156,7 +156,7 @@ msgstr "vitesse: {0}"
 msgid "Change the description"
 msgstr "Changer la description"
 
-msgid "Change the sorting speed"
+msgid "Change the sorter speed"
 msgstr "Changer la vitesse de tri"
 
 msgid "This material is clogging up one of the inputs"
