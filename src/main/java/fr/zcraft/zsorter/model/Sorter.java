@@ -415,10 +415,10 @@ public class Sorter implements Serializable{
 	
 	/**
 	 * Returns the sorter as a RawText to display it.
-	 * @param byOutput - {@code true} to display by outputs, {@code false} to display be items.
+	 * @param mode - The mode to display the sorter.
 	 * @return Sorter as RawText.
 	 */
-	public RawText toRawText(boolean byOutput) {
+	public RawText toRawText(DisplayMode mode) {
 		commit();
 		RawTextPart text = new RawText("")
     			.then(name)
@@ -476,7 +476,7 @@ public class Sorter implements Serializable{
 		}
 		
 		//if display by output
-		if(byOutput) {
+		if(mode == DisplayMode.OUTPUTS) {
 			List<Output> outputs = inventoryToOutput
 					.values()
 					.stream()
@@ -518,7 +518,8 @@ public class Sorter implements Serializable{
 	    		}
 			}
     	}
-    	else{	//if display by items
+		//If display by items
+    	else if(mode == DisplayMode.ITEMS){
     		List<Material> sortedMaterials = inventoryToOutput
 														.values()
 														.stream()

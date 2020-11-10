@@ -162,8 +162,5 @@ msgstr "Changer la vitesse de tri"
 msgid "This material is clogging up one of the inputs"
 msgstr "Ce matériaux bouche une des entrées"
 
-msgid "The display mode must be 0 or 1."
-msgstr "Le mode d'affichage doit être 0 ou 1."
-
-msgid "The display mode must be an integer."
-msgstr "Le mode d'affichage doit être un entier."
+msgid "The display mode must be either <OUTPUTS> or <ITEMS>."
+msgstr "Le mode d'affichage peut être <OUTPUTS> ou <ITEMS>."

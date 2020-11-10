@@ -4,6 +4,7 @@ import fr.zcraft.zlib.components.commands.CommandException;
 import fr.zcraft.zlib.components.commands.CommandInfo;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorter;
+import fr.zcraft.zsorter.model.DisplayMode;
 import fr.zcraft.zsorter.model.Sorter;
 
 /**
@@ -25,17 +26,16 @@ public class InfoCommand extends ZSorterCommands{
         String name = args[0];
         
         //Get the mode
-        int mode = 0;
+        DisplayMode mode = DisplayMode.OUTPUTS;
         if(args.length > 1) {
         	try {
-        		mode = Integer.parseInt(args[1]);
-                if (mode < 0 || 1 < mode)
-                    throwInvalidArgument(I.t("The display mode must be 0 or 1."));
-            }catch(NumberFormatException e) {
-                throwInvalidArgument(I.t("The display mode must be an integer."));
-            }
+        		mode = DisplayMode.valueOf(args[1]);
+        	}
+        	catch(IllegalArgumentException e) {
+        		throwInvalidArgument(I.t("The display mode must be either <OUTPUTS> or <ITEMS>."));
+        	}
         }
-        
+
         //Get the sorter from the name
         Sorter sorter = ZSorter.getInstance().getSorterManager().getNameToSorter().get(name);
         
@@ -43,7 +43,7 @@ public class InfoCommand extends ZSorterCommands{
             error(I.t("There is no sorter with this name."));
         }
         else {
-        	send(sorter.toRawText(mode > 0));
+        	send(sorter.toRawText(mode));
         }
     }
 }
