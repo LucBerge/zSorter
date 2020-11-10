@@ -11,6 +11,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 import fr.zcraft.zsorter.ZSorter;
+import fr.zcraft.zsorter.utils.InventoryUtils;
 
 /**
  * The class {@code InputOutput} represents an input or an output of a sorter.
@@ -146,5 +147,6 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
         	throw new IOException(String.format("The block at the location x=%d, y=%d, z=%d in the world %s is not a holder. The input/output at this location will be removed.", x, y, z, worldName));
         
 		inventory = ((InventoryHolder) block.getState()).getInventory();
+		inventory = InventoryUtils.doubleInventoryToSimpleInventory(inventory);
 	}
 }

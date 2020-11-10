@@ -182,7 +182,7 @@ public class SorterManager implements Serializable{
 	
 	/**
 	 * Compute the sorter associated with this inventory.
-	 * Don't do anything if the inventory is not an input.
+	 * Don't do anything if the inventory is not an input or an output.
 	 * @param inventory - Inventory of the sorter to compute.
 	 * @return {@code true} if the sorter has been computed, {@code false} otherwise.
 	 */

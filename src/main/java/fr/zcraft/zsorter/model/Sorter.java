@@ -23,6 +23,7 @@ import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.commands.SpeedCommand;
 import fr.zcraft.zsorter.commands.ToggleCommand;
 import fr.zcraft.zsorter.commands.UpdateCommand;
+import fr.zcraft.zsorter.utils.InventoryUtils;
 
 /**
  * The class {@code Sorter} represents a sorter in the game.<br><br>
@@ -360,7 +361,7 @@ public class Sorter implements Serializable{
 	public void computeSorting() {
 		if(isEnable()) {																						//If the sorter is ON
     		for(Input input:inputs) {																				//For each input in the sorter
-    			Inventory inputInventory = input.getInventory();														//Get the input inventory
+    			Inventory inputInventory = InventoryUtils.simpleInventoryToDoubleInventory(input.getInventory());		//Get the input inventory
     			for(ItemStack itemStack: inputInventory.getContents()) {												//For each item in the input inventory
     				if(itemStack != null) {																					//If the item is not null
     					ItemStack itemStackToTransfer = itemStack.clone();														//Clone the item to keep the metadata
@@ -368,7 +369,7 @@ public class Sorter implements Serializable{
 							itemStackToTransfer.setAmount(speed);																	//Set to the speed limit
     					List<Output> outputs = findOutputs(itemStack.getType());												//Find the outputs for this item
     					for(Output output:outputs) {																			//For each possible output
-    						Inventory outputInventory = output.getInventory();														//Get the output inventory
+    						Inventory outputInventory = InventoryUtils.simpleInventoryToDoubleInventory(output.getInventory());		//Get the output inventory
     						int amountToTransfer = itemStackToTransfer.getAmount();													//Get the amount to transfer
     						HashMap<Integer, ItemStack> couldntTransferMap = outputInventory.addItem(itemStackToTransfer);			//Add the item to the output
     						if(couldntTransferMap.isEmpty()) {																		//If everything has been transfered

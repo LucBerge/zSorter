@@ -12,6 +12,7 @@ import fr.zcraft.zlib.components.commands.CommandInfo;
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.ZSorterException;
+import fr.zcraft.zsorter.utils.InventoryUtils;
 
 /**
  * Command triggered to remove an input.
@@ -35,7 +36,9 @@ public class RemoveInputCommand extends ZSorterCommands{
         Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
         if(!(block.getState() instanceof InventoryHolder))
         	throwInvalidArgument(I.t("An input must be a holder."));
-        Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
+
+		InventoryHolder holder = (InventoryHolder) block.getState();
+        Inventory inventory = InventoryUtils.doubleInventoryToSimpleInventory(holder.getInventory());
         
         //Try to remove the input from the sorter
         try {

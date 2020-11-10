@@ -3,8 +3,10 @@ package fr.zcraft.zsorter.events;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.inventory.Inventory;
 
 import fr.zcraft.zsorter.ZSorter;
+import fr.zcraft.zsorter.utils.InventoryUtils;
 
 /**
  * Event called when a block is broken.
@@ -19,8 +21,11 @@ public class ItemMoveEvent implements Listener{
      */
 	@EventHandler
 	public void onInventoryMoveItem(InventoryMoveItemEvent e) {
-		boolean computed = ZSorter.getInstance().getSorterManager().computeSorter(e.getDestination());	//Try to compute the sorter with this input
-		if(!computed)																				//If no computed
-			ZSorter.getInstance().getSorterManager().computeSorter(e.getSource());							//Try to compute the sorter with this output
+        Inventory inputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getDestination());		//Get the inventory if double chest
+		boolean computed = ZSorter.getInstance().getSorterManager().computeSorter(inputInventory);		//Try to compute the sorter with this input
+		if(!computed) {																					//If no computed
+	        Inventory outputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getSource());			//Get the inventory if double chest
+			ZSorter.getInstance().getSorterManager().computeSorter(outputInventory);						//Try to compute the sorter with this output
+		}
 	}
 }
