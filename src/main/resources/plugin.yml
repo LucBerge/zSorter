@@ -9,7 +9,7 @@ commands:
         description: Manage your sorters in game
     list:
         description : List all the sorters in the world
-    add:
+    create:
         description : Create a new sorter
     update:
         description : Update a sorter description

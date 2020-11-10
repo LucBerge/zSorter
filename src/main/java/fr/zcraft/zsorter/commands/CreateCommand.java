@@ -13,8 +13,8 @@ import fr.zcraft.zsorter.ZSorterException;
  * Command triggered to create a sorter.
  * @author Lucas
  */
-@CommandInfo (name = "add", usageParameters = "<name> <description>")
-public class AddCommand extends ZSorterCommands{
+@CommandInfo (name = "create", usageParameters = "<name> <description>")
+public class CreateCommand extends ZSorterCommands{
 	
     @Override
     protected void run() throws CommandException {
@@ -33,7 +33,7 @@ public class AddCommand extends ZSorterCommands{
         	description.add(args[i]);
 
         try {
-        	ZSorter.getInstance().getSorterManager().addSorter(name, description.toString());
+        	ZSorter.getInstance().getSorterManager().createSorter(name, description.toString());
         	success(I.t("The sorter has been created."));
         } catch (ZSorterException e) {
         	error(e.getMessage());

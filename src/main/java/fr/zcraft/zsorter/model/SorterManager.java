@@ -64,7 +64,7 @@ public class SorterManager implements Serializable{
 	 * @return The created sorter object.
 	 * @throws ZSorterException if a sorter with this name already exists.
 	 */
-	public Sorter addSorter(String name, String description) throws ZSorterException {
+	public Sorter createSorter(String name, String description) throws ZSorterException {
 		Sorter sorter = new Sorter(name, description);										//Create a new sorter
 		if(nameToSorter.putIfAbsent(name, sorter) != null)										//If a sorter with this name already exists
 			throw new ZSorterException(I.t("A sorter with this name already exists"));

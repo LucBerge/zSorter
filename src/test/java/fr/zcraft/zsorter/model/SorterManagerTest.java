@@ -32,12 +32,12 @@ public class SorterManagerTest extends ZSorterTest{
 	public void addRemoveTest() throws ZSorterException{
 		//Create a manager, add a sorter and test if the sorter has been added
 		SorterManager manager = new SorterManager();
-		manager.addSorter("addRemoveTestSorter", "Description");
+		manager.createSorter("addRemoveTestSorter", "Description");
 		Assert.assertEquals(1, manager.getNameToSorter().values().size());
 		
 		//Add a sorter and check if exception thrown
 		Assert.assertThrows(ZSorterException.class, () -> {
-			manager.addSorter("addRemoveTestSorter", "Description");
+			manager.createSorter("addRemoveTestSorter", "Description");
 		});
 
 		//Remove a sorter and check if one removed
@@ -58,14 +58,14 @@ public class SorterManagerTest extends ZSorterTest{
 	public void findFromInventoryTest() throws ZSorterException {
 		
 		//Create a sorter, add 2 inputs and test if the sorter if found
-		Sorter sorter1 = manager.addSorter("findFromInventoryTestSorter1", "Description");
+		Sorter sorter1 = manager.createSorter("findFromInventoryTestSorter1", "Description");
 		sorter1.setInput(inventory0, 1);
 		sorter1.setInput(inventory1, 1);
 		Assert.assertEquals(sorter1, manager.getInventoryToSorter().get(inventory0));
 		Assert.assertEquals(sorter1, manager.getInventoryToSorter().get(inventory1));
 
 		//Create a sorter, add 1 input and test if the sorter if found
-		Sorter sorter2 = manager.addSorter("findFromInventoryTestSorter2", "Description");
+		Sorter sorter2 = manager.createSorter("findFromInventoryTestSorter2", "Description");
 		sorter2.setInput(inventory2, 1);
 		Assert.assertEquals(sorter2, manager.getInventoryToSorter().get(inventory2));
 
@@ -93,8 +93,8 @@ public class SorterManagerTest extends ZSorterTest{
 		SorterManager manager = new SorterManager();
 		
 		//Add two sorters and tests if no sorter is found
-		Sorter sorter1 = manager.addSorter("canComputeTestSorter1", "Description");
-		Sorter sorter2 = manager.addSorter("canComputeTestSorter2", "Description");
+		Sorter sorter1 = manager.createSorter("canComputeTestSorter1", "Description");
+		Sorter sorter2 = manager.createSorter("canComputeTestSorter2", "Description");
 		Assert.assertEquals(Arrays.asList(), manager.canCompute());
 		
 		//Set the sorter1 canCompute flag to true and tests if the sorter1 is found
@@ -124,7 +124,7 @@ public class SorterManagerTest extends ZSorterTest{
 	@Test
 	public void serializationTest() throws ZSorterException, FileNotFoundException, IOException, ClassNotFoundException {
 		SorterManager manager = new SorterManager();
-		Sorter sorter = manager.addSorter("test", "Simple test sorter");
+		Sorter sorter = manager.createSorter("test", "Simple test sorter");
 		manager.setInput("test", inventory0, 1);
 		manager.setOutput("test", inventory1, 1, Arrays.asList(Material.IRON_INGOT));
 		manager.setOutput("test", inventory2, 1, Arrays.asList());

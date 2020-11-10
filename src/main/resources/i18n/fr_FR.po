@@ -21,7 +21,7 @@ msgstr ""
 msgid "A sorter name and a description are required."
 msgstr "Un nom de trieur et une description sont requis."
 
-msgid "The sorter has been created and selected."
+msgid "The sorter has been created."
 msgstr "Le trieur a été créé."
 
 msgid "A sorter with this name already exists."

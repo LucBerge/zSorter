@@ -15,7 +15,7 @@ import fr.zcraft.zlib.components.commands.Commands;
 import fr.zcraft.zlib.components.i18n.I18n;
 import fr.zcraft.zlib.core.ZPlugin;
 import fr.zcraft.zlib.tools.PluginLogger;
-import fr.zcraft.zsorter.commands.AddCommand;
+import fr.zcraft.zsorter.commands.CreateCommand;
 import fr.zcraft.zsorter.commands.DeleteCommand;
 import fr.zcraft.zsorter.commands.InfoCommand;
 import fr.zcraft.zsorter.commands.ListCommand;
@@ -117,7 +117,7 @@ public final class ZSorter extends ZPlugin implements Listener{
         
         Commands.register("sorter",
         		ListCommand.class,
-        		AddCommand.class,
+        		CreateCommand.class,
         		UpdateCommand.class,
         		SpeedCommand.class,
         		DeleteCommand.class,
