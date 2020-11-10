@@ -51,7 +51,7 @@ public class SetOutputCommand extends ZSorterCommands{
         		if(material != null)
         			materials.add(material);
         		else
-        			error(I.t("Could not found material {0} : Ignored.", args[i]));
+        			error(I.t("Unknown material {0}.", args[i]));
         	}
         }
         

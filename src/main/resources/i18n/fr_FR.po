@@ -90,8 +90,8 @@ msgstr "La priorité de sortie doit être suppérieure ou égale à 1."
 msgid "The output priority must be an integer."
 msgstr "La priorité de sortie doit être un entier."
 
-msgid "Could not found material {0} : Ignored."
-msgstr "Impossible de trouver le matériaux {0} : Ignoré."
+msgid "Unknown material {0}."
+msgstr "Matériaux {0} inconnu."
 
 msgid "This holder is already an output."
 msgstr "Ce contenant est déjà une sortie."
