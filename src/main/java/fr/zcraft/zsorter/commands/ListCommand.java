@@ -55,7 +55,7 @@ public class ListCommand extends ZSorterCommands{
 		        		.color(ChatColor.AQUA)
         			.then(" (" + sorter.getDescription() + ") ")
         				.color(ChatColor.GRAY).hover(new RawText()
-    	        				.then(I.t("Update the description")))
+    	        				.then(I.t("Change the description")))
     	        			.suggest(UpdateCommand.class, sorter.getName());
         	}
         	send(text.build());

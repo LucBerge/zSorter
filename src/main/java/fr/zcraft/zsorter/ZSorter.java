@@ -1,15 +1,18 @@
 package fr.zcraft.zsorter;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import fr.zcraft.zlib.components.commands.Commands;
 import fr.zcraft.zlib.components.i18n.I18n;
@@ -30,6 +33,8 @@ import fr.zcraft.zsorter.events.HolderBreakEvent;
 import fr.zcraft.zsorter.events.InventoryEvent;
 import fr.zcraft.zsorter.events.ItemMoveEvent;
 import fr.zcraft.zsorter.model.SorterManager;
+import fr.zcraft.zsorter.model.serializer.InventoryAdapter;
+import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory;
 import fr.zcraft.zsorter.tasks.SortTask;
 
 /**
@@ -144,10 +149,14 @@ public final class ZSorter extends ZPlugin implements Listener{
 	 */
 	private void save() {
 		if(enable) {
-			try {			
-				ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(dataPath)));
-				oos.writeObject(sorterManager);
-				oos.close();
+			try {
+				GsonBuilder gsonBuilder = new GsonBuilder();
+				gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
+				gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+				Gson customGson = gsonBuilder.create();
+				FileWriter fr = new FileWriter(dataPath);
+				fr.write(customGson.toJson(sorterManager));
+				fr.close();
 			}catch (Exception e) {
 				PluginLogger.error("Couldn't save the sorter manager instance on the file %s.", e, dataPath);
 			}
@@ -161,11 +170,15 @@ public final class ZSorter extends ZPlugin implements Listener{
 	private boolean load() {
 		File dataFile = new File(dataPath);
 		if(dataFile.exists()) {
-			try {			
-				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(dataFile));
-				sorterManager = (SorterManager) ois.readObject();
-				ois.close();
-			}catch(IOException | ClassNotFoundException e) {
+			try {
+				GsonBuilder gsonBuilder = new GsonBuilder();
+				gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
+				gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+				Gson customGson = gsonBuilder.create();
+				BufferedReader br = new BufferedReader(new FileReader(dataFile));
+				sorterManager = customGson.fromJson(br, SorterManager.class);
+				br.close();
+			}catch(IOException e) {
 				PluginLogger.warning("Cannot read the content of the file {0}. The file might be corrupted.", dataPath);
 				PluginLogger.warning("To prevent all lose of data, the plugin is temporary disabled.");
 				PluginLogger.warning("To enable it, you can either :");

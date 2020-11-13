@@ -1,17 +1,8 @@
 package fr.zcraft.zsorter.model;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-
-import fr.zcraft.zsorter.ZSorter;
-import fr.zcraft.zsorter.utils.InventoryUtils;
 
 /**
  * The class {@code InputOutput} represents an input or an output of a sorter.
@@ -28,7 +19,7 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	/**
 	 * Inventory of the InputOutput.
 	 */
-	private transient Inventory inventory;
+	private Inventory inventory;
 	
 	/**
 	 * Priority of the InputOutput.
@@ -111,42 +102,5 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 		if (priority != other.priority)
 			return false;
 		return true;
-	}
-
-	private void writeObject(ObjectOutputStream oos) throws IOException
-	{
-		oos.defaultWriteObject();
-		oos.writeObject(inventory.getLocation().getWorld().getName());
-		oos.writeInt(inventory.getLocation().getBlockX());
-		oos.writeInt(inventory.getLocation().getBlockY());
-		oos.writeInt(inventory.getLocation().getBlockZ());
-	}
-
-	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException
-	{
-		ois.defaultReadObject();
-		String worldName = (String)ois.readObject();
-		int x = ois.readInt();
-		int y = ois.readInt();
-		int z = ois.readInt();
-		
-		if(worldName == null)
-			throw new IOException("The inventory world name is null. The input/output will be removed.");
-		
-		World world = ZSorter.getInstance().getServer().getWorld(worldName);
-		
-		if(world == null)
-			throw new IOException(String.format("The world %s does not exist anymore. The input/output in this world will be removed.", worldName));
-
-		Block block = world.getBlockAt(x, y, z);
-		
-		if(block == null)
-        	throw new IOException(String.format("The block at the location x=%d, y=%d, z=%d in the world %s does not exist. The input/output at this location will be removed.", x, y, z, worldName));
-        
-		if(!(block.getState() instanceof InventoryHolder))
-        	throw new IOException(String.format("The block at the location x=%d, y=%d, z=%d in the world %s is not a holder. The input/output at this location will be removed.", x, y, z, worldName));
-        
-		inventory = ((InventoryHolder) block.getState()).getInventory();
-		inventory = InventoryUtils.doubleInventoryToSimpleInventory(inventory);
 	}
 }
