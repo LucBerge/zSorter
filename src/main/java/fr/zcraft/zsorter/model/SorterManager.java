@@ -12,14 +12,13 @@ import org.bukkit.inventory.Inventory;
 
 import fr.zcraft.zlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorterException;
-import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory.PostProcessable;
 import fr.zcraft.zsorter.tasks.SortTask;
 
 /**
  * The class {@code SorterManager} is used to manage sorters.
  * @author Lucas
  */
-public class SorterManager implements Serializable, PostProcessable{
+public class SorterManager implements Serializable{
 
 	/**
 	 * Serial Version UID
@@ -244,19 +243,5 @@ public class SorterManager implements Serializable, PostProcessable{
 		} else if (!nameToSorter.equals(other.nameToSorter))
 			return false;
 		return true;
-	}
-
-	@Override
-	public void postProcess() {
-		
-		inventoryToSorter = new HashMap<Inventory, Sorter>();
-		for(Sorter sorter:nameToSorter.values()) {
-			for(Input input:sorter.getInventoryToInput().values()) {
-				inventoryToSorter.putIfAbsent(input.getInventory(), sorter);
-			}
-			for(Output output:sorter.getInventoryToOutput().values()) {
-				inventoryToSorter.putIfAbsent(output.getInventory(), sorter);
-			}
-		}
 	}
 }

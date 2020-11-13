@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import fr.zcraft.zlib.components.commands.Commands;
 import fr.zcraft.zlib.components.i18n.I18n;
@@ -35,6 +36,7 @@ import fr.zcraft.zsorter.events.ItemMoveEvent;
 import fr.zcraft.zsorter.model.SorterManager;
 import fr.zcraft.zsorter.model.serializer.InventoryAdapter;
 import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory;
+import fr.zcraft.zsorter.model.serializer.SorterManagerAdapter;
 import fr.zcraft.zsorter.tasks.SortTask;
 
 /**
@@ -78,7 +80,7 @@ public final class ZSorter extends ZPlugin implements Listener{
         super(loader, description, dataFolder, file);
     }
 	
-	private final String dataPath = this.getDataFolder() + "/zsorter.dat";
+	private final String dataPath = this.getDataFolder() + "\\zsorter.json";
 	
 	private SorterManager sorterManager;
 	
@@ -141,25 +143,25 @@ public final class ZSorter extends ZPlugin implements Listener{
 	
     @Override
     public void onDisable() {
-    	save();
+    	if(enable)
+    		save();
     }
 	
 	/**
-	 * Save the sorter manager to a file. Doesn't do anything if the plugin is disabled.
+	 * Save the sorter manager to a file.
 	 */
 	private void save() {
-		if(enable) {
-			try {
-				GsonBuilder gsonBuilder = new GsonBuilder();
-				gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
-				gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
-				Gson customGson = gsonBuilder.create();
-				FileWriter fr = new FileWriter(dataPath);
-				fr.write(customGson.toJson(sorterManager));
-				fr.close();
-			}catch (Exception e) {
-				PluginLogger.error("Couldn't save the sorter manager instance on the file %s.", e, dataPath);
-			}
+		try {
+			GsonBuilder gsonBuilder = new GsonBuilder();
+			gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
+			gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+			gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
+			Gson customGson = gsonBuilder.create();
+			FileWriter fr = new FileWriter(dataPath);
+			fr.write(customGson.toJson(sorterManager));
+			fr.close();
+		}catch (IOException e) {
+			PluginLogger.error("Couldn't save the sorter manager instance on the file %s.", e, dataPath);
 		}
 	}
 	
@@ -174,11 +176,16 @@ public final class ZSorter extends ZPlugin implements Listener{
 				GsonBuilder gsonBuilder = new GsonBuilder();
 				gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
 				gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+				gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
 				Gson customGson = gsonBuilder.create();
 				BufferedReader br = new BufferedReader(new FileReader(dataFile));
 				sorterManager = customGson.fromJson(br, SorterManager.class);
+				
+				if(sorterManager == null)					//If the file was empty
+					sorterManager = new SorterManager();
+				
 				br.close();
-			}catch(IOException e) {
+			}catch(IOException | JsonSyntaxException e) {
 				PluginLogger.warning("Cannot read the content of the file {0}. The file might be corrupted.", dataPath);
 				PluginLogger.warning("To prevent all lose of data, the plugin is temporary disabled.");
 				PluginLogger.warning("To enable it, you can either :");

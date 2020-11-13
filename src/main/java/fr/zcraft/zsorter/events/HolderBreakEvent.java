@@ -25,22 +25,20 @@ public class HolderBreakEvent implements Listener{
      */
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-
-    	if(e.getBlock().getState() instanceof InventoryHolder) {
-    		for(Sorter sorter:ZSorter.getInstance().getSorterManager().getNameToSorter().values()) {
-    			if(e.getBlock().getState() instanceof InventoryHolder) {
-    				
-    				InventoryHolder holder = (InventoryHolder) e.getBlock().getState();
-    		        Inventory inventory = InventoryUtils.doubleInventoryToSimpleInventory(holder.getInventory());
-    				
-        			if(sorter.removeInput(inventory) != null){
-        				e.getPlayer().sendMessage(ChatColor.RED + I.t("This holder was an input of the sorter {0}. It has been removed from it.", sorter.getName()));
-        			}
-        			if(sorter.removeOutput(inventory) != null){
-        				e.getPlayer().sendMessage(ChatColor.RED + I.t("This holder was an output of the sorter {0}. It has been removed from it.", sorter.getName()));
-        			}
-    			}
-    		}
+    	if(ZSorter.getInstance().isEnable()) {																//If the plugin is not enable
+	    	if(e.getBlock().getState() instanceof InventoryHolder) {											//If the block is an inventory holder
+				InventoryHolder holder = (InventoryHolder) e.getBlock().getState();									//Get the holder block
+		        Inventory inventory = InventoryUtils.doubleInventoryToSimpleInventory(holder.getInventory());		//Get the inventory
+		        Sorter sorter = ZSorter.getInstance().getSorterManager().getInventoryToSorter().get(inventory);		//Get the associated sorter
+		        if(sorter != null) {																				//If a sorter has been found
+		        	if(sorter.removeInput(inventory) != null){															//Try to remove the input inventory
+		        		e.getPlayer().sendMessage(ChatColor.RED + I.t("This holder was an input of the sorter {0}. It has been removed from it.", sorter.getName()));
+		        	}
+		        	if(sorter.removeOutput(inventory) != null){															//Try to remove the output inventory
+		        		e.getPlayer().sendMessage(ChatColor.RED + I.t("This holder was an output of the sorter {0}. It has been removed from it.", sorter.getName()));
+		        	}
+	    		}
+	    	}
     	}
     }
 }

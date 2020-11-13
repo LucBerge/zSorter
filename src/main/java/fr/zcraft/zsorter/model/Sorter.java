@@ -50,10 +50,11 @@ public class Sorter implements Serializable, PostProcessable{
 	
 	private transient Map<Inventory, Input> inventoryToInput;
 	private transient Map<Inventory, Output> inventoryToOutput;
+	private transient Map<Material, List<Output>> materialToOutputs;
+	private transient List<Output> overflows;
 	
 	private List<Input> inputs;
-	private Map<Material, List<Output>> materialToOutputs;
-	private List<Output> overflows;
+	private List<Output> outputs;
 	private List<Material> cloggingUpMaterials;
 	
 	/**
@@ -79,10 +80,11 @@ public class Sorter implements Serializable, PostProcessable{
 		
 		this.inventoryToInput = new HashMap<Inventory, Input>();
 		this.inventoryToOutput = new HashMap<Inventory, Output>();
-		
-		this.inputs = new ArrayList<Input>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();
+		
+		this.inputs = new ArrayList<Input>();
+		this.outputs = new ArrayList<Output>();
 		this.cloggingUpMaterials = new ArrayList<Material>();
 	}
 	
@@ -228,6 +230,9 @@ public class Sorter implements Serializable, PostProcessable{
 	public void commit() {
 		inputs = inventoryToInput.values().stream().collect(Collectors.toList());
 		Collections.sort(inputs);											//Sort the inputs
+
+		outputs = inventoryToOutput.values().stream().collect(Collectors.toList());
+		Collections.sort(outputs);										//Sort the outputs
 
 		overflows = inventoryToOutput.values().stream().filter(o -> o.isOverflow()).collect(Collectors.toList());
 		Collections.sort(overflows);										//Sort the overflows
@@ -588,19 +593,16 @@ public class Sorter implements Serializable, PostProcessable{
 
 	@Override
 	public void postProcess() {
+		System.out.println("========SORTER========");
 		inventoryToInput = new HashMap<Inventory, Input>();
 		for(Input input:inputs) {
 			inventoryToInput.putIfAbsent(input.getInventory(), input);
 		}
 		inventoryToOutput = new HashMap<Inventory, Output>();
-		for(List<Output> outputs:materialToOutputs.values()) {
-			for(Output output:outputs) {
-				inventoryToOutput.putIfAbsent(output.getInventory(), output);
-			}
+		for(Output output:outputs) {
+			inventoryToOutput.putIfAbsent(output.getInventory(), output);
 		}
-		for(Output overflow:overflows) {
-			inventoryToOutput.putIfAbsent(overflow.getInventory(), overflow);
-		}
+		commit();
 		if(enable)
 			toCompute = true;
 	}

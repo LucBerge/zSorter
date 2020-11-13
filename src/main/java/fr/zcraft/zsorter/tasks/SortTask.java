@@ -62,14 +62,19 @@ public class SortTask implements Runnable{
      * Event called every 8 ticks
      */
     public void run() {
-    	List<Sorter> sorters = ZSorter.getInstance().getSorterManager().canCompute();		//Get the sorters that need computation
-    	if(sorters.isEmpty()) {															//If no sorter needs computation
-    		task.cancel();																	//Cancel the task
+    	if(ZSorter.getInstance().isEnable()) {												//If the plugin is enable
+    		List<Sorter> sorters = ZSorter.getInstance().getSorterManager().canCompute();		//Get the sorters that need computation
+    		if(sorters.isEmpty()) {																//If no sorter needs computation
+    			task.cancel();																		//Cancel the task
+    		}
+    		else {																				//If some sorters need computation
+    			for(Sorter sorter:sorters) {														//For each sorter that needs to compute sorting
+    				sorter.computeSorting();															//Compute sorting
+    			}
+    		}
     	}
-    	else {																			//If some sorters need computation
-	    	for(Sorter sorter:sorters) {														//For each sorter that needs to compute sorting
-	    		sorter.computeSorting();															//Compute sorting
-	    	}
+    	else {																				//If the plugin is disable
+    		task.cancel();																		//Cancel the task
     	}
-	}
+    }
 }

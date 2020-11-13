@@ -21,11 +21,13 @@ public class ItemMoveEvent implements Listener{
      */
 	@EventHandler
 	public void onInventoryMoveItem(InventoryMoveItemEvent e) {
-        Inventory inputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getDestination());		//Get the inventory if double chest
-		boolean computed = ZSorter.getInstance().getSorterManager().computeSorter(inputInventory);			//Try to compute the sorter with this input
-		if(!computed) {																						//If no computed
-	        Inventory outputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getSource());			//Get the inventory if double chest
-			ZSorter.getInstance().getSorterManager().computeSorter(outputInventory);							//Try to compute the sorter with this output
+    	if(ZSorter.getInstance().isEnable()) {																//If the plugin is not enable
+	        Inventory inputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getDestination());		//Get the inventory if double chest
+			boolean computed = ZSorter.getInstance().getSorterManager().computeSorter(inputInventory);			//Try to compute the sorter with this input
+			if(!computed) {																						//If no computed
+		        Inventory outputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getSource());			//Get the inventory if double chest
+				ZSorter.getInstance().getSorterManager().computeSorter(outputInventory);							//Try to compute the sorter with this output
+			}
 		}
 	}
 }
