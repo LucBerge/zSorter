@@ -15,10 +15,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import fr.zcraft.zlib.components.commands.Commands;
-import fr.zcraft.zlib.components.i18n.I18n;
-import fr.zcraft.zlib.core.ZPlugin;
-import fr.zcraft.zlib.tools.PluginLogger;
+import fr.zcraft.quartzlib.core.QuartzLib;
+import fr.zcraft.quartzlib.core.QuartzPlugin;
+import fr.zcraft.quartzlib.components.commands.Commands;
+import fr.zcraft.quartzlib.components.i18n.I18n;
+import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.zsorter.commands.CreateCommand;
 import fr.zcraft.zsorter.commands.DeleteCommand;
 import fr.zcraft.zsorter.commands.InfoCommand;
@@ -43,7 +44,7 @@ import fr.zcraft.zsorter.tasks.SortTask;
  * The ZSorter main class.
  * @author Lucas
  */
-public final class ZSorter extends ZPlugin implements Listener{
+public final class ZSorter extends QuartzPlugin implements Listener{
 
 	/**
 	 * Instance of the plugin.
@@ -77,7 +78,8 @@ public final class ZSorter extends ZPlugin implements Listener{
      */
     protected ZSorter(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
     {
-        super(loader, description, dataFolder, file);
+        //super(loader, description, dataFolder, file);	//Waiting for QuartzLib to implement this constructor.
+        super();
     }
 	
 	private final String dataPath = this.getDataFolder() + "\\zsorter.json";

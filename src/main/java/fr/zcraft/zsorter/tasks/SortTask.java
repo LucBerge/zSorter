@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.bukkit.scheduler.BukkitTask;
 
-import fr.zcraft.zlib.tools.runners.RunTask;
+import fr.zcraft.quartzlib.tools.runners.RunTask;
 import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.model.Sorter;
 

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 
-import fr.zcraft.zlib.components.i18n.I;
+import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.tasks.SortTask;
 
