@@ -36,7 +36,7 @@ public class ListCommand extends ZSorterCommands{
         }
         else {
         	RawTextPart text = new RawText()
-        			.then(I.t("{0} sorter(s) found :", sorters.size()))
+        			.then(I.t("{0} sorter(s) found:", sorters.size()))
         				.color(ChatColor.GOLD);
         	
         	for(Sorter sorter:sorters) {

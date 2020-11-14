@@ -36,6 +36,9 @@ msgstr "Il n'existe aucun trieur à ce nom."
 msgid "No sorter found."
 msgstr "Aucun trieur n'a été trouvé."
 
+msgid "{0} sorter(s) found:"
+msgstr "{0} trieur(s) trouvé(s):"
+
 msgid "Show the informations of the sorter {0}"
 msgstr "Voir les informations du trieur {0}"
 
