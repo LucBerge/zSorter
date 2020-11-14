@@ -26,12 +26,12 @@
                     <minimizeJar>true</minimizeJar>
                     <artifactSet>
                         <includes>
-                            <include>fr.zcraft:zlib</include>
+                            <include>fr.zcraft:quartzlib</include>
                         </includes>
                     </artifactSet>
                     <relocations>
                         <relocation>
-                            <pattern>fr.zcraft.zlib</pattern>
+                            <pattern>fr.zcraft.quartzlib</pattern>
                             <shadedPattern>fr.zcraft.zSorter.zlib</shadedPattern>
                         </relocation>
                     </relocations>
@@ -76,6 +76,10 @@
             <id>zDevelopers</id>
             <url>http://maven.carrade.eu/artifactory/snapshots</url>
         </repository>
+        <repository>
+	        <id>zdevelopers-quartzlib</id>
+	        <url>https://maven.zcraft.fr/QuartzLib</url>
+	    </repository>
     </repositories>
 
     <dependencies>
@@ -84,12 +88,12 @@
             <artifactId>bukkit</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
         </dependency>
+        
         <dependency>
-            <groupId>fr.zcraft</groupId>
-            <artifactId>zlib</artifactId>
-            <version>0.99-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+	        <groupId>fr.zcraft</groupId>
+	        <artifactId>quartzlib</artifactId>
+	        <version>0.0.1</version>
+	    </dependency>
         
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>

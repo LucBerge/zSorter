@@ -14,9 +14,9 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import fr.zcraft.zlib.components.i18n.I;
-import fr.zcraft.zlib.components.rawtext.RawText;
-import fr.zcraft.zlib.components.rawtext.RawTextPart;
+import fr.zcraft.quartzlib.components.i18n.I;
+import fr.zcraft.quartzlib.components.rawtext.RawText;
+import fr.zcraft.quartzlib.components.rawtext.RawTextPart;
 import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.commands.SpeedCommand;
 import fr.zcraft.zsorter.commands.ToggleCommand;

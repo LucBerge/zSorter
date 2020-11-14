@@ -7,7 +7,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import fr.zcraft.zlib.components.i18n.I;
+import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.model.Sorter;
 import fr.zcraft.zsorter.utils.InventoryUtils;
