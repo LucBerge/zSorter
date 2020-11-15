@@ -1,7 +1,9 @@
 package fr.zcraft.zsorter.commands;
 
 
+import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
@@ -36,5 +38,16 @@ public class UpdateCommand extends ZSorterCommands{
         Sorter sorter = ZSorter.getInstance().getSorterManager().getNameToSorter().get(name);
         sorter.setDescription(description.toString());
         success(I.t("The sorter description has been updated."));
+    }
+    
+    @Override
+    protected List<String> complete() throws CommandException{
+    	if(args.length <= 1) {
+    		return ZSorter.getInstance().getSorterManager().getNameToSorter().keySet()
+    				.stream()
+    				.filter(s -> s.startsWith(args[0]))
+    				.collect(Collectors.toList());
+    	}
+    	return null;
     }
 }
