@@ -1,0 +1,6 @@
+Sets the target block as an input.
+
+§6<name>		§rThe name of the sorter related to the input.
+§6<priority>	§rPriority of the input. Must be higher or equal to 1.
+
+An input of priority 1 will be the first to be sorted.

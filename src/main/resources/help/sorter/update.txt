@@ -1,0 +1,4 @@
+Updates a sorter description.
+
+§6<name>		§rThe name of the sorter to update.
+§6<description>	§rA short description of the sorter.

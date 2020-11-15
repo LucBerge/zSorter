@@ -1,0 +1,7 @@
+Sets the target block as an output.
+
+§6<name>		§rThe name of the sorter related to the output.
+§6<priority>	§rPriority of the output. Must be higher or equal to 1.
+§6<materials>	§rOptinal list of materials that can be sorted to the targeting block. 
+
+If no materials are specified, the output is defined as overflow.

@@ -1,0 +1,4 @@
+Creates a sorter.
+
+§6<name>		§rThe name of the sorter.
+§6<description>	§rA short description of the sorter.

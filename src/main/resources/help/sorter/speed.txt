@@ -1,0 +1,6 @@
+Defines the sorting speed of a sorter.
+
+§6<name>	§rThe name of the sorter.
+§6<speed>	§rThe sorting speed between 1 and 64.
+
+One cycle is 8 ticks long, corresponding to regular hoppers speed.

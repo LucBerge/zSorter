@@ -1,0 +1,3 @@
+Remove the target block from the inputs.
+
+§6<name>	§rThe name of the sorter related to the input.
