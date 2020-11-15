@@ -5,11 +5,11 @@ import java.util.Collection;
 
 import org.bukkit.ChatColor;
 
-import fr.zcraft.zlib.components.commands.CommandException;
-import fr.zcraft.zlib.components.commands.CommandInfo;
-import fr.zcraft.zlib.components.i18n.I;
-import fr.zcraft.zlib.components.rawtext.RawText;
-import fr.zcraft.zlib.components.rawtext.RawTextPart;
+import fr.zcraft.quartzlib.components.commands.CommandException;
+import fr.zcraft.quartzlib.components.commands.CommandInfo;
+import fr.zcraft.quartzlib.components.i18n.I;
+import fr.zcraft.quartzlib.components.rawtext.RawText;
+import fr.zcraft.quartzlib.components.rawtext.RawTextPart;
 import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.model.Sorter;
 
@@ -36,7 +36,7 @@ public class ListCommand extends ZSorterCommands{
         }
         else {
         	RawTextPart text = new RawText()
-        			.then(I.t("{0} sorter(s) found :", sorters.size()))
+        			.then(I.t("{0} sorter(s) found:", sorters.size()))
         				.color(ChatColor.GOLD);
         	
         	for(Sorter sorter:sorters) {
@@ -55,7 +55,7 @@ public class ListCommand extends ZSorterCommands{
 		        		.color(ChatColor.AQUA)
         			.then(" (" + sorter.getDescription() + ") ")
         				.color(ChatColor.GRAY).hover(new RawText()
-    	        				.then(I.t("Update the description")))
+    	        				.then(I.t("Change the description")))
     	        			.suggest(UpdateCommand.class, sorter.getName());
         	}
         	send(text.build());

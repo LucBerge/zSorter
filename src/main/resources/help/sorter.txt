@@ -1,0 +1,12 @@
+This command is used to manage sorters in game
+list: List all the sorters in the world
+create: Create a new sorter
+update: Update a sorter description
+speed: Change the sorter speed.
+delete: Delete a sorter
+info: Display a sorter informations
+toggle: Enable/Disable a sorter
+set_input: Add an input to a sorter
+set_output: Add an output to a sorter
+remove_input: Delete a sorter input
+remove_output: Delete a sorter output

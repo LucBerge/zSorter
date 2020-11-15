@@ -21,16 +21,35 @@
           <minimizeJar>true</minimizeJar>
           <artifactSet>
             <includes>
-              <include>fr.zcraft:zlib</include>
+              <include>fr.zcraft:quartzlib</include>
             </includes>
           </artifactSet>
           <relocations>
             <relocation>
-              <pattern>fr.zcraft.zlib</pattern>
+              <pattern>fr.zcraft.quartzlib</pattern>
               <shadedPattern>fr.zcraft.zSorter.zlib</shadedPattern>
             </relocation>
           </relocations>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.6</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -42,6 +61,10 @@
     <repository>
       <id>zDevelopers</id>
       <url>http://maven.carrade.eu/artifactory/snapshots</url>
+    </repository>
+    <repository>
+      <id>zdevelopers-quartzlib</id>
+      <url>https://maven.zcraft.fr/QuartzLib</url>
     </repository>
   </repositories>
   <dependencies>
@@ -66,7 +89,7 @@
     <dependency>
       <groupId>com.github.seeseemelk</groupId>
       <artifactId>MockBukkit-v1.16</artifactId>
-      <version>0.14.0</version>
+      <version>0.5.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

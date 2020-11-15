@@ -1,7 +1,5 @@
 package fr.zcraft.zsorter.model;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 
-import fr.zcraft.zlib.components.i18n.I;
+import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.tasks.SortTask;
 
@@ -188,16 +186,16 @@ public class SorterManager implements Serializable{
 	 */
 	public boolean computeSorter(Inventory inventory) {
 		boolean computed = false;
-		Sorter sorter = inventoryToSorter.get(inventory);						//Get the sorter associated with this inventory
+		Sorter sorter = inventoryToSorter.get(inventory);					//Get the sorter associated with this inventory
 		if(sorter != null && sorter.isEnable()) {							//If sorter found and enable
-			Input input = sorter.getInventoryToInput().get(inventory);		//Get the input linked to this inventory
-			if(input != null) {												//If input found
+			Input input = sorter.getInventoryToInput().get(inventory);			//Get the input linked to this inventory
+			if(input != null) {													//If input found
 				sorter.setToCompute(true);										//Set the sorter to compute
-				SortTask.getInstance().start();								//Start the task
+				SortTask.getInstance().start();									//Start the task
 				computed = true;
 			}
 			else {
-				Output output = sorter.getInventoryToOutput().get(inventory);		//Get the output linked to this inventory
+				Output output = sorter.getInventoryToOutput().get(inventory);	//Get the output linked to this inventory
 				if(output != null) {											//If output found
 					
 					boolean clogging = output.getMaterials()
@@ -205,8 +203,8 @@ public class SorterManager implements Serializable{
 							.filter(sorter.getCloggingUpMaterials()::contains)
 							.count() > 0;
 
-					if(clogging || output.isOverflow()) {							//If one of the output material was clogging up the inputs or if it is an overflow
-						sorter.setToCompute(true);										//Set the sorter to compute
+					if(clogging || output.isOverflow()) {						//If one of the output material was clogging up the inputs or if it is an overflow
+						sorter.setToCompute(true);									//Set the sorter to compute
 						SortTask.getInstance().start();								//Start the task
 						computed = true;
 					}
@@ -215,21 +213,35 @@ public class SorterManager implements Serializable{
 		}
 		return computed;
 	}
-	
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((inventoryToSorter == null) ? 0 : inventoryToSorter.hashCode());
+		result = prime * result + ((nameToSorter == null) ? 0 : nameToSorter.hashCode());
+		return result;
+	}
 
-	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException
-	{
-		ois.defaultReadObject();
-
-		inventoryToSorter = new HashMap<Inventory, Sorter>();
-		for(Sorter sorter:nameToSorter.values()) {
-			for(Input input:sorter.getInventoryToInput().values()) {
-				inventoryToSorter.putIfAbsent(input.getInventory(), sorter);
-			}
-			for(Output output:sorter.getInventoryToOutput().values()) {
-				inventoryToSorter.putIfAbsent(output.getInventory(), sorter);
-			}
-		}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SorterManager other = (SorterManager) obj;
+		if (inventoryToSorter == null) {
+			if (other.inventoryToSorter != null)
+				return false;
+		} else if (!inventoryToSorter.equals(other.inventoryToSorter))
+			return false;
+		if (nameToSorter == null) {
+			if (other.nameToSorter != null)
+				return false;
+		} else if (!nameToSorter.equals(other.nameToSorter))
+			return false;
+		return true;
 	}
 }

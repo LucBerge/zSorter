@@ -1,15 +1,17 @@
 package fr.zcraft.zsorter.commands;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import fr.zcraft.zlib.components.commands.CommandException;
-import fr.zcraft.zlib.components.commands.CommandInfo;
-import fr.zcraft.zlib.components.i18n.I;
+import fr.zcraft.quartzlib.components.commands.CommandException;
+import fr.zcraft.quartzlib.components.commands.CommandInfo;
+import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.utils.InventoryUtils;
@@ -58,5 +60,16 @@ public class SetInputCommand extends ZSorterCommands{
         catch(ZSorterException e) {
         	error(e.getMessage());
         }
+    }
+    
+    @Override
+    protected List<String> complete() throws CommandException{
+    	if(args.length <= 1) {
+    		return ZSorter.getInstance().getSorterManager().getNameToSorter().keySet()
+    				.stream()
+    				.filter(s -> s.startsWith(args[0]))
+    				.collect(Collectors.toList());
+    	}
+    	return null;
     }
 }

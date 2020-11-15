@@ -3,9 +3,9 @@ package fr.zcraft.zsorter.commands;
 
 import java.util.StringJoiner;
 
-import fr.zcraft.zlib.components.commands.CommandException;
-import fr.zcraft.zlib.components.commands.CommandInfo;
-import fr.zcraft.zlib.components.i18n.I;
+import fr.zcraft.quartzlib.components.commands.CommandException;
+import fr.zcraft.quartzlib.components.commands.CommandInfo;
+import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.ZSorterException;
 

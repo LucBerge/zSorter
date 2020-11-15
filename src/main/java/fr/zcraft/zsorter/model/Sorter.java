@@ -1,7 +1,5 @@
 package fr.zcraft.zsorter.model;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,13 +14,14 @@ import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import fr.zcraft.zlib.components.i18n.I;
-import fr.zcraft.zlib.components.rawtext.RawText;
-import fr.zcraft.zlib.components.rawtext.RawTextPart;
+import fr.zcraft.quartzlib.components.i18n.I;
+import fr.zcraft.quartzlib.components.rawtext.RawText;
+import fr.zcraft.quartzlib.components.rawtext.RawTextPart;
 import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.commands.SpeedCommand;
 import fr.zcraft.zsorter.commands.ToggleCommand;
 import fr.zcraft.zsorter.commands.UpdateCommand;
+import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory.PostProcessable;
 import fr.zcraft.zsorter.utils.InventoryUtils;
 
 /**
@@ -31,7 +30,7 @@ import fr.zcraft.zsorter.utils.InventoryUtils;
  * 
  * @author Lucas
  */
-public class Sorter implements Serializable{
+public class Sorter implements Serializable, PostProcessable{
 
 	/**
 	 * Serial version UID
@@ -46,15 +45,16 @@ public class Sorter implements Serializable{
 	private String name;
 	private String description;	
 	private boolean enable;
-	private boolean toCompute;
+	private transient boolean toCompute;
 	private int speed;
 	
 	private transient Map<Inventory, Input> inventoryToInput;
 	private transient Map<Inventory, Output> inventoryToOutput;
+	private transient Map<Material, List<Output>> materialToOutputs;
+	private transient List<Output> overflows;
 	
 	private List<Input> inputs;
-	private Map<Material, List<Output>> materialToOutputs;
-	private List<Output> overflows;
+	private List<Output> outputs;
 	private List<Material> cloggingUpMaterials;
 	
 	/**
@@ -80,10 +80,11 @@ public class Sorter implements Serializable{
 		
 		this.inventoryToInput = new HashMap<Inventory, Input>();
 		this.inventoryToOutput = new HashMap<Inventory, Output>();
-		
-		this.inputs = new ArrayList<Input>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();
+		
+		this.inputs = new ArrayList<Input>();
+		this.outputs = new ArrayList<Output>();
 		this.cloggingUpMaterials = new ArrayList<Material>();
 	}
 	
@@ -229,6 +230,9 @@ public class Sorter implements Serializable{
 	public void commit() {
 		inputs = inventoryToInput.values().stream().collect(Collectors.toList());
 		Collections.sort(inputs);											//Sort the inputs
+
+		outputs = inventoryToOutput.values().stream().collect(Collectors.toList());
+		Collections.sort(outputs);										//Sort the outputs
 
 		overflows = inventoryToOutput.values().stream().filter(o -> o.isOverflow()).collect(Collectors.toList());
 		Collections.sort(overflows);										//Sort the overflows
@@ -433,12 +437,12 @@ public class Sorter implements Serializable{
     			.then(" (" + description + ") ")
     				.color(ChatColor.GRAY)
     				.hover(new RawText()
-	        				.then(I.t("Update the description")))
+	        				.then(I.t("Change the description")))
 	        			.suggest(UpdateCommand.class, name)
     			.then("\n  " + I.t("speed: {0}", speed))
 					.color(ChatColor.GRAY)
 					.hover(new RawText()
-	        				.then(I.t("Change the sorter speed")))
+	        				.then(I.t("Change the sorting speed")))
 	        			.suggest(SpeedCommand.class, name)
         		.then("\n  " + I.t("{0} input(s):", inventoryToInput.size()) + "\n  ")
     				.color(ChatColor.GRAY);
@@ -506,15 +510,12 @@ public class Sorter implements Serializable{
 	    		for(Material material:materials) {
 	    			text
 	    				.then(" " + material.name().toLowerCase())
-	    					.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN);
-	    			if(cloggingUpMaterials.contains(material)) {
-	    				text
+	    					.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
 		    				.hover(
-		        	    			new RawText()
-		            					.then(I.t("This material is clogging up one of the inputs"))
-		            						.color(ChatColor.RED)
-		            			);
-	    			}
+		        	    		new RawText()
+		            				.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
+		            					.color(ChatColor.RED)
+		            		);
 	    		}
 			}
     	}
@@ -535,28 +536,24 @@ public class Sorter implements Serializable{
 	    			.color(ChatColor.GRAY);
 	    	
 	    	for(Material material:sortedMaterials) {
-	    		
 	    		text
-				.then("\n    " + material.name().toLowerCase())
-					.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN);
-				if(cloggingUpMaterials.contains(material)) {
-					text
-	    				.hover(
-	        	    			new RawText()
-	            					.then(I.t("This material is clogging up one of the inputs"))
-	            						.color(ChatColor.RED)
-	            			);
-				}
+					.then("\n    " + material.name().toLowerCase())
+						.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
+			    		.hover(
+		        	    	new RawText()
+		            			.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
+		            				.color(ChatColor.RED)
+		            	);
 				
 				for(Output output: materialToOutputs.get(material)) {
 					text
-	    			.then("  " + output.getPriority())
-						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-	    				.hover(
-	    	    			new RawText()
-	        					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
-	        						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-	        			);
+	    				.then("  " + output.getPriority())
+							.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+							.hover(
+									new RawText()
+									.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
+										.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+							);
 				}
 	    	}
     	}
@@ -594,22 +591,18 @@ public class Sorter implements Serializable{
 		return true;
 	}
 
-	private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException
-	{
-		ois.defaultReadObject();
+	@Override
+	public void postProcess() {
+		System.out.println("========SORTER========");
 		inventoryToInput = new HashMap<Inventory, Input>();
 		for(Input input:inputs) {
 			inventoryToInput.putIfAbsent(input.getInventory(), input);
 		}
 		inventoryToOutput = new HashMap<Inventory, Output>();
-		for(List<Output> outputs:materialToOutputs.values()) {
-			for(Output output:outputs) {
-				inventoryToOutput.putIfAbsent(output.getInventory(), output);
-			}
+		for(Output output:outputs) {
+			inventoryToOutput.putIfAbsent(output.getInventory(), output);
 		}
-		for(Output overflow:overflows) {
-			inventoryToOutput.putIfAbsent(overflow.getInventory(), overflow);
-		}
+		commit();
 		if(enable)
 			toCompute = true;
 	}

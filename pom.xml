@@ -26,12 +26,12 @@
                     <minimizeJar>true</minimizeJar>
                     <artifactSet>
                         <includes>
-                            <include>fr.zcraft:zlib</include>
+                            <include>fr.zcraft:quartzlib</include>
                         </includes>
                     </artifactSet>
                     <relocations>
                         <relocation>
-                            <pattern>fr.zcraft.zlib</pattern>
+                            <pattern>fr.zcraft.quartzlib</pattern>
                             <shadedPattern>fr.zcraft.zSorter.zlib</shadedPattern>
                         </relocation>
                     </relocations>
@@ -45,6 +45,25 @@
                     </execution>
                 </executions>
             </plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.6</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
         </plugins>
     </build>
 
@@ -57,6 +76,10 @@
             <id>zDevelopers</id>
             <url>http://maven.carrade.eu/artifactory/snapshots</url>
         </repository>
+        <repository>
+	        <id>zdevelopers-quartzlib</id>
+	        <url>https://maven.zcraft.fr/QuartzLib</url>
+	    </repository>
     </repositories>
 
     <dependencies>
@@ -65,12 +88,12 @@
             <artifactId>bukkit</artifactId>
             <version>1.15.2-R0.1-SNAPSHOT</version>
         </dependency>
+        
         <dependency>
-            <groupId>fr.zcraft</groupId>
-            <artifactId>zlib</artifactId>
-            <version>0.99-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
+	        <groupId>fr.zcraft</groupId>
+	        <artifactId>quartzlib</artifactId>
+	        <version>0.0.1</version>
+	    </dependency>
         
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
 		<dependency>
@@ -85,7 +108,7 @@
 		<dependency>
 		    <groupId>com.github.seeseemelk</groupId>
 		    <artifactId>MockBukkit-v1.16</artifactId>
-		    <version>0.14.0</version>
+		    <version>0.5.0</version>
 		    <scope>test</scope>
 		</dependency>
     </dependencies>

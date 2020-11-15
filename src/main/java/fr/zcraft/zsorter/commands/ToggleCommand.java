@@ -1,8 +1,11 @@
 package fr.zcraft.zsorter.commands;
 
-import fr.zcraft.zlib.components.commands.CommandException;
-import fr.zcraft.zlib.components.commands.CommandInfo;
-import fr.zcraft.zlib.components.i18n.I;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import fr.zcraft.quartzlib.components.commands.CommandException;
+import fr.zcraft.quartzlib.components.commands.CommandInfo;
+import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.model.Sorter;
 import fr.zcraft.zsorter.tasks.SortTask;
@@ -46,5 +49,16 @@ public class ToggleCommand extends ZSorterCommands{
         	else
         		success(I.t("The sorter has been disabled."));
         }
+    }
+    
+    @Override
+    protected List<String> complete() throws CommandException{
+    	if(args.length <= 1) {
+    		return ZSorter.getInstance().getSorterManager().getNameToSorter().keySet()
+    				.stream()
+    				.filter(s -> s.startsWith(args[0]))
+    				.collect(Collectors.toList());
+    	}
+    	return null;
     }
 }

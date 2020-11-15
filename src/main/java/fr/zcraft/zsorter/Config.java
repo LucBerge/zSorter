@@ -2,9 +2,9 @@ package fr.zcraft.zsorter;
 
 import java.util.Locale;
 
-import fr.zcraft.zlib.components.configuration.Configuration;
-import fr.zcraft.zlib.components.configuration.ConfigurationItem;
-import static fr.zcraft.zlib.components.configuration.ConfigurationItem.item;
+import fr.zcraft.quartzlib.components.configuration.Configuration;
+import fr.zcraft.quartzlib.components.configuration.ConfigurationItem;
+import static fr.zcraft.quartzlib.components.configuration.ConfigurationItem.item;
 
 /**
  * This class provides the configuration constants for the plugin.

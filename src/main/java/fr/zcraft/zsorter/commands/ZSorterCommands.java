@@ -2,8 +2,8 @@ package fr.zcraft.zsorter.commands;
 
 import org.bukkit.command.CommandSender;
 
-import fr.zcraft.zlib.components.commands.Command;
-import fr.zcraft.zlib.components.commands.CommandException;
+import fr.zcraft.quartzlib.components.commands.Command;
+import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.zsorter.Permissions;
 import fr.zcraft.zsorter.ZSorter;
 

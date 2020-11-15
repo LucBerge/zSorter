@@ -1,0 +1,3 @@
+Deletes a sorter.
+
+§6<name>		§rThe name of the sorter to delete.

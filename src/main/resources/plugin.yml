@@ -3,32 +3,11 @@ version: 0.2
 main: fr.zcraft.zsorter.ZSorter
 description: Create and manage sorters in game.
 author: MrDomoo
+api-version: "1.13"
 
 commands:
     sorter:
         description: Manage your sorters in game
-    list:
-        description : List all the sorters in the world
-    create:
-        description : Create a new sorter
-    update:
-        description : Update a sorter description
-    speed:
-        description : Change the sorter speed (number of item per tick).
-    delete:
-        description : Delete a sorter
-    info:
-        description : Display a sorter informations
-    toggle:
-        description : Enable/Disable a sorter
-    set_input:
-        description : Add an input to a sorter
-    set_output:
-        description : Add an output to a sorter
-    remove_input:
-        description : Delete a sorter input
-    remove_output:
-        description : Delete a sorter output
         
 # Permissions section generated using https://amaury.carrade.eu/tools/generators/bukkit/permissions.html
 permissions:

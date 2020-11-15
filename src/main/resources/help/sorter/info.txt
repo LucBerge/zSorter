@@ -1,0 +1,4 @@
+Gives the informations about a sorter.
+
+§6<name>	§rThe name of the sorter you want to display.
+§6<mode>	§rThe mode to display the sorter informations. It can be either OUTPUTS (default) or ITEMS.

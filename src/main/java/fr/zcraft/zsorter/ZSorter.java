@@ -1,20 +1,25 @@
 package fr.zcraft.zsorter;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
-import fr.zcraft.zlib.components.commands.Commands;
-import fr.zcraft.zlib.components.i18n.I18n;
-import fr.zcraft.zlib.core.ZPlugin;
-import fr.zcraft.zlib.tools.PluginLogger;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+
+import fr.zcraft.quartzlib.core.QuartzLib;
+import fr.zcraft.quartzlib.core.QuartzPlugin;
+import fr.zcraft.quartzlib.components.commands.Commands;
+import fr.zcraft.quartzlib.components.i18n.I18n;
+import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.zsorter.commands.CreateCommand;
 import fr.zcraft.zsorter.commands.DeleteCommand;
 import fr.zcraft.zsorter.commands.InfoCommand;
@@ -30,13 +35,16 @@ import fr.zcraft.zsorter.events.HolderBreakEvent;
 import fr.zcraft.zsorter.events.InventoryEvent;
 import fr.zcraft.zsorter.events.ItemMoveEvent;
 import fr.zcraft.zsorter.model.SorterManager;
+import fr.zcraft.zsorter.model.serializer.InventoryAdapter;
+import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory;
+import fr.zcraft.zsorter.model.serializer.SorterManagerAdapter;
 import fr.zcraft.zsorter.tasks.SortTask;
 
 /**
  * The ZSorter main class.
  * @author Lucas
  */
-public final class ZSorter extends ZPlugin implements Listener{
+public final class ZSorter extends QuartzPlugin implements Listener{
 
 	/**
 	 * Instance of the plugin.
@@ -70,10 +78,11 @@ public final class ZSorter extends ZPlugin implements Listener{
      */
     protected ZSorter(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
     {
-        super(loader, description, dataFolder, file);
+        //super(loader, description, dataFolder, file);	//Waiting for QuartzLib to implement this constructor.
+        super();
     }
 	
-	private final String dataPath = this.getDataFolder() + "/zsorter.dat";
+	private final String dataPath = this.getDataFolder() + "\\zsorter.json";
 	
 	private SorterManager sorterManager;
 	
@@ -136,21 +145,25 @@ public final class ZSorter extends ZPlugin implements Listener{
 	
     @Override
     public void onDisable() {
-    	save();
+    	if(enable)
+    		save();
     }
 	
 	/**
-	 * Save the sorter manager to a file. Doesn't do anything if the plugin is disabled.
+	 * Save the sorter manager to a file.
 	 */
 	private void save() {
-		if(enable) {
-			try {			
-				ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File(dataPath)));
-				oos.writeObject(sorterManager);
-				oos.close();
-			}catch (Exception e) {
-				PluginLogger.error("Couldn't save the sorter manager instance on the file %s.", e, dataPath);
-			}
+		try {
+			GsonBuilder gsonBuilder = new GsonBuilder();
+			gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
+			gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+			gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
+			Gson customGson = gsonBuilder.create();
+			FileWriter fr = new FileWriter(dataPath);
+			fr.write(customGson.toJson(sorterManager));
+			fr.close();
+		}catch (IOException e) {
+			PluginLogger.error("Couldn't save the sorter manager instance on the file %s.", e, dataPath);
 		}
 	}
 	
@@ -161,11 +174,20 @@ public final class ZSorter extends ZPlugin implements Listener{
 	private boolean load() {
 		File dataFile = new File(dataPath);
 		if(dataFile.exists()) {
-			try {			
-				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(dataFile));
-				sorterManager = (SorterManager) ois.readObject();
-				ois.close();
-			}catch(IOException | ClassNotFoundException e) {
+			try {
+				GsonBuilder gsonBuilder = new GsonBuilder();
+				gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
+				gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+				gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
+				Gson customGson = gsonBuilder.create();
+				BufferedReader br = new BufferedReader(new FileReader(dataFile));
+				sorterManager = customGson.fromJson(br, SorterManager.class);
+				
+				if(sorterManager == null)					//If the file was empty
+					sorterManager = new SorterManager();
+				
+				br.close();
+			}catch(IOException | JsonSyntaxException e) {
 				PluginLogger.warning("Cannot read the content of the file {0}. The file might be corrupted.", dataPath);
 				PluginLogger.warning("To prevent all lose of data, the plugin is temporary disabled.");
 				PluginLogger.warning("To enable it, you can either :");

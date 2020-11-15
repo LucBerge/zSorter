@@ -1,8 +1,12 @@
 package fr.zcraft.zsorter.commands;
 
-import fr.zcraft.zlib.components.commands.CommandException;
-import fr.zcraft.zlib.components.commands.CommandInfo;
-import fr.zcraft.zlib.components.i18n.I;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import fr.zcraft.quartzlib.components.commands.CommandException;
+import fr.zcraft.quartzlib.components.commands.CommandInfo;
+import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.model.DisplayMode;
 import fr.zcraft.zsorter.model.Sorter;
@@ -29,7 +33,7 @@ public class InfoCommand extends ZSorterCommands{
         DisplayMode mode = DisplayMode.OUTPUTS;
         if(args.length > 1) {
         	try {
-        		mode = DisplayMode.valueOf(args[1]);
+        		mode = DisplayMode.valueOf(args[1].toUpperCase());
         	}
         	catch(IllegalArgumentException e) {
         		throwInvalidArgument(I.t("The display mode must be either <OUTPUTS> or <ITEMS>."));
@@ -45,5 +49,23 @@ public class InfoCommand extends ZSorterCommands{
         else {
         	send(sorter.toRawText(mode));
         }
+    }
+    
+    @Override
+    protected List<String> complete() throws CommandException{
+    	if(args.length <= 1) {
+    		return ZSorter.getInstance().getSorterManager().getNameToSorter().keySet()
+    				.stream()
+    				.filter(s -> s.startsWith(args[0]))
+    				.collect(Collectors.toList());
+    	}
+    	else if(args.length <= 2) {
+    		return Arrays.asList(DisplayMode.ITEMS, DisplayMode.OUTPUTS)
+    				.stream()
+    				.map(dm -> dm.toString().toLowerCase())
+    				.filter(dm -> dm.startsWith(args[1]))
+    				.collect(Collectors.toList());
+    	}
+    	return null;
     }
 }

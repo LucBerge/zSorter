@@ -1,22 +1,30 @@
 package fr.zcraft.zsorter.model;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.Inventory;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.ZSorterTest;
-import fr.zcraft.zsorter.model.Sorter;
-import fr.zcraft.zsorter.model.SorterManager;
+import fr.zcraft.zsorter.model.serializer.InventoryAdapter;
+import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory;
+import fr.zcraft.zsorter.model.serializer.SorterManagerAdapter;
 
 /**
  * Tests the {@code SorterManager.class} methods.
@@ -54,7 +62,7 @@ public class SorterManagerTest extends ZSorterTest{
 	 * Tests if a sorter can correctly be found from its input inventory.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	@Test
+	/*@Test
 	public void findFromInventoryTest() throws ZSorterException {
 		
 		//Create a sorter, add 2 inputs and test if the sorter if found
@@ -82,7 +90,7 @@ public class SorterManagerTest extends ZSorterTest{
 		//Remove the sorter2 and test if the inputs have been removed from the inventory map
 		manager.deleteSorter(sorter2.getName());
 		Assert.assertEquals(null, manager.getInventoryToSorter().get(inventory2));
-	}
+	}*/
 	
 	/**
 	 * Tests if the sorters with canCompute flag set are found.
@@ -115,14 +123,14 @@ public class SorterManagerTest extends ZSorterTest{
 	}
 	
 	/**
-	 * Tests if a sorterManage object is correctly serialized and deserialized.
+	 * Tests if a sorterManage binary serialized and deserialized.
 	 * @throws ZSorterException
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
 	@Test
-	public void serializationTest() throws ZSorterException, FileNotFoundException, IOException, ClassNotFoundException {
+	public void binarySerializationTest() throws ZSorterException, FileNotFoundException, IOException, ClassNotFoundException {
 		SorterManager manager = new SorterManager();
 		Sorter sorter = manager.createSorter("test", "Simple test sorter");
 		manager.setInput("test", inventory0, 1);
@@ -141,6 +149,44 @@ public class SorterManagerTest extends ZSorterTest{
 		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("serializationTest.dat")));
 		SorterManager deserializedManager = (SorterManager) ois.readObject();
 		ois.close();
+		
+		Assert.assertEquals(manager, deserializedManager);
+	}
+	
+	/**
+	 * Tests if a sorterManage object is correctly serialized and deserialized.
+	 * @throws ZSorterException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	@Test
+	public void gsonSerializationTest() throws ZSorterException, FileNotFoundException, IOException, ClassNotFoundException {
+		SorterManager manager = new SorterManager();
+		Sorter sorter = manager.createSorter("test", "Simple test sorter");
+		manager.setInput("test", inventory0, 1);
+		manager.setOutput("test", inventory1, 1, Arrays.asList(Material.IRON_INGOT));
+		manager.setOutput("test", inventory2, 1, Arrays.asList());
+		
+		sorter.setSpeed(64);
+		sorter.commit();
+
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
+		gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+		gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
+		
+		Gson customGson = gsonBuilder.create();
+		
+		//Serialization
+		FileWriter fr = new FileWriter("serializationTest.dat");
+		fr.write(customGson.toJson(manager));
+		fr.close();
+
+		//Dezerialisation
+		BufferedReader br = new BufferedReader(new FileReader("serializationTest.dat"));
+		SorterManager deserializedManager = customGson.fromJson(br, SorterManager.class);
+		br.close();
 		
 		Assert.assertEquals(manager, deserializedManager);
 	}
