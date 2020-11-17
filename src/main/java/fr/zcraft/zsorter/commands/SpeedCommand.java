@@ -51,10 +51,7 @@ public class SpeedCommand extends ZSorterCommands{
     @Override
     protected List<String> complete() throws CommandException{
     	if(args.length <= 1) {
-    		return ZSorter.getInstance().getSorterManager().getNameToSorter().keySet()
-    				.stream()
-    				.filter(s -> s.startsWith(args[0]))
-    				.collect(Collectors.toList());
+    		return completeSorterName(args[0]);
     	}
     	return null;
     }

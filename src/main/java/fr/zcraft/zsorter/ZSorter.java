@@ -24,6 +24,7 @@ import fr.zcraft.zsorter.commands.CreateCommand;
 import fr.zcraft.zsorter.commands.DeleteCommand;
 import fr.zcraft.zsorter.commands.InfoCommand;
 import fr.zcraft.zsorter.commands.ListCommand;
+import fr.zcraft.zsorter.commands.MagicCommand;
 import fr.zcraft.zsorter.commands.RemoveInputCommand;
 import fr.zcraft.zsorter.commands.RemoveOutputCommand;
 import fr.zcraft.zsorter.commands.SetInputCommand;
@@ -135,7 +136,8 @@ public final class ZSorter extends QuartzPlugin implements Listener{
         		SetInputCommand.class,
         		SetOutputCommand.class,
         		RemoveInputCommand.class,
-        		RemoveOutputCommand.class
+        		RemoveOutputCommand.class,
+        		MagicCommand.class
         );
         
 		if(load()) {
