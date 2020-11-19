@@ -593,7 +593,6 @@ public class Sorter implements Serializable, PostProcessable{
 
 	@Override
 	public void postProcess() {
-		System.out.println("========SORTER========");
 		inventoryToInput = new HashMap<Inventory, Input>();
 		for(Input input:inputs) {
 			inventoryToInput.putIfAbsent(input.getInventory(), input);
