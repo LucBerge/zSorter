@@ -16,19 +16,9 @@ public class Config extends Configuration
 	 * The default language of the plugin.
 	 */
 	static public final ConfigurationItem<Locale> LANGUAGE = item("language", Locale.class);
-	
-    /**
-     * The maximum number of sorter per map
-     */
-    static public final ConfigurationItem<Integer> MAX_BANKS = item("max_sorters", 100);
     
     /**
-     * The maximum inputs for one sorter.
+     * The magic effect cooldown.
      */
-    static public final ConfigurationItem<Integer> MAX_INPUTS = item("max_inputs", 100);
-    
-    /**
-     * The maximum outputs for one sorter.
-     */
-    static public final ConfigurationItem<Integer> MAX_OUTPUTS = item("max_ouputs", 10000);
+    static public final ConfigurationItem<Integer> MAGIC_EFFECT_DURATION = item("magic_effect_duration", 1200);
 }

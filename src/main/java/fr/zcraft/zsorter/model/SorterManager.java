@@ -8,6 +8,7 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import fr.zcraft.quartzlib.components.i18n.I;
@@ -27,6 +28,7 @@ public class SorterManager implements Serializable{
 	
 	private Map<String, Sorter> nameToSorter;
 	private transient Map<Inventory, Sorter> inventoryToSorter;
+	private transient Map<Player, Sorter> playerToSorter;
 	
 	/**
 	 * Constructor of a sorter manager object.
@@ -34,14 +36,23 @@ public class SorterManager implements Serializable{
 	public SorterManager() {
 		this.inventoryToSorter = new HashMap<Inventory, Sorter>();
 		this.nameToSorter = new TreeMap<String, Sorter>();
+		this.playerToSorter = new HashMap<Player, Sorter>();
 	}
 	
 	/**
-	 * Returns the map linking a name to a sorters.
-	 * @return The sorters of the plugin.
+	 * Returns the map linking a name to a sorter.
+	 * @return The name to sorter map.
 	 */
 	public Map<String, Sorter> getNameToSorter() {
 		return nameToSorter;
+	}
+	
+	/**
+	 * Returns the map linking a player to a sorter.
+	 * @return The player to sorter map.
+	 */
+	public Map<Player, Sorter> getPlayerToSorter() {
+		return playerToSorter;
 	}
 	
 	/**
