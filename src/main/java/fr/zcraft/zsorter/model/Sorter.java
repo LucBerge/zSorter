@@ -133,9 +133,7 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @param state - {@code true} to enable the sorter, {@code false} to disable it.
 	 */
 	public void setEnable(boolean state) {
-		if(state)		//If enabling the sorter
-			commit();		//Commit the sorter
-		else
+		if(!state)		//If disabling the sorter
 			this.toCompute = false;
 		this.enable = state;
 	}
@@ -266,8 +264,6 @@ public class Sorter implements Serializable, PostProcessable{
 		if(output != null)																							//If exists
 			throw new ZSorterException(I.t("This holder is already an output."));										//Display error message
 		
-		setEnable(false);																							//Disable the sorter
-		
 		Input existingInput = inventoryToInput.get(inventory);															//Get the existing input
     	if(existingInput == null) {																						//If no input exists
     		existingInput = new Input(inventory, priority);																	//Create a new input
@@ -276,6 +272,7 @@ public class Sorter implements Serializable, PostProcessable{
     	else {																											//If the input exists
     		existingInput.setPriority(priority);																			//Set the new priority
     	}
+    	commit();
 		return existingInput;
 	}
 
@@ -285,8 +282,10 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @return The removed input object, {@code null} if no input found for this inventory.
 	 */
 	public Input removeInput(Inventory inventory) {
-		setEnable(false);
-		return inventoryToInput.remove(inventory);
+		Input result = inventoryToInput.remove(inventory);
+    	if(result != null)
+    		commit();
+    	return result;
 	}
 	
 	/**
@@ -303,8 +302,6 @@ public class Sorter implements Serializable, PostProcessable{
 		if(input != null)																							//If exists
 			throw new ZSorterException(I.t("This holder is already an input."));										//Display error message
 		
-		setEnable(false);																							//Disable the sorter
-		
 		Output existingOutput = inventoryToOutput.get(inventory);													//Get the existing output
     	if(existingOutput == null) {																				//If no existing output
     		existingOutput = new Output(inventory, priority);															//Create a new output
@@ -315,6 +312,7 @@ public class Sorter implements Serializable, PostProcessable{
     		existingOutput.setPriority(priority);																		//Set the new priority
     		existingOutput.setMaterials(materials); 																	//Set the new materials
     	}
+    	commit();
 		return existingOutput;
 	}
 	
@@ -324,8 +322,10 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @return The removed output object, {@code null} if no output found at this inventory.
 	 */
 	public Output removeOutput(Inventory inventory) {
-		setEnable(false);
-		return inventoryToOutput.remove(inventory);
+		Output result = inventoryToOutput.remove(inventory);
+		if(result != null)
+    		commit();
+		return result;
 	}
 	
 	/**
@@ -423,7 +423,6 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @return Sorter as RawText.
 	 */
 	public RawText toRawText(DisplayMode mode) {
-		commit();
 		RawTextPart text = new RawText("")
     			.then(name)
     				.style(ChatColor.GOLD)

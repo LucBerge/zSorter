@@ -123,37 +123,6 @@ public class SorterManagerTest extends ZSorterTest{
 	}
 	
 	/**
-	 * Tests if a sorterManage binary serialized and deserialized.
-	 * @throws ZSorterException
-	 * @throws FileNotFoundException
-	 * @throws IOException
-	 * @throws ClassNotFoundException
-	 */
-	@Test
-	public void binarySerializationTest() throws ZSorterException, FileNotFoundException, IOException, ClassNotFoundException {
-		SorterManager manager = new SorterManager();
-		Sorter sorter = manager.createSorter("test", "Simple test sorter");
-		manager.setInput("test", inventory0, 1);
-		manager.setOutput("test", inventory1, 1, Arrays.asList(Material.IRON_INGOT));
-		manager.setOutput("test", inventory2, 1, Arrays.asList());
-
-		sorter.setSpeed(64);
-		sorter.commit();
-
-		//Serialization
-		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(new File("serializationTest.dat")));
-		oos.writeObject(manager);
-		oos.close();
-
-		//Dezerialisation
-		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("serializationTest.dat")));
-		SorterManager deserializedManager = (SorterManager) ois.readObject();
-		ois.close();
-		
-		Assert.assertEquals(manager, deserializedManager);
-	}
-	
-	/**
 	 * Tests if a sorterManage object is correctly serialized and deserialized.
 	 * @throws ZSorterException
 	 * @throws FileNotFoundException
@@ -169,7 +138,6 @@ public class SorterManagerTest extends ZSorterTest{
 		manager.setOutput("test", inventory2, 1, Arrays.asList());
 		
 		sorter.setSpeed(64);
-		sorter.commit();
 
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
