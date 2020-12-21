@@ -1,5 +1,5 @@
 name: zSorter
-version: 0.2
+version: 0.4
 main: fr.zcraft.zsorter.ZSorter
 description: Create and manage sorters in game.
 author: MrDomoo
