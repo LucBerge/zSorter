@@ -51,8 +51,8 @@ public class InventoryUtils {
 	 */
 	public static Inventory findInventoryFromBlock(Block block) throws ZSorterException {
         if(!(block.getState() instanceof InventoryHolder))
-        	throw new ZSorterException(I.t("Thi block must be an hodler."));
-        
+        	throw new ZSorterException(I.t("This block must be a hodler."));
+
 		InventoryHolder holder = (InventoryHolder) block.getState();
         return InventoryUtils.doubleInventoryToSimpleInventory(holder.getInventory());
 	}
