@@ -5,7 +5,6 @@ import java.lang.reflect.Type;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -16,6 +15,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import fr.zcraft.zsorter.ZSorter;
+import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.utils.InventoryUtils;
 
 /**
@@ -56,12 +56,11 @@ public class InventoryAdapter implements JsonSerializer<Inventory>, JsonDeserial
 		
 		if(block == null)
         	throw new JsonParseException(String.format("The block at the location x=%d, y=%d, z=%d in the world %s does not exist. The input/output at this location will be removed.", x, y, z, worldName));
-        
-		if(!(block.getState() instanceof InventoryHolder))
-        	throw new JsonParseException(String.format("The block at the location x=%d, y=%d, z=%d in the world %s is not a holder. The input/output at this location will be removed.", x, y, z, worldName));
-        
-		Inventory inventory = ((InventoryHolder) block.getState()).getInventory();
-		return InventoryUtils.doubleInventoryToSimpleInventory(inventory);
+
+		try {
+			return InventoryUtils.findInventoryFromBlock(block);
+		} catch (ZSorterException e) {
+			throw new JsonParseException(e);
+		}
 	}
-	
 }

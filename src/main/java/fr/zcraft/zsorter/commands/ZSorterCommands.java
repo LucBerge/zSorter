@@ -32,6 +32,11 @@ abstract public class ZSorterCommands extends Command{
 				+ "- Remove the file (and loose your data)");
 	}
 	
+	/**
+	 * Complete the sorter name when typing a command.
+	 * @param arg Current type value.
+	 * @return List of possible sorters.
+	 */
 	public List<String> completeSorterName(String arg){
 		return ZSorter.getInstance().getSorterManager().getNameToSorter().keySet()
 				.stream()

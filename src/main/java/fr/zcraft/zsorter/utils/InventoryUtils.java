@@ -1,8 +1,12 @@
 package fr.zcraft.zsorter.utils;
 
+import org.bukkit.block.Block;
 import org.bukkit.inventory.DoubleChestInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+
+import fr.zcraft.quartzlib.components.i18n.I;
+import fr.zcraft.zsorter.ZSorterException;
 
 /**
  * This class provides useful methods related to inventories.
@@ -37,5 +41,19 @@ public class InventoryUtils {
         	inventory = dci.getLeftSide();
         }
         return inventory;
+	}
+	
+	/**
+	 * Find the inventory of a block.
+	 * @param block - Block from which get the inventory.
+	 * @return The inventory corresponding to the block location.
+	 * @throws ZSorterException if the block is not an instance of {@code InventoryHolder};
+	 */
+	public static Inventory findInventoryFromBlock(Block block) throws ZSorterException {
+        if(!(block.getState() instanceof InventoryHolder))
+        	throw new ZSorterException(I.t("Thi block must be an hodler."));
+        
+		InventoryHolder holder = (InventoryHolder) block.getState();
+        return InventoryUtils.doubleInventoryToSimpleInventory(holder.getInventory());
 	}
 }

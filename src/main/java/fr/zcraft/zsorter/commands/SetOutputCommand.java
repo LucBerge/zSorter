@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
@@ -60,14 +59,10 @@ public class SetOutputCommand extends ZSorterCommands{
         
         //Get the inventory from location
         Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
-        if(!(block.getState() instanceof InventoryHolder))
-        	throwInvalidArgument(I.t("An output must be a holder."));
-
-		InventoryHolder holder = (InventoryHolder) block.getState();
-        Inventory inventory = InventoryUtils.doubleInventoryToSimpleInventory(holder.getInventory());
-
-        //Try to add the output to the sorter
         try {
+        	Inventory inventory = InventoryUtils.findInventoryFromBlock(block);
+
+        	//Try to add the output to the sorter
         	ZSorter.getInstance().getSorterManager().setOutput(name, inventory, priority, materials);
         	success(I.t("This holder is now an output of priority {0}.", priority));
         }

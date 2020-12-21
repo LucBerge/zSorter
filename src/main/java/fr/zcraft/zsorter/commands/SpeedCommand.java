@@ -1,7 +1,6 @@
 package fr.zcraft.zsorter.commands;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;

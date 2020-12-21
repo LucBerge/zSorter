@@ -8,7 +8,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorter;
@@ -32,11 +31,10 @@ public class LeftClickEvent implements Listener{
     		Sorter sorter = ZSorter.getInstance().getSorterManager().getPlayerToSorter().get(e.getPlayer());	//Get the sorter the player
     		if(sorter != null){																					//If sorter found
         		int priority = 1;																					//Defines the priority of the output
-    			InventoryHolder holder = (InventoryHolder) e.getClickedBlock().getState();							//Get the holder
-    	        Inventory inventory = InventoryUtils.doubleInventoryToSimpleInventory(holder.getInventory());		//find the inventory from the holder
-
-    	        //Try to add the output to the sorter
     	        try {
+    	        	Inventory inventory = InventoryUtils.findInventoryFromBlock(e.getClickedBlock());
+
+    	        	//Try to add the output to the sorter
     	        	ZSorter.getInstance().getSorterManager().setOutput(sorter.getName(), inventory, priority, Arrays.asList(e.getItem().getType()));
     	        	e.getPlayer().sendMessage(ChatColor.GREEN + I.t("This holder is now an output of priority {0}.", priority));
     	        	e.setCancelled(true);
