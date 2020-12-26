@@ -43,7 +43,8 @@ public class InventoryUtils {
 		if(holder.getInventory() instanceof DoubleChestInventory) {
 			DoubleChestInventory dci = (DoubleChestInventory) holder.getInventory();
 			holder = dci.getLeftSide().getHolder();
-		}
+		}else
+			holder = holder.getInventory().getHolder();
 		System.out.println("doubleHolderToSimpleHolder AFTER : " + holder);
 		displayInventoryContent(holder.getInventory());
 		return holder;
