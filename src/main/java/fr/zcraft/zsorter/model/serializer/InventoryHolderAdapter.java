@@ -23,7 +23,7 @@ import fr.zcraft.zsorter.utils.InventoryUtils;
  * @author Lucas
  *
  */
-public class InventoryAdapter implements JsonSerializer<InventoryHolder>, JsonDeserializer<InventoryHolder>{
+public class InventoryHolderAdapter implements JsonSerializer<InventoryHolder>, JsonDeserializer<InventoryHolder>{
 	
 	@Override
 	public JsonElement serialize(InventoryHolder src, Type typeOfSrc, JsonSerializationContext context) {

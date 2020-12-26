@@ -36,7 +36,7 @@ import fr.zcraft.zsorter.events.InventoryEvent;
 import fr.zcraft.zsorter.events.ItemMoveEvent;
 import fr.zcraft.zsorter.events.LeftClickEvent;
 import fr.zcraft.zsorter.model.SorterManager;
-import fr.zcraft.zsorter.model.serializer.InventoryAdapter;
+import fr.zcraft.zsorter.model.serializer.InventoryHolderAdapter;
 import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory;
 import fr.zcraft.zsorter.model.serializer.SorterManagerAdapter;
 import fr.zcraft.zsorter.tasks.SortTask;
@@ -159,7 +159,7 @@ public final class ZSorter extends QuartzPlugin implements Listener{
 		try {
 			GsonBuilder gsonBuilder = new GsonBuilder();
 			gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
-			gsonBuilder.registerTypeHierarchyAdapter(InventoryHolder.class, new InventoryAdapter());
+			gsonBuilder.registerTypeHierarchyAdapter(InventoryHolder.class, new InventoryHolderAdapter());
 			gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
 			Gson customGson = gsonBuilder.create();
 			FileWriter fr = new FileWriter(dataPath);
@@ -180,7 +180,7 @@ public final class ZSorter extends QuartzPlugin implements Listener{
 			try {
 				GsonBuilder gsonBuilder = new GsonBuilder();
 				gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
-				gsonBuilder.registerTypeHierarchyAdapter(InventoryHolder.class, new InventoryAdapter());
+				gsonBuilder.registerTypeHierarchyAdapter(InventoryHolder.class, new InventoryHolderAdapter());
 				gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
 				Gson customGson = gsonBuilder.create();
 				BufferedReader br = new BufferedReader(new FileReader(dataFile));

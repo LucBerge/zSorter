@@ -27,7 +27,7 @@ public class HolderBreakEvent implements Listener{
 	public void onBlockBreak(BlockBreakEvent e) {
 		if(ZSorter.getInstance().isEnable()) {																//If the plugin is not enable
 			try {
-				InventoryHolder inventory = InventoryUtils.findInventoryFromBlock(e.getBlock());					//Get the inventory
+				InventoryHolder inventory = InventoryUtils.findInventoryFromBlock(e.getBlock());					//Get the holder
 				Sorter sorter = ZSorter.getInstance().getSorterManager().getInventoryToSorter().get(inventory);		//Get the associated sorter
 				if(sorter != null) {																				//If a sorter has been found
 					if(sorter.removeInput(inventory) != null){															//Try to remove the input inventory

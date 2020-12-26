@@ -28,14 +28,14 @@ public class SorterManager implements Serializable{
 	private static final long serialVersionUID = -1782855927147248287L;
 	
 	private Map<String, Sorter> nameToSorter;
-	private transient Map<InventoryHolder, Sorter> inventoryToSorter;
+	private transient Map<InventoryHolder, Sorter> holderToSorter;
 	private transient Map<Player, Sorter> playerToSorter;
 	
 	/**
 	 * Constructor of a sorter manager object.
 	 */
 	public SorterManager() {
-		this.inventoryToSorter = new HashMap<InventoryHolder, Sorter>();
+		this.holderToSorter = new HashMap<InventoryHolder, Sorter>();
 		this.nameToSorter = new TreeMap<String, Sorter>();
 		this.playerToSorter = new HashMap<Player, Sorter>();
 	}
@@ -57,13 +57,13 @@ public class SorterManager implements Serializable{
 	}
 	
 	/**
-	 * Returns the map linking a inventory to a sorter.<br><br>
+	 * Returns the map linking a holder to a sorter.<br><br>
 	 * Do not use this method if you need to add or remove a sorter.
 	 * Use the {@code addSorter} and {@code deleteSorter} methods instead.
 	 * @return The sorters of the plugin.
 	 */
 	public Map<InventoryHolder, Sorter> getInventoryToSorter() {
-		return inventoryToSorter;
+		return holderToSorter;
 	}
 	
 	/**
@@ -93,88 +93,88 @@ public class SorterManager implements Serializable{
 			throw new ZSorterException(I.t("There is no sorter with this name."));		//Display error message
 		
 		for(Input input:sorter.getInventoryToInput().values())							//For each input of the sorter
-			inventoryToSorter.remove(input.getHolder());								//Remove the input from the inventory to sorter map
+			holderToSorter.remove(input.getHolder());								//Remove the input from the holder to sorter map
 		for(Input input:sorter.getInventoryToInput().values())							//For each ouput of the sorter
-			inventoryToSorter.remove(input.getHolder());								//Remove the output from the inventory to sorter map
+			holderToSorter.remove(input.getHolder());								//Remove the output from the holder to sorter map
 		return sorter;
 	}
 	
 	/**
 	 * Sets a new sorter input.
 	 * @param name - Name of the sorter.
-	 * @param inventory - Input inventory.
+	 * @param holder - Input holder.
 	 * @param priority - Priority of the input.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public void setInput(String name, InventoryHolder inventory, int priority) throws ZSorterException {
+	public void setInput(String name, InventoryHolder holder, int priority) throws ZSorterException {
 		Sorter sorter = nameToSorter.get(name);
 		if(sorter == null)
 			throw new ZSorterException(I.t("There is no sorter with this name."));
 
-		Sorter existingSorter = inventoryToSorter.putIfAbsent(inventory, sorter);											//Get the sorter with this input
+		Sorter existingSorter = holderToSorter.putIfAbsent(holder, sorter);												//Get the sorter with this input
 		if(existingSorter != null && !sorter.equals(existingSorter))															//If the sorter is not this one
 			throw new ZSorterException(I.t("This holder is already in use by the sorter {0}.", sorter.getName()));			//Display error messsage
 		
-		sorter.setInput(inventory, priority);
+		sorter.setInput(holder, priority);
 	}
 	
 	/**
 	 * Remove an input from a sorter.
 	 * @param name - Name of the sorter.
-	 * @param inventory - Inventory of the input.
-	 * @return The removed input object, {@code null} if no input found for this inventory.
+	 * @param holder - Holder of the input.
+	 * @return The removed input object, {@code null} if no input found for this holder.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public Input removeInput(String name, InventoryHolder inventory) throws ZSorterException {
+	public Input removeInput(String name, InventoryHolder holder) throws ZSorterException {
 		Sorter sorter = nameToSorter.get(name);
 		if(sorter == null)
 			throw new ZSorterException(I.t("There is no sorter with this name."));
 		
-		Input input = sorter.removeInput(inventory);
+		Input input = sorter.removeInput(holder);
 		if(input == null)
 			throw new ZSorterException(I.t("This holder is not an input."));
 			
-		inventoryToSorter.remove(inventory);			//Unkink the sorter
+		holderToSorter.remove(holder);			//Unkink the sorter
 		return input;
 	}
 	
 	/**
 	 * Sets a new sorter output.
 	 * @param name - Name of the sorter.
-	 * @param inventory - Output inventory.
+	 * @param holder - Output holder.
 	 * @param priority - Priority of the output.
 	 * @param materials - Materials of the output.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public void setOutput(String name, InventoryHolder inventory, int priority, List<Material> materials) throws ZSorterException {
+	public void setOutput(String name, InventoryHolder holder, int priority, List<Material> materials) throws ZSorterException {
 		Sorter sorter = nameToSorter.get(name);
 		if(sorter == null)
 			throw new ZSorterException(I.t("There is no sorter with this name."));
 
-		Sorter existingSorter = inventoryToSorter.putIfAbsent(inventory, sorter);											//Get the sorter with this input
+		Sorter existingSorter = holderToSorter.putIfAbsent(holder, sorter);											//Get the sorter with this input
 		if(existingSorter != null && !sorter.equals(existingSorter))															//If the sorter is not this one
 			throw new ZSorterException(I.t("This holder is already in use by the sorter {0}.", sorter.getName()));			//Display error messsage
 		
-		sorter.setOutput(inventory, priority, materials);
+		sorter.setOutput(holder, priority, materials);
 	}
 	
 	/**
 	 * Remove an output from a sorter.
 	 * @param name - Name of the sorter.
-	 * @param inventory - Inventory of the output.
-	 * @return The removed output object, {@code null} if no output found for this inventory.
+	 * @param holder - Holder of the output.
+	 * @return The removed output object, {@code null} if no output found for this holder.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public Output removeOutput(String name, InventoryHolder inventory) throws ZSorterException {
+	public Output removeOutput(String name, InventoryHolder holder) throws ZSorterException {
 		Sorter sorter = nameToSorter.get(name);
 		if(sorter == null)
 			throw new ZSorterException(I.t("There is no sorter with this name."));
 		
-		Output output = sorter.removeOutput(inventory);
+		Output output = sorter.removeOutput(holder);
 		if(output == null)
 			throw new ZSorterException(I.t("This holder is not an output."));
 		
-		inventoryToSorter.remove(inventory);									//Unkink the sorter
+		holderToSorter.remove(holder);									//Unkink the sorter
 		return output;
 	}
 	
@@ -191,24 +191,24 @@ public class SorterManager implements Serializable{
 	}
 	
 	/**
-	 * Compute the sorter associated with this inventory.
-	 * Don't do anything if the inventory is not an input or an output.
-	 * @param inventory - Inventory of the sorter to compute.
+	 * Compute the sorter associated with this holder.
+	 * Don't do anything if the holder is not an input or an output.
+	 * @param holder - Holder of the sorter to compute.
 	 * @param checkContent - Defines the rule to apply for the output full flag. {@code true} to define the flag regarding the output content, {@code false} to set it to {@code false} anyway.
 	 * @return {@code true} if the sorter has been computed, {@code false} otherwise.
 	 */
-	public boolean computeSorter(InventoryHolder inventory, boolean checkContent) {
+	public boolean computeSorter(InventoryHolder holder, boolean checkContent) {
 		boolean computed = false;
-		Sorter sorter = inventoryToSorter.get(inventory);					//Get the sorter associated with this inventory
+		Sorter sorter = holderToSorter.get(holder);							//Get the sorter associated with this holder
 		if(sorter != null && sorter.isEnable()) {							//If sorter found and enable
-			Input input = sorter.getInventoryToInput().get(inventory);			//Get the input linked to this inventory
+			Input input = sorter.getInventoryToInput().get(holder);				//Get the input linked to this holder
 			if(input != null) {													//If input found
 				sorter.setToCompute(true);										//Set the sorter to compute
 				SortTask.getInstance().start();									//Start the task
 				computed = true;
 			}
 			else {
-				Output output = sorter.getInventoryToOutput().get(inventory);	//Get the output linked to this inventory
+				Output output = sorter.getInventoryToOutput().get(holder);		//Get the output linked to this holder
 				if(output != null) {											//If output found
 					
 					boolean clogging = output.getMaterials()
@@ -236,7 +236,7 @@ public class SorterManager implements Serializable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((inventoryToSorter == null) ? 0 : inventoryToSorter.hashCode());
+		result = prime * result + ((holderToSorter == null) ? 0 : holderToSorter.hashCode());
 		result = prime * result + ((nameToSorter == null) ? 0 : nameToSorter.hashCode());
 		return result;
 	}
@@ -250,10 +250,10 @@ public class SorterManager implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		SorterManager other = (SorterManager) obj;
-		if (inventoryToSorter == null) {
-			if (other.inventoryToSorter != null)
+		if (holderToSorter == null) {
+			if (other.holderToSorter != null)
 				return false;
-		} else if (!inventoryToSorter.equals(other.inventoryToSorter))
+		} else if (!holderToSorter.equals(other.holderToSorter))
 			return false;
 		if (nameToSorter == null) {
 			if (other.nameToSorter != null)

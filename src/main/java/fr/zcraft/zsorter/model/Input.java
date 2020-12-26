@@ -23,11 +23,11 @@ public class Input extends InputOutput implements Serializable{
 
 	/**
 	 * Constructor of an output object.
-	 * @param inventory - Inventory of the output.
+	 * @param holder - Holder of the output.
 	 * @param priority - Priority of the output.
 	 */
-	public Input(InventoryHolder inventory, Integer priority) {
-		super(inventory, priority);
+	public Input(InventoryHolder holder, Integer priority) {
+		super(holder, priority);
 		this.cloggedUp = false;
 	}
 	

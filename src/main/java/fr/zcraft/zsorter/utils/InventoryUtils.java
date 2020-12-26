@@ -31,9 +31,9 @@ public class InventoryUtils {
 	}
 
 	/**
-	 * Find the inventory of a block.
-	 * @param block - Block from which get the inventory.
-	 * @return The inventory corresponding to the block location.
+	 * Find the holder of a block.
+	 * @param block - Block from which get the holder.
+	 * @return Holder corresponding to the block location.
 	 * @throws ZSorterException if the block is not an instance of {@code InventoryHolder};
 	 */
 	public static InventoryHolder findInventoryFromBlock(Block block) throws ZSorterException {

@@ -17,7 +17,7 @@ import com.google.gson.GsonBuilder;
 
 import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.ZSorterTest;
-import fr.zcraft.zsorter.model.serializer.InventoryAdapter;
+import fr.zcraft.zsorter.model.serializer.InventoryHolderAdapter;
 import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory;
 import fr.zcraft.zsorter.model.serializer.SorterManagerAdapter;
 
@@ -136,7 +136,7 @@ public class SorterManagerTest extends ZSorterTest{
 
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
-		gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+		gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryHolderAdapter());
 		gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
 		
 		Gson customGson = gsonBuilder.create();

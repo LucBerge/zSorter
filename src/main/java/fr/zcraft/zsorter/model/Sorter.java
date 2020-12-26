@@ -48,8 +48,8 @@ public class Sorter implements Serializable, PostProcessable{
 	private transient boolean toCompute;
 	private int speed;
 	
-	private transient Map<InventoryHolder, Input> inventoryToInput;
-	private transient Map<InventoryHolder, Output> inventoryToOutput;
+	private transient Map<InventoryHolder, Input> holderToInput;
+	private transient Map<InventoryHolder, Output> holderToOutput;
 	private transient Map<Material, List<Output>> materialToOutputs;
 	private transient List<Output> overflows;
 	
@@ -78,8 +78,8 @@ public class Sorter implements Serializable, PostProcessable{
 		this.toCompute = false;
 		this.speed = DEFAULT_SPEED;
 		
-		this.inventoryToInput = new HashMap<InventoryHolder, Input>();
-		this.inventoryToOutput = new HashMap<InventoryHolder, Output>();
+		this.holderToInput = new HashMap<InventoryHolder, Input>();
+		this.holderToOutput = new HashMap<InventoryHolder, Output>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();
 		
@@ -177,7 +177,7 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @return The sorter inputs.
 	 */
 	public Map<InventoryHolder, Input> getInventoryToInput() {
-		return inventoryToInput;
+		return holderToInput;
 	}
 
 	/**
@@ -187,7 +187,7 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @return The sorter outputs.
 	 */
 	public Map<InventoryHolder, Output> getInventoryToOutput() {
-		return inventoryToOutput;
+		return holderToOutput;
 	}
 
 	/**
@@ -226,17 +226,17 @@ public class Sorter implements Serializable, PostProcessable{
 	 * Sorts the input outputs by order of priority.
 	 */
 	public void commit() {
-		inputs = inventoryToInput.values().stream().collect(Collectors.toList());
+		inputs = holderToInput.values().stream().collect(Collectors.toList());
 		Collections.sort(inputs);											//Sort the inputs
 
-		outputs = inventoryToOutput.values().stream().collect(Collectors.toList());
+		outputs = holderToOutput.values().stream().collect(Collectors.toList());
 		Collections.sort(outputs);										//Sort the outputs
 
-		overflows = inventoryToOutput.values().stream().filter(o -> o.isOverflow()).collect(Collectors.toList());
+		overflows = holderToOutput.values().stream().filter(o -> o.isOverflow()).collect(Collectors.toList());
 		Collections.sort(overflows);										//Sort the overflows
 		
 		materialToOutputs = new HashMap<Material, List<Output>>();
-		for(Output output:inventoryToOutput.values()) {						//For each output
+		for(Output output:holderToOutput.values()) {						//For each output
 			for(Material material:output.getMaterials()) {						//For each material
 				List<Output> possibleOutputs = materialToOutputs.get(material);		//Get the possible outputs for the given material
 				if(possibleOutputs == null) {										//If none have been found
@@ -252,22 +252,22 @@ public class Sorter implements Serializable, PostProcessable{
 	}
 	
 	/**
-	 * Sets the inventory has an input.<br><br>
+	 * Sets the holder has an input.<br><br>
 	 * If the input already exists, the priority is updated.
-	 * @param inventory - Inventory of the input.
+	 * @param holder - Holder of the input.
 	 * @param priority - Priority of the input.
 	 * @return The created input object.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public Input setInput(InventoryHolder inventory, int priority) throws ZSorterException {
-		Output output = inventoryToOutput.get(inventory);															//Get the existing output
+	public Input setInput(InventoryHolder holder, int priority) throws ZSorterException {
+		Output output = holderToOutput.get(holder);																	//Get the existing output
 		if(output != null)																							//If exists
 			throw new ZSorterException(I.t("This holder is already an output."));										//Display error message
 		
-		Input existingInput = inventoryToInput.get(inventory);															//Get the existing input
+		Input existingInput = holderToInput.get(holder);																//Get the existing input
     	if(existingInput == null) {																						//If no input exists
-    		existingInput = new Input(inventory, priority);																	//Create a new input
-    		inventoryToInput.put(inventory, existingInput);																	//Add the new input
+    		existingInput = new Input(holder, priority);																	//Create a new input
+    		holderToInput.put(holder, existingInput);																		//Add the new input
     	}
     	else {																											//If the input exists
     		existingInput.setPriority(priority);																			//Set the new priority
@@ -278,35 +278,35 @@ public class Sorter implements Serializable, PostProcessable{
 
 	/**
 	 * Remove an input from a sorter.
-	 * @param inventory - Inventory of the input.
-	 * @return The removed input object, {@code null} if no input found for this inventory.
+	 * @param holder - Holder of the input.
+	 * @return The removed input object, {@code null} if no input found for this holder.
 	 */
-	public Input removeInput(InventoryHolder inventory) {
-		Input result = inventoryToInput.remove(inventory);
+	public Input removeInput(InventoryHolder holder) {
+		Input result = holderToInput.remove(holder);
     	if(result != null)
     		commit();
     	return result;
 	}
 	
 	/**
-	 * Sets the inventory has an output.<br><br>
+	 * Sets the holder has an output.<br><br>
 	 * If the output already exists, the priority and the materials are updated.
-	 * @param inventory - Inventory of the output.
+	 * @param holder - Holder of the output.
 	 * @param priority - Priority of the output.
 	 * @param materials - Sorted materials of the output.
 	 * @return The created output object.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public Output setOutput(InventoryHolder inventory, int priority, List<Material> materials) throws ZSorterException {
-		Input input = inventoryToInput.get(inventory);																//Get the existing input
+	public Output setOutput(InventoryHolder holder, int priority, List<Material> materials) throws ZSorterException {
+		Input input = holderToInput.get(holder);																	//Get the existing input
 		if(input != null)																							//If exists
 			throw new ZSorterException(I.t("This holder is already an input."));										//Display error message
 		
-		Output existingOutput = inventoryToOutput.get(inventory);													//Get the existing output
+		Output existingOutput = holderToOutput.get(holder);															//Get the existing output
     	if(existingOutput == null) {																				//If no existing output
-    		existingOutput = new Output(inventory, priority);															//Create a new output
+    		existingOutput = new Output(holder, priority);																//Create a new output
     		existingOutput.setMaterials(materials); 																	//Add the materials
-    		inventoryToOutput.put(inventory, existingOutput);															//Add the new output
+    		holderToOutput.put(holder, existingOutput);																//Add the new output
     	}
     	else {																										//If the output exists
     		existingOutput.setPriority(priority);																		//Set the new priority
@@ -318,11 +318,11 @@ public class Sorter implements Serializable, PostProcessable{
 	
 	/**
 	 * Remove an output from a sorter.
-	 * @param inventory - Inventory of the output.
-	 * @return The removed output object, {@code null} if no output found at this inventory.
+	 * @param holder - Holder of the output.
+	 * @return The removed output object, {@code null} if no output found at this holder.
 	 */
-	public Output removeOutput(InventoryHolder inventory) {
-		Output result = inventoryToOutput.remove(inventory);
+	public Output removeOutput(InventoryHolder holder) {
+		Output result = holderToOutput.remove(holder);
 		if(result != null)
     		commit();
 		return result;
@@ -445,10 +445,10 @@ public class Sorter implements Serializable, PostProcessable{
 					.hover(new RawText()
 	        				.then(I.t("Change the sorting speed")))
 	        			.suggest(SpeedCommand.class, name)
-        		.then("\n  " + I.t("{0} input(s):", inventoryToInput.size()) + "\n  ")
+        		.then("\n  " + I.t("{0} input(s):", holderToInput.size()) + "\n  ")
     				.color(ChatColor.GRAY);
 		
-		List<Input> inputs = inventoryToInput
+		List<Input> inputs = holderToInput
 				.values()
 				.stream()
 				.sorted()
@@ -482,7 +482,7 @@ public class Sorter implements Serializable, PostProcessable{
 		
 		//if display by output
 		if(mode == DisplayMode.OUTPUTS) {
-			List<Output> outputs = inventoryToOutput
+			List<Output> outputs = holderToOutput
 					.values()
 					.stream()
 					.filter(o -> !o.isOverflow())
@@ -522,7 +522,7 @@ public class Sorter implements Serializable, PostProcessable{
     	}
 		//If display by items
     	else if(mode == DisplayMode.ITEMS){
-    		List<Material> sortedMaterials = inventoryToOutput
+    		List<Material> sortedMaterials = holderToOutput
 														.values()
 														.stream()
 														.filter(o -> !o.isOverflow())
@@ -594,13 +594,13 @@ public class Sorter implements Serializable, PostProcessable{
 
 	@Override
 	public void postProcess() {
-		inventoryToInput = new HashMap<InventoryHolder, Input>();
+		holderToInput = new HashMap<InventoryHolder, Input>();
 		for(Input input:inputs) {
-			inventoryToInput.putIfAbsent(input.getHolder(), input);
+			holderToInput.putIfAbsent(input.getHolder(), input);
 		}
-		inventoryToOutput = new HashMap<InventoryHolder, Output>();
+		holderToOutput = new HashMap<InventoryHolder, Output>();
 		for(Output output:outputs) {
-			inventoryToOutput.putIfAbsent(output.getHolder(), output);
+			holderToOutput.putIfAbsent(output.getHolder(), output);
 		}
 		commit();
 		if(enable)
