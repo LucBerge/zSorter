@@ -140,6 +140,7 @@ public final class ZSorter extends QuartzPlugin implements Listener{
         		RemoveOutputCommand.class,
         		MagicCommand.class
         );
+        Commands.registerShortcut("sorter", ListCommand.class, "sorters");
         
 		if(load()) {
 			SortTask.getInstance().start();

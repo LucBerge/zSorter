@@ -8,6 +8,8 @@ api-version: "1.13"
 commands:
     sorter:
         description: Manage your sorters in game
+    sorters:
+        description: List all the sorters in game
         
 # Permissions section generated using https://amaury.carrade.eu/tools/generators/bukkit/permissions.html
 permissions:
