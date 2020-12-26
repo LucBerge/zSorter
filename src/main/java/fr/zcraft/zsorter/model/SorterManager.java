@@ -14,6 +14,7 @@ import org.bukkit.inventory.InventoryHolder;
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorterException;
 import fr.zcraft.zsorter.tasks.SortTask;
+import fr.zcraft.zsorter.utils.InventoryUtils;
 
 /**
  * The class {@code SorterManager} is used to manage sorters.
@@ -213,7 +214,11 @@ public class SorterManager implements Serializable{
 							.stream()
 							.filter(sorter.getCloggingUpMaterials()::contains)
 							.count() > 0;
-
+					
+					boolean realState = InventoryUtils.isFull(output.getHolder());
+					if(output.isFull() != realState)
+						output.setFull(realState);
+					
 					if(clogging || output.isOverflow()) {						//If one of the output material was clogging up the inputs or if it is an overflow
 						sorter.setToCompute(true);									//Set the sorter to compute
 						SortTask.getInstance().start();								//Start the task

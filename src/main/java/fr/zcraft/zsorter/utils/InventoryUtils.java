@@ -2,7 +2,9 @@ package fr.zcraft.zsorter.utils;
 
 import org.bukkit.block.Block;
 import org.bukkit.inventory.DoubleChestInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorterException;
@@ -41,5 +43,19 @@ public class InventoryUtils {
 		InventoryHolder holder = (InventoryHolder) block.getState();
 		holder = doubleHolderToSimpleHolder(holder);
 		return holder;
+	}
+	
+	/**
+	 * Checks whether a holder is full.
+	 * @param holder - Holder to check.
+	 * @return {@code true} if the holder is full, {@code false} if it contains at least an empty slot.
+	 */
+	public static boolean isFull(InventoryHolder holder) {
+		Inventory inventory = holder.getInventory().getHolder().getInventory();
+		for(ItemStack itemStack: inventory.getContents()) {														//For each item in the input inventory
+			if(itemStack == null)
+				return false;
+		}
+		return true;
 	}
 }
