@@ -1,13 +1,12 @@
 package fr.zcraft.zsorter;
 
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.model.SorterManager;
 
 /**
@@ -21,7 +20,7 @@ public class ZSorterTest {
 	protected ZSorter plugin;
 	
 	protected SorterManager manager;
-	protected Inventory inventory0, inventory1, inventory2, inventory3;
+	protected InventoryHolder inventory0, inventory1, inventory2, inventory3;
 	
 	/**
 	 * Load the manager and the inventories.
@@ -39,10 +38,10 @@ public class ZSorterTest {
 	    server = MockBukkit.mock();
 	    plugin = (ZSorter) MockBukkit.load(ZSorter.class);
 		manager = new SorterManager();
-		inventory0 = server.createInventory(null, 9);
+		/*inventory0 = server.createInventory(null, 9);
 		inventory1 = server.createInventory(null, 9);
 		inventory2 = server.createInventory(null, 9);
-		inventory3 = server.createInventory(null, 9);
+		inventory3 = server.createInventory(null, 9);*/
 	}
 
 	/**

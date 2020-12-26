@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorter;
@@ -27,7 +27,7 @@ public class HolderBreakEvent implements Listener{
 	public void onBlockBreak(BlockBreakEvent e) {
 		if(ZSorter.getInstance().isEnable()) {																//If the plugin is not enable
 			try {
-				Inventory inventory = InventoryUtils.findInventoryFromBlock(e.getBlock());						//Get the inventory
+				InventoryHolder inventory = InventoryUtils.findInventoryFromBlock(e.getBlock());					//Get the inventory
 				Sorter sorter = ZSorter.getInstance().getSorterManager().getInventoryToSorter().get(inventory);		//Get the associated sorter
 				if(sorter != null) {																				//If a sorter has been found
 					if(sorter.removeInput(inventory) != null){															//Try to remove the input inventory
@@ -39,7 +39,7 @@ public class HolderBreakEvent implements Listener{
 				}
 			}
 			catch(ZSorterException ex) {
-				//The removed block is not an holder.
+				//The removed block is not a holder.
 			}
 		}
 	}

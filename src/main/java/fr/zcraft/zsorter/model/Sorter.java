@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import fr.zcraft.quartzlib.components.i18n.I;
@@ -48,8 +49,8 @@ public class Sorter implements Serializable, PostProcessable{
 	private transient boolean toCompute;
 	private int speed;
 	
-	private transient Map<Inventory, Input> inventoryToInput;
-	private transient Map<Inventory, Output> inventoryToOutput;
+	private transient Map<InventoryHolder, Input> inventoryToInput;
+	private transient Map<InventoryHolder, Output> inventoryToOutput;
 	private transient Map<Material, List<Output>> materialToOutputs;
 	private transient List<Output> overflows;
 	
@@ -78,8 +79,8 @@ public class Sorter implements Serializable, PostProcessable{
 		this.toCompute = false;
 		this.speed = DEFAULT_SPEED;
 		
-		this.inventoryToInput = new HashMap<Inventory, Input>();
-		this.inventoryToOutput = new HashMap<Inventory, Output>();
+		this.inventoryToInput = new HashMap<InventoryHolder, Input>();
+		this.inventoryToOutput = new HashMap<InventoryHolder, Output>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();
 		
@@ -176,7 +177,7 @@ public class Sorter implements Serializable, PostProcessable{
 	 * Use the {@code setInput} and {@code removeInput} methods instead.
 	 * @return The sorter inputs.
 	 */
-	public Map<Inventory, Input> getInventoryToInput() {
+	public Map<InventoryHolder, Input> getInventoryToInput() {
 		return inventoryToInput;
 	}
 
@@ -186,7 +187,7 @@ public class Sorter implements Serializable, PostProcessable{
 	 * Use the {@code setOutput} and {@code removeOutput} methods instead.
 	 * @return The sorter outputs.
 	 */
-	public Map<Inventory, Output> getInventoryToOutput() {
+	public Map<InventoryHolder, Output> getInventoryToOutput() {
 		return inventoryToOutput;
 	}
 
@@ -259,7 +260,7 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @return The created input object.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public Input setInput(Inventory inventory, int priority) throws ZSorterException {
+	public Input setInput(InventoryHolder inventory, int priority) throws ZSorterException {
 		Output output = inventoryToOutput.get(inventory);															//Get the existing output
 		if(output != null)																							//If exists
 			throw new ZSorterException(I.t("This holder is already an output."));										//Display error message
@@ -281,7 +282,7 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @param inventory - Inventory of the input.
 	 * @return The removed input object, {@code null} if no input found for this inventory.
 	 */
-	public Input removeInput(Inventory inventory) {
+	public Input removeInput(InventoryHolder inventory) {
 		Input result = inventoryToInput.remove(inventory);
     	if(result != null)
     		commit();
@@ -297,7 +298,7 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @return The created output object.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public Output setOutput(Inventory inventory, int priority, List<Material> materials) throws ZSorterException {
+	public Output setOutput(InventoryHolder inventory, int priority, List<Material> materials) throws ZSorterException {
 		Input input = inventoryToInput.get(inventory);																//Get the existing input
 		if(input != null)																							//If exists
 			throw new ZSorterException(I.t("This holder is already an input."));										//Display error message
@@ -321,7 +322,7 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @param inventory - Inventory of the output.
 	 * @return The removed output object, {@code null} if no output found at this inventory.
 	 */
-	public Output removeOutput(Inventory inventory) {
+	public Output removeOutput(InventoryHolder inventory) {
 		Output result = inventoryToOutput.remove(inventory);
 		if(result != null)
     		commit();
@@ -363,50 +364,50 @@ public class Sorter implements Serializable, PostProcessable{
 	 * Compute sorter on the sorter.
 	 */
 	public void computeSorting() {
-		if(isEnable()) {																						//If the sorter is ON
-    		for(Input input:inputs) {																				//For each input in the sorter
-    			Inventory inputInventory = InventoryUtils.simpleInventoryToDoubleInventory(input.getInventory());		//Get the input inventory
-    			for(ItemStack itemStack: inputInventory.getContents()) {												//For each item in the input inventory
-    				if(itemStack != null) {																					//If the item is not null
-    					ItemStack itemStackToTransfer = itemStack.clone();														//Clone the item to keep the metadata
-    					if(itemStackToTransfer.getAmount() > speed)																//If the number of items in the stack is over the speed limit
-							itemStackToTransfer.setAmount(speed);																	//Set to the speed limit
-    					List<Output> outputs = findOutputs(itemStack.getType());												//Find the outputs for this item
-    					for(Output output:outputs) {																			//For each possible output
-    						Inventory outputInventory = InventoryUtils.simpleInventoryToDoubleInventory(output.getInventory());		//Get the output inventory
-    						int amountToTransfer = itemStackToTransfer.getAmount();													//Get the amount to transfer
-    						HashMap<Integer, ItemStack> couldntTransferMap = outputInventory.addItem(itemStackToTransfer);			//Add the item to the output
-    						if(couldntTransferMap.isEmpty()) {																		//If everything has been transfered
+		if(isEnable()) {																								//If the sorter is ON
+    		for(Input input:inputs) {																						//For each input in the sorter
+    			Inventory inputInventory = input.getHolder().getInventory();													//Get the input inventory
+    			for(ItemStack itemStack: inputInventory.getContents()) {														//For each item in the input inventory
+    				if(itemStack != null) {																							//If the item is not null
+    					ItemStack itemStackToTransfer = itemStack.clone();																//Clone the item to keep the metadata
+    					if(itemStackToTransfer.getAmount() > speed)																		//If the number of items in the stack is over the speed limit
+							itemStackToTransfer.setAmount(speed);																			//Set to the speed limit
+    					List<Output> outputs = findOutputs(itemStack.getType());														//Find the outputs for this item
+    					for(Output output:outputs) {																					//For each possible output
+    						Inventory outputInventory = output.getHolder().getInventory();													//Get the output inventory
+    						int amountToTransfer = itemStackToTransfer.getAmount();															//Get the amount to transfer
+    						HashMap<Integer, ItemStack> couldntTransferMap = outputInventory.addItem(itemStackToTransfer);					//Add the item to the output
+    						if(couldntTransferMap.isEmpty()) {																				//If everything has been transfered
     							
     							//Run only if all the item fit in the output
     							
-        						inputInventory.removeItem(itemStackToTransfer);															//Remove the item from the input
-        						if(input.isCloggedUp())																					//If the input is clogged up
-        							input.setCloggedUp(false); 																				//Not clogged up anymore
-        						if(output.isFull())																						//If the output was full
-        							output.setFull(false); 																					//Not full anymore
-    							if(cloggingUpMaterials.contains(itemStack.getType()))													//If the stored item was clogging up the inputs
-    								cloggingUpMaterials.remove(itemStack.getType());														//Not clogging up anymore
-    							return;																									//Exit
+        						inputInventory.removeItem(itemStackToTransfer);																	//Remove the item from the input
+        						if(input.isCloggedUp())																							//If the input is clogged up
+        							input.setCloggedUp(false); 																						//Not clogged up anymore
+        						if(output.isFull())																								//If the output was full
+        							output.setFull(false); 																							//Not full anymore
+    							if(cloggingUpMaterials.contains(itemStack.getType()))															//If the stored item was clogging up the inputs
+    								cloggingUpMaterials.remove(itemStack.getType());																//Not clogging up anymore
+    							return;																											//Exit
     						}
     						
     						//Run only if the output is full
     						
-    						if(!output.isFull())																					//If the output was not full
-    							output.setFull(true); 																					//Now is it's full
+    						if(!output.isFull())																							//If the output was not full
+    							output.setFull(true); 																							//Now is it's full
     						
-    						ItemStack itemStackToRemove = itemStackToTransfer.clone();												//Create the stack to remove
-    						itemStackToRemove.setAmount(amountToTransfer - itemStackToTransfer.getAmount());						//Set the amount to remove
-    						inputInventory.removeItem(itemStackToRemove);															//Remove the item from the input
-    						itemStackToTransfer.setAmount(itemStackToTransfer.getAmount());											//Define the new amount to transfer
+    						ItemStack itemStackToRemove = itemStackToTransfer.clone();														//Create the stack to remove
+    						itemStackToRemove.setAmount(amountToTransfer - itemStackToTransfer.getAmount());								//Set the amount to remove
+    						inputInventory.removeItem(itemStackToRemove);																	//Remove the item from the input
+    						itemStackToTransfer.setAmount(itemStackToTransfer.getAmount());													//Define the new amount to transfer
     					}
     					
     					//Run only if this item is clogging up.
 
-						if(!input.isCloggedUp())																	//If the input is not clogging up
-							input.setCloggedUp(true); 																	//Set the input to clogged up
-    					if(!cloggingUpMaterials.contains(itemStack.getType()))										//If the material is not in the list
-    						cloggingUpMaterials.add(itemStack.getType());												//Add the material to the list
+						if(!input.isCloggedUp())																			//If the input is not clogging up
+							input.setCloggedUp(true); 																			//Set the input to clogged up
+    					if(!cloggingUpMaterials.contains(itemStack.getType()))												//If the material is not in the list
+    						cloggingUpMaterials.add(itemStack.getType());														//Add the material to the list
     				}
     			}
     		}
@@ -458,7 +459,7 @@ public class Sorter implements Serializable, PostProcessable{
 					.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
 					.hover(
 						new RawText()
-							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getInventory().getLocation().getX(), input.getInventory().getLocation().getY(), input.getInventory().getLocation().getZ()))
+							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getHolder().getInventory().getLocation().getX(), input.getHolder().getInventory().getLocation().getY(), input.getHolder().getInventory().getLocation().getZ()))
 								.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
 					);
     	}
@@ -473,7 +474,7 @@ public class Sorter implements Serializable, PostProcessable{
 					.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
 					.hover(
 						new RawText()
-							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", overflow.getInventory().getLocation().getX(), overflow.getInventory().getLocation().getY(), overflow.getInventory().getLocation().getZ()))
+							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", overflow.getHolder().getInventory().getLocation().getX(), overflow.getHolder().getInventory().getLocation().getY(), overflow.getHolder().getInventory().getLocation().getZ()))
 								.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
 					);
 		}
@@ -497,7 +498,7 @@ public class Sorter implements Serializable, PostProcessable{
 						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
 	    				.hover(
 	    	    			new RawText()
-	        					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
+	        					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
 	        						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
 	        			);
 	    		
@@ -550,7 +551,7 @@ public class Sorter implements Serializable, PostProcessable{
 							.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
 							.hover(
 									new RawText()
-									.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getInventory().getLocation().getX(), output.getInventory().getLocation().getY(), output.getInventory().getLocation().getZ()))
+									.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
 										.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
 							);
 				}
@@ -592,13 +593,13 @@ public class Sorter implements Serializable, PostProcessable{
 
 	@Override
 	public void postProcess() {
-		inventoryToInput = new HashMap<Inventory, Input>();
+		inventoryToInput = new HashMap<InventoryHolder, Input>();
 		for(Input input:inputs) {
-			inventoryToInput.putIfAbsent(input.getInventory(), input);
+			inventoryToInput.putIfAbsent(input.getHolder(), input);
 		}
-		inventoryToOutput = new HashMap<Inventory, Output>();
+		inventoryToOutput = new HashMap<InventoryHolder, Output>();
 		for(Output output:outputs) {
-			inventoryToOutput.putIfAbsent(output.getInventory(), output);
+			inventoryToOutput.putIfAbsent(output.getHolder(), output);
 		}
 		commit();
 		if(enable)

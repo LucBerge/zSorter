@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
@@ -36,7 +36,7 @@ public class RemoveOutputCommand extends ZSorterCommands{
         Block block = playerSender().getTargetBlock((Set<Material>) null, 15);
         
         try {
-        	Inventory inventory = InventoryUtils.findInventoryFromBlock(block);
+        	InventoryHolder inventory = InventoryUtils.findInventoryFromBlock(block);
         
         	//Try to remove the output from the sorter
 			ZSorter.getInstance().getSorterManager().removeOutput(name, inventory);

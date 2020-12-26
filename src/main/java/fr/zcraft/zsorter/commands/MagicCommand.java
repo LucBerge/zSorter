@@ -41,10 +41,10 @@ public class MagicCommand extends ZSorterCommands{
 			doMagicEffectPlayer(playerSender(), sorter, Config.MAGIC_EFFECT_DURATION.get());
 			
 			for(Input input:sorter.getInventoryToInput().values()) {
-				highlightGlowingBlock(playerSender(), input.getInventory().getLocation(), Config.MAGIC_EFFECT_DURATION.get());
+				highlightGlowingBlock(playerSender(), input.getHolder().getInventory().getLocation(), Config.MAGIC_EFFECT_DURATION.get());
 			}
 			for(Output output:sorter.getInventoryToOutput().values()) {
-				highlightGlowingBlock(playerSender(), output.getInventory().getLocation(), Config.MAGIC_EFFECT_DURATION.get());
+				highlightGlowingBlock(playerSender(), output.getHolder().getInventory().getLocation(), Config.MAGIC_EFFECT_DURATION.get());
 			}
 			success(I.t("The magic effect has been applied on the sorter {0} for {1} ticks.", sorter.getName(), Config.MAGIC_EFFECT_DURATION.get()));
 		}

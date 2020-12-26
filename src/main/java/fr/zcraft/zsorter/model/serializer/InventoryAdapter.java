@@ -4,7 +4,7 @@ import java.lang.reflect.Type;
 
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -23,20 +23,20 @@ import fr.zcraft.zsorter.utils.InventoryUtils;
  * @author Lucas
  *
  */
-public class InventoryAdapter implements JsonSerializer<Inventory>, JsonDeserializer<Inventory>{
+public class InventoryAdapter implements JsonSerializer<InventoryHolder>, JsonDeserializer<InventoryHolder>{
 	
 	@Override
-	public JsonElement serialize(Inventory src, Type typeOfSrc, JsonSerializationContext context) {
+	public JsonElement serialize(InventoryHolder src, Type typeOfSrc, JsonSerializationContext context) {
 		JsonObject jsonInputOutput = new JsonObject();
-		jsonInputOutput.addProperty("world", src.getLocation().getWorld().getName());
-		jsonInputOutput.addProperty("x", new Integer(src.getLocation().getBlockX()));
-		jsonInputOutput.addProperty("y", new Integer(src.getLocation().getBlockY()));
-		jsonInputOutput.addProperty("z", new Integer(src.getLocation().getBlockZ()));
+		jsonInputOutput.addProperty("world", src.getInventory().getLocation().getWorld().getName());
+		jsonInputOutput.addProperty("x", new Integer(src.getInventory().getLocation().getBlockX()));
+		jsonInputOutput.addProperty("y", new Integer(src.getInventory().getLocation().getBlockY()));
+		jsonInputOutput.addProperty("z", new Integer(src.getInventory().getLocation().getBlockZ()));
         return jsonInputOutput;
 	}
 
 	@Override
-	public Inventory deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+	public InventoryHolder deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 		
 		JsonObject jsonObject = json.getAsJsonObject();
 		String worldName = jsonObject.get("world").getAsString();

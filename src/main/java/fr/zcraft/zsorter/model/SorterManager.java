@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorterException;
@@ -27,14 +27,14 @@ public class SorterManager implements Serializable{
 	private static final long serialVersionUID = -1782855927147248287L;
 	
 	private Map<String, Sorter> nameToSorter;
-	private transient Map<Inventory, Sorter> inventoryToSorter;
+	private transient Map<InventoryHolder, Sorter> inventoryToSorter;
 	private transient Map<Player, Sorter> playerToSorter;
 	
 	/**
 	 * Constructor of a sorter manager object.
 	 */
 	public SorterManager() {
-		this.inventoryToSorter = new HashMap<Inventory, Sorter>();
+		this.inventoryToSorter = new HashMap<InventoryHolder, Sorter>();
 		this.nameToSorter = new TreeMap<String, Sorter>();
 		this.playerToSorter = new HashMap<Player, Sorter>();
 	}
@@ -61,7 +61,7 @@ public class SorterManager implements Serializable{
 	 * Use the {@code addSorter} and {@code deleteSorter} methods instead.
 	 * @return The sorters of the plugin.
 	 */
-	public Map<Inventory, Sorter> getInventoryToSorter() {
+	public Map<InventoryHolder, Sorter> getInventoryToSorter() {
 		return inventoryToSorter;
 	}
 	
@@ -92,9 +92,9 @@ public class SorterManager implements Serializable{
 			throw new ZSorterException(I.t("There is no sorter with this name."));		//Display error message
 		
 		for(Input input:sorter.getInventoryToInput().values())							//For each input of the sorter
-			inventoryToSorter.remove(input.getInventory());								//Remove the input from the inventory to sorter map
+			inventoryToSorter.remove(input.getHolder());								//Remove the input from the inventory to sorter map
 		for(Input input:sorter.getInventoryToInput().values())							//For each ouput of the sorter
-			inventoryToSorter.remove(input.getInventory());								//Remove the output from the inventory to sorter map
+			inventoryToSorter.remove(input.getHolder());								//Remove the output from the inventory to sorter map
 		return sorter;
 	}
 	
@@ -105,7 +105,7 @@ public class SorterManager implements Serializable{
 	 * @param priority - Priority of the input.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public void setInput(String name, Inventory inventory, int priority) throws ZSorterException {
+	public void setInput(String name, InventoryHolder inventory, int priority) throws ZSorterException {
 		Sorter sorter = nameToSorter.get(name);
 		if(sorter == null)
 			throw new ZSorterException(I.t("There is no sorter with this name."));
@@ -124,7 +124,7 @@ public class SorterManager implements Serializable{
 	 * @return The removed input object, {@code null} if no input found for this inventory.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public Input removeInput(String name, Inventory inventory) throws ZSorterException {
+	public Input removeInput(String name, InventoryHolder inventory) throws ZSorterException {
 		Sorter sorter = nameToSorter.get(name);
 		if(sorter == null)
 			throw new ZSorterException(I.t("There is no sorter with this name."));
@@ -145,7 +145,7 @@ public class SorterManager implements Serializable{
 	 * @param materials - Materials of the output.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public void setOutput(String name, Inventory inventory, int priority, List<Material> materials) throws ZSorterException {
+	public void setOutput(String name, InventoryHolder inventory, int priority, List<Material> materials) throws ZSorterException {
 		Sorter sorter = nameToSorter.get(name);
 		if(sorter == null)
 			throw new ZSorterException(I.t("There is no sorter with this name."));
@@ -164,7 +164,7 @@ public class SorterManager implements Serializable{
 	 * @return The removed output object, {@code null} if no output found for this inventory.
 	 * @throws ZSorterException if a ZSorter exception occurs.
 	 */
-	public Output removeOutput(String name, Inventory inventory) throws ZSorterException {
+	public Output removeOutput(String name, InventoryHolder inventory) throws ZSorterException {
 		Sorter sorter = nameToSorter.get(name);
 		if(sorter == null)
 			throw new ZSorterException(I.t("There is no sorter with this name."));
@@ -195,7 +195,7 @@ public class SorterManager implements Serializable{
 	 * @param inventory - Inventory of the sorter to compute.
 	 * @return {@code true} if the sorter has been computed, {@code false} otherwise.
 	 */
-	public boolean computeSorter(Inventory inventory) {
+	public boolean computeSorter(InventoryHolder inventory) {
 		boolean computed = false;
 		Sorter sorter = inventoryToSorter.get(inventory);					//Get the sorter associated with this inventory
 		if(sorter != null && sorter.isEnable()) {							//If sorter found and enable

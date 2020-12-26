@@ -131,22 +131,22 @@ public class SorterTest extends ZSorterTest {
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput2, coobleStoneOutput1, overflow), sorter.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the sorter has two output of cobblestone and one overflow
-		sorter.removeOutput(ironBlockOutput.getInventory());
+		sorter.removeOutput(ironBlockOutput.getHolder());
 		Assert.assertEquals(Arrays.asList(overflow), sorter.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput2, coobleStoneOutput1, overflow), sorter.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the sorter has one output of cobblestone and one overflow
-		sorter.removeOutput(coobleStoneOutput1.getInventory());
+		sorter.removeOutput(coobleStoneOutput1.getHolder());
 		Assert.assertEquals(Arrays.asList(overflow), sorter.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput2, overflow), sorter.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the sorter has one overflow
-		sorter.removeOutput(coobleStoneOutput2.getInventory());
+		sorter.removeOutput(coobleStoneOutput2.getHolder());
 		Assert.assertEquals(Arrays.asList(overflow), sorter.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(overflow), sorter.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the sorter has not output
-		sorter.removeOutput(overflow.getInventory());
+		sorter.removeOutput(overflow.getHolder());
 		Assert.assertEquals(Arrays.asList(), sorter.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(), sorter.findOutputs(Material.COBBLESTONE));
 	}

@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
@@ -159,7 +160,7 @@ public final class ZSorter extends QuartzPlugin implements Listener{
 		try {
 			GsonBuilder gsonBuilder = new GsonBuilder();
 			gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
-			gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+			gsonBuilder.registerTypeHierarchyAdapter(InventoryHolder.class, new InventoryAdapter());
 			gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
 			Gson customGson = gsonBuilder.create();
 			FileWriter fr = new FileWriter(dataPath);
@@ -180,7 +181,7 @@ public final class ZSorter extends QuartzPlugin implements Listener{
 			try {
 				GsonBuilder gsonBuilder = new GsonBuilder();
 				gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
-				gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+				gsonBuilder.registerTypeHierarchyAdapter(InventoryHolder.class, new InventoryAdapter());
 				gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
 				Gson customGson = gsonBuilder.create();
 				BufferedReader br = new BufferedReader(new FileReader(dataFile));
