@@ -401,9 +401,7 @@ public class Sorter implements Serializable, PostProcessable{
     							
     						if(!output.isFull())																							//If the output was not full
     							output.setFull(true); 																							//Now is it's full
-    						
-    						itemStackToTransfer.setAmount(itemStackToTransfer.getAmount());													//Define the new amount to transfer*/
-    					}
+    						}
     					
     					//Run only if this item is clogging up.
 
