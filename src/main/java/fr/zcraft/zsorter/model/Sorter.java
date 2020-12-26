@@ -23,7 +23,6 @@ import fr.zcraft.zsorter.commands.SpeedCommand;
 import fr.zcraft.zsorter.commands.ToggleCommand;
 import fr.zcraft.zsorter.commands.UpdateCommand;
 import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory.PostProcessable;
-import fr.zcraft.zsorter.utils.InventoryUtils;
 
 /**
  * The class {@code Sorter} represents a sorter in the game.<br><br>
@@ -366,8 +365,7 @@ public class Sorter implements Serializable, PostProcessable{
 	public void computeSorting() {
 		if(isEnable()) {																								//If the sorter is ON
     		for(Input input:inputs) {																						//For each input in the sorter
-    			System.out.println("In " + input.getHolder());
-    			Inventory inputInventory = InventoryUtils.doubleHolderToSimpleHolder(input.getHolder()).getInventory();
+    			Inventory inputInventory = input.getHolder().getInventory().getHolder().getInventory();
     			for(ItemStack itemStack: inputInventory.getContents()) {														//For each item in the input inventory
     				if(itemStack != null) {																							//If the item is not null
     					ItemStack itemStackToTransfer = itemStack.clone();																//Clone the item to keep the metadata
@@ -375,9 +373,8 @@ public class Sorter implements Serializable, PostProcessable{
 							itemStackToTransfer.setAmount(speed);																			//Set to the speed limit
     					List<Output> outputs = findOutputs(itemStack.getType());														//Find the outputs for this item
     					for(Output output:outputs) {																					//For each possible output
-    		    			System.out.println("Out " + output.getHolder());
-    						Inventory outputInventory = InventoryUtils.doubleHolderToSimpleHolder(output.getHolder()).getInventory();
-    						int amountToTransfer = itemStackToTransfer.getAmount();															//Get the amount to transfer
+       						Inventory outputInventory = output.getHolder().getInventory().getHolder().getInventory();
+    		    			int amountToTransfer = itemStackToTransfer.getAmount();															//Get the amount to transfer
     						HashMap<Integer, ItemStack> couldntTransferMap = outputInventory.addItem(itemStackToTransfer);					//Add the item to the output
     						if(couldntTransferMap.isEmpty()) {																				//If everything has been transfered
     							

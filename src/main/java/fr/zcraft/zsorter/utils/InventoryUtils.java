@@ -2,9 +2,7 @@ package fr.zcraft.zsorter.utils;
 
 import org.bukkit.block.Block;
 import org.bukkit.inventory.DoubleChestInventory;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorterException;
@@ -17,36 +15,16 @@ import fr.zcraft.zsorter.ZSorterException;
 public class InventoryUtils {
 
 	/**
-	 * Find the double chest inventory if the inventory is part of a double chest.<br>
-	 * Don't do anything if the inventory is not part of a double chest.
-	 * @param inventory - Inventory to check.
-	 * @return The double chest inventory.
-	 */
-	public static Inventory simpleInventoryToDoubleInventory(Inventory inventory) {
-		System.out.println("simpleInventoryToDoubleInventory BEFORE : " + inventory.getHolder());
-		if(inventory instanceof DoubleChestInventory) {
-			inventory = (DoubleChestInventory) inventory;
-		}
-		System.out.println("simpleInventoryToDoubleInventory AFTER : " + inventory.getHolder());
-		displayInventoryContent(inventory);
-		return inventory;
-	}
-
-	/**
-	 * Find the left inventory if the inventory is a double chest inventory.<br>
-	 * Don't do anything if the inventory is not a double chest inventory.
-	 * @param inventory - Inventory to check.
-	 * @return The left side inventory.
+	 * Find the left holder if the holder is a double chest.<br>
+	 * Don't do anything if the holder is not a double chest.
+	 * @param holder - Holder to check.
+	 * @return The left side holder.
 	 */
 	public static InventoryHolder doubleHolderToSimpleHolder(InventoryHolder holder) {
-		System.out.println("doubleHolderToSimpleHolder BEFORE : " + holder);
 		if(holder.getInventory() instanceof DoubleChestInventory) {
 			DoubleChestInventory dci = (DoubleChestInventory) holder.getInventory();
 			holder = dci.getLeftSide().getHolder();
-		}else
-			holder = holder.getInventory().getHolder();
-		System.out.println("doubleHolderToSimpleHolder AFTER : " + holder);
-		displayInventoryContent(holder.getInventory());
+		}
 		return holder;
 	}
 
@@ -63,14 +41,5 @@ public class InventoryUtils {
 		InventoryHolder holder = (InventoryHolder) block.getState();
 		holder = doubleHolderToSimpleHolder(holder);
 		return holder;
-	}
-
-	public static void displayInventoryContent(Inventory inventory) {
-		System.out.println("The content of the inventory " + inventory.toString() + " is : ");
-		for(ItemStack itemStack: inventory.getContents()) {														//For each item in the input inventory
-			if(itemStack != null) {																					//If the item is not null
-				System.out.println(itemStack.getAmount() + " x " + itemStack.getType().toString());
-			}
-		}
 	}
 }
