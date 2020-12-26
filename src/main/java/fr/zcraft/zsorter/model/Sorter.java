@@ -392,13 +392,17 @@ public class Sorter implements Serializable, PostProcessable{
     						
     						//Run only if the output is full
     						
+    						if(amountToTransfer != itemStackToTransfer.getAmount()) {														//If partially moved
+        						ItemStack itemStackToRemove = itemStackToTransfer.clone();														//Create the stack to remove
+        						itemStackToRemove.setAmount(amountToTransfer - itemStackToTransfer.getAmount());								//Set the amount to remove
+        						inputInventory.removeItem(itemStackToRemove);																	//Remove the item from the input
+    							return;
+    						}
+    							
     						if(!output.isFull())																							//If the output was not full
     							output.setFull(true); 																							//Now is it's full
     						
-    						ItemStack itemStackToRemove = itemStackToTransfer.clone();														//Create the stack to remove
-    						itemStackToRemove.setAmount(amountToTransfer - itemStackToTransfer.getAmount());								//Set the amount to remove
-    						inputInventory.removeItem(itemStackToRemove);																	//Remove the item from the input
-    						itemStackToTransfer.setAmount(itemStackToTransfer.getAmount());													//Define the new amount to transfer
+    						itemStackToTransfer.setAmount(itemStackToTransfer.getAmount());													//Define the new amount to transfer*/
     					}
     					
     					//Run only if this item is clogging up.
