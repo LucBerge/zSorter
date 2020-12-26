@@ -23,7 +23,7 @@ public class InventoryEvent implements Listener{
 	public void onInventoryCloseEvent(InventoryCloseEvent e) {
     	if(ZSorter.getInstance().isEnable()) {																		//If the plugin is not enable
     		InventoryHolder holder = InventoryUtils.doubleHolderToSimpleHolder(e.getInventory().getHolder());			//Get the inventory if double chest
-			ZSorter.getInstance().getSorterManager().computeSorter(holder);												//Try to compute the sorter with this inventory
+			ZSorter.getInstance().getSorterManager().computeSorter(holder, true);										//Try to compute the sorter with this inventory
     	}
 	}
 }

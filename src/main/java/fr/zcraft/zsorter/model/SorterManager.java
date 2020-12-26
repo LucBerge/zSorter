@@ -194,9 +194,10 @@ public class SorterManager implements Serializable{
 	 * Compute the sorter associated with this inventory.
 	 * Don't do anything if the inventory is not an input or an output.
 	 * @param inventory - Inventory of the sorter to compute.
+	 * @param checkContent - Defines the rule to apply for the output full flag. {@code true} to define the flag regarding the output content, {@code false} to set it to {@code false} anyway.
 	 * @return {@code true} if the sorter has been computed, {@code false} otherwise.
 	 */
-	public boolean computeSorter(InventoryHolder inventory) {
+	public boolean computeSorter(InventoryHolder inventory, boolean checkContent) {
 		boolean computed = false;
 		Sorter sorter = inventoryToSorter.get(inventory);					//Get the sorter associated with this inventory
 		if(sorter != null && sorter.isEnable()) {							//If sorter found and enable
@@ -215,9 +216,10 @@ public class SorterManager implements Serializable{
 							.filter(sorter.getCloggingUpMaterials()::contains)
 							.count() > 0;
 					
-					boolean realState = InventoryUtils.isFull(output.getHolder());
-					if(output.isFull() != realState)
-						output.setFull(realState);
+					boolean state = false;
+					if(checkContent)
+						state = InventoryUtils.isFull(output.getHolder());
+					output.setFull(state);
 					
 					if(clogging || output.isOverflow()) {						//If one of the output material was clogging up the inputs or if it is an overflow
 						sorter.setToCompute(true);									//Set the sorter to compute
