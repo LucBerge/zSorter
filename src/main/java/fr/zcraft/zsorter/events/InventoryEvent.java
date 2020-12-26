@@ -21,11 +21,9 @@ public class InventoryEvent implements Listener{
      */
 	@EventHandler
 	public void onInventoryCloseEvent(InventoryCloseEvent e) {
-    	if(ZSorter.getInstance().isEnable()) {															//If the plugin is not enable
-    		System.out.println("onInventoryCloseEvent : " + e.getInventory().getHolder().toString());
-    		InventoryUtils.displayInventoryContent(e.getInventory());
-    		//InventoryHolder inventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getInventory()).getHolder();		//Get the inventory if double chest
-			ZSorter.getInstance().getSorterManager().computeSorter(e.getInventory().getHolder());					//Try to compute the sorter with this inventory
+    	if(ZSorter.getInstance().isEnable()) {																		//If the plugin is not enable
+    		InventoryHolder holder = InventoryUtils.doubleHolderToSimpleHolder(e.getInventory().getHolder());		//Get the inventory if double chest
+			ZSorter.getInstance().getSorterManager().computeSorter(holder);												//Try to compute the sorter with this inventory
     	}
 	}
 }

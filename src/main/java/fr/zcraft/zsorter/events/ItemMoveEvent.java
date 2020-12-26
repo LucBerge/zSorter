@@ -21,14 +21,12 @@ public class ItemMoveEvent implements Listener{
      */
 	@EventHandler
 	public void onInventoryMoveItem(InventoryMoveItemEvent e) {
-    	if(ZSorter.getInstance().isEnable()) {																		//If the plugin is not enable
-    		System.out.println("onInventoryMoveItem : " + e.getDestination().getHolder().toString());
-    		InventoryUtils.displayInventoryContent(e.getDestination());
-	        //InventoryHolder inputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getDestination()).getHolder();				//Get the inventory if double chest
-			boolean computed = ZSorter.getInstance().getSorterManager().computeSorter(e.getDestination().getHolder());		//Try to compute the sorter with this input
-			if(!computed) {																								//If no computed
-				//InventoryHolder outputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getSource()).getHolder();				//Get the inventory if double chest
-				ZSorter.getInstance().getSorterManager().computeSorter(e.getDestination().getHolder());						//Try to compute the sorter with this output
+    	if(ZSorter.getInstance().isEnable()) {																					//If the plugin is not enable
+	        InventoryHolder inputInventory = InventoryUtils.doubleHolderToSimpleHolder(e.getDestination().getHolder());		//Get the inventory if double chest
+			boolean computed = ZSorter.getInstance().getSorterManager().computeSorter(inputInventory);								//Try to compute the sorter with this input
+			if(!computed) {																											//If no computed
+				InventoryHolder outputInventory = InventoryUtils.doubleHolderToSimpleHolder(e.getSource().getHolder());			//Get the inventory if double chest
+				ZSorter.getInstance().getSorterManager().computeSorter(outputInventory);												//Try to compute the sorter with this output
 			}
 		}
 	}

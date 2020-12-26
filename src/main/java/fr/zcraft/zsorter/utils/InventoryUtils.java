@@ -23,9 +23,12 @@ public class InventoryUtils {
 	 * @return The double chest inventory.
 	 */
 	public static Inventory simpleInventoryToDoubleInventory(Inventory inventory) {
+		System.out.println("simpleInventoryToDoubleInventory BEFORE : " + inventory.getHolder());
 		if(inventory instanceof DoubleChestInventory) {
 			inventory = (DoubleChestInventory) inventory;
-		}        
+		}
+		System.out.println("simpleInventoryToDoubleInventory AFTER : " + inventory.getHolder());
+		displayInventoryContent(inventory);
 		return inventory;
 	}
 
@@ -35,12 +38,15 @@ public class InventoryUtils {
 	 * @param inventory - Inventory to check.
 	 * @return The left side inventory.
 	 */
-	public static Inventory doubleInventoryToSimpleInventory(Inventory inventory) {
-		if(inventory instanceof DoubleChestInventory) {
-			DoubleChestInventory dci = (DoubleChestInventory) inventory;
-			inventory = dci.getLeftSide();
+	public static InventoryHolder doubleHolderToSimpleHolder(InventoryHolder holder) {
+		System.out.println("doubleHolderToSimpleHolder BEFORE : " + holder);
+		if(holder.getInventory() instanceof DoubleChestInventory) {
+			DoubleChestInventory dci = (DoubleChestInventory) holder.getInventory();
+			holder = dci.getLeftSide().getHolder();
 		}
-		return inventory;
+		System.out.println("doubleHolderToSimpleHolder AFTER : " + holder);
+		displayInventoryContent(holder.getInventory());
+		return holder;
 	}
 
 	/**
@@ -54,9 +60,7 @@ public class InventoryUtils {
 			throw new ZSorterException(I.t("This block must be a holder."));
 
 		InventoryHolder holder = (InventoryHolder) block.getState();
-		//holder = InventoryUtils.doubleInventoryToSimpleInventory(holder.getInventory()).getHolder();
-		System.out.println("findInventoryFromBlock : " + holder.toString());
-		displayInventoryContent(holder.getInventory());
+		holder = doubleHolderToSimpleHolder(holder);
 		return holder;
 	}
 
