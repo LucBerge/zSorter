@@ -44,10 +44,10 @@ public class SorterManagerAdapter implements JsonSerializer<SorterManager>, Json
 			Sorter sorter = iterator.next();
 			manager.getNameToSorter().putIfAbsent(sorter.getName(), sorter);
 			for(Input input:sorter.getInventoryToInput().values()) {
-				manager.getInventoryToSorter().putIfAbsent(input.getInventory(), sorter);
+				manager.getInventoryToSorter().putIfAbsent(input.getHolder(), sorter);
 			}
 			for(Output output:sorter.getInventoryToOutput().values()) {
-				manager.getInventoryToSorter().putIfAbsent(output.getInventory(), sorter);
+				manager.getInventoryToSorter().putIfAbsent(output.getHolder(), sorter);
 			}
 	    }
 		

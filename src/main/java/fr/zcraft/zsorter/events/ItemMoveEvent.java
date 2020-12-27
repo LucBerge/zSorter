@@ -3,7 +3,7 @@ package fr.zcraft.zsorter.events;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 import fr.zcraft.zsorter.ZSorter;
 import fr.zcraft.zsorter.utils.InventoryUtils;
@@ -21,12 +21,12 @@ public class ItemMoveEvent implements Listener{
      */
 	@EventHandler
 	public void onInventoryMoveItem(InventoryMoveItemEvent e) {
-    	if(ZSorter.getInstance().isEnable()) {																//If the plugin is not enable
-	        Inventory inputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getDestination());		//Get the inventory if double chest
-			boolean computed = ZSorter.getInstance().getSorterManager().computeSorter(inputInventory);			//Try to compute the sorter with this input
-			if(!computed) {																						//If no computed
-		        Inventory outputInventory = InventoryUtils.doubleInventoryToSimpleInventory(e.getSource());			//Get the inventory if double chest
-				ZSorter.getInstance().getSorterManager().computeSorter(outputInventory);							//Try to compute the sorter with this output
+    	if(ZSorter.getInstance().isEnable()) {																					//If the plugin is not enable
+	        InventoryHolder inputInventory = InventoryUtils.doubleHolderToSimpleHolder(e.getDestination().getHolder());				//Get the holder if double chest
+			boolean computed = ZSorter.getInstance().getSorterManager().computeSorter(inputInventory, true);						//Try to compute the sorter with this input
+			if(!computed) {																											//If no computed
+				InventoryHolder outputInventory = InventoryUtils.doubleHolderToSimpleHolder(e.getSource().getHolder());					//Get the holder if double chest
+				ZSorter.getInstance().getSorterManager().computeSorter(outputInventory, false);											//Try to compute the sorter with this output
 			}
 		}
 	}

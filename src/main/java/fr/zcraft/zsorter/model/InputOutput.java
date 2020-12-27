@@ -2,7 +2,7 @@ package fr.zcraft.zsorter.model;
 
 import java.io.Serializable;
 
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 /**
  * The class {@code InputOutput} represents an input or an output of a sorter.
@@ -19,7 +19,7 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	/**
 	 * Inventory of the InputOutput.
 	 */
-	private Inventory inventory;
+	private InventoryHolder inventory;
 	
 	/**
 	 * Priority of the InputOutput.
@@ -31,7 +31,7 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	 * @param inventory - Inventory of the InputOutput.
 	 * @param priority - Priority of the InputOutput.
 	 */
-	public InputOutput(Inventory inventory, Integer priority) {
+	public InputOutput(InventoryHolder inventory, Integer priority) {
 		super();
 		
 		if(inventory == null)
@@ -64,10 +64,10 @@ public abstract class InputOutput implements Serializable, Comparable<InputOutpu
 	}
 
 	/**
-	 * Returns the inventory of the InputOutput.
+	 * Returns the holder of the InputOutput.
 	 * @return Inventory of the InputOutput.
 	 */
-	public Inventory getInventory() {
+	public InventoryHolder getHolder() {
 		return inventory;
 	}
 

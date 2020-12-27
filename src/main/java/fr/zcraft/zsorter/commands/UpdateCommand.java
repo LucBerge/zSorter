@@ -3,7 +3,6 @@ package fr.zcraft.zsorter.commands;
 
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
@@ -43,10 +42,7 @@ public class UpdateCommand extends ZSorterCommands{
     @Override
     protected List<String> complete() throws CommandException{
     	if(args.length <= 1) {
-    		return ZSorter.getInstance().getSorterManager().getNameToSorter().keySet()
-    				.stream()
-    				.filter(s -> s.startsWith(args[0]))
-    				.collect(Collectors.toList());
+    		return completeSorterName(args[0]);
     	}
     	return null;
     }

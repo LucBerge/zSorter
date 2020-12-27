@@ -1,0 +1,6 @@
+Select a sorter to easily define the outputs.
+
+§6<name>		§rThe name of the sorter to select.
+
+When a sorter is selected using this command, the inputs and outputs are highlighted.
+By performing a left click on an holder while holding an item in the hand, defines the holder as an output for the target item.

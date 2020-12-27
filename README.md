@@ -67,6 +67,11 @@ Remove the target block from outputs :
 /sorter remove_output <name>
 ```
 
+Highlight all the inputs and outputs of the sorter during 1 minute. The single outputs can also be define by left clicking on a holder.  
+```
+/sorter magic <name>
+```
+
 ## Permissions
 
 The following permission allows you to use all the above commands.

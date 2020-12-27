@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 /**
  * The class {@code Output} represents an output of a sorter.
@@ -32,11 +32,11 @@ public class Output extends InputOutput implements Serializable{
 
 	/**
 	 * Constructor of an output object.
-	 * @param inventory - Inventory of the output.
+	 * @param holder - Holder of the output.
 	 * @param priority - Priority of the output.
 	 */
-	public Output(Inventory inventory, Integer priority) {
-		super(inventory, priority);
+	public Output(InventoryHolder holder, Integer priority) {
+		super(holder, priority);
 		this.materials = new ArrayList<Material>();
 		this.full = false;
 	}

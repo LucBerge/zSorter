@@ -2,7 +2,7 @@ package fr.zcraft.zsorter.model;
 
 import java.io.Serializable;
 
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 
 /**
  * The class {@code Input} represents an input of a sorter.
@@ -23,11 +23,11 @@ public class Input extends InputOutput implements Serializable{
 
 	/**
 	 * Constructor of an output object.
-	 * @param inventory - Inventory of the output.
+	 * @param holder - Holder of the output.
 	 * @param priority - Priority of the output.
 	 */
-	public Input(Inventory inventory, Integer priority) {
-		super(inventory, priority);
+	public Input(InventoryHolder holder, Integer priority) {
+		super(holder, priority);
 		this.cloggedUp = false;
 	}
 	

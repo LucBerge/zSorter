@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 
@@ -15,15 +15,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import fr.zcraft.quartzlib.core.QuartzLib;
-import fr.zcraft.quartzlib.core.QuartzPlugin;
 import fr.zcraft.quartzlib.components.commands.Commands;
 import fr.zcraft.quartzlib.components.i18n.I18n;
+import fr.zcraft.quartzlib.core.QuartzPlugin;
 import fr.zcraft.quartzlib.tools.PluginLogger;
 import fr.zcraft.zsorter.commands.CreateCommand;
 import fr.zcraft.zsorter.commands.DeleteCommand;
 import fr.zcraft.zsorter.commands.InfoCommand;
 import fr.zcraft.zsorter.commands.ListCommand;
+import fr.zcraft.zsorter.commands.MagicCommand;
 import fr.zcraft.zsorter.commands.RemoveInputCommand;
 import fr.zcraft.zsorter.commands.RemoveOutputCommand;
 import fr.zcraft.zsorter.commands.SetInputCommand;
@@ -34,8 +34,9 @@ import fr.zcraft.zsorter.commands.UpdateCommand;
 import fr.zcraft.zsorter.events.HolderBreakEvent;
 import fr.zcraft.zsorter.events.InventoryEvent;
 import fr.zcraft.zsorter.events.ItemMoveEvent;
+import fr.zcraft.zsorter.events.LeftClickEvent;
 import fr.zcraft.zsorter.model.SorterManager;
-import fr.zcraft.zsorter.model.serializer.InventoryAdapter;
+import fr.zcraft.zsorter.model.serializer.InventoryHolderAdapter;
 import fr.zcraft.zsorter.model.serializer.PostProcessAdapterFactory;
 import fr.zcraft.zsorter.model.serializer.SorterManagerAdapter;
 import fr.zcraft.zsorter.tasks.SortTask;
@@ -123,7 +124,8 @@ public final class ZSorter extends QuartzPlugin implements Listener{
         this.getServer().getPluginManager().registerEvents(new HolderBreakEvent(), this);
         this.getServer().getPluginManager().registerEvents(new InventoryEvent(), this);
         this.getServer().getPluginManager().registerEvents(new ItemMoveEvent(), this);
-        
+        this.getServer().getPluginManager().registerEvents(new LeftClickEvent(), this);
+		
         Commands.register("sorter",
         		ListCommand.class,
         		CreateCommand.class,
@@ -135,8 +137,10 @@ public final class ZSorter extends QuartzPlugin implements Listener{
         		SetInputCommand.class,
         		SetOutputCommand.class,
         		RemoveInputCommand.class,
-        		RemoveOutputCommand.class
+        		RemoveOutputCommand.class,
+        		MagicCommand.class
         );
+        Commands.registerShortcut("sorter", ListCommand.class, "sorters");
         
 		if(load()) {
 			SortTask.getInstance().start();
@@ -156,7 +160,7 @@ public final class ZSorter extends QuartzPlugin implements Listener{
 		try {
 			GsonBuilder gsonBuilder = new GsonBuilder();
 			gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
-			gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+			gsonBuilder.registerTypeHierarchyAdapter(InventoryHolder.class, new InventoryHolderAdapter());
 			gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
 			Gson customGson = gsonBuilder.create();
 			FileWriter fr = new FileWriter(dataPath);
@@ -177,7 +181,7 @@ public final class ZSorter extends QuartzPlugin implements Listener{
 			try {
 				GsonBuilder gsonBuilder = new GsonBuilder();
 				gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
-				gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryAdapter());
+				gsonBuilder.registerTypeHierarchyAdapter(InventoryHolder.class, new InventoryHolderAdapter());
 				gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
 				Gson customGson = gsonBuilder.create();
 				BufferedReader br = new BufferedReader(new FileReader(dataFile));
