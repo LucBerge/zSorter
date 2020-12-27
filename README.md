@@ -1,3 +1,5 @@
+![Build & Test](https://github.com/zDevelopers/zSorter/workflows/Build%20&%20Test/badge.svg)
+
 # zSorter
 
 The zSorter plugin allows you to manager sorting system in game. It is an alternate solution to standard slow and laggy systems.
