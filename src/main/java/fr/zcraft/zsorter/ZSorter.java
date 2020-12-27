@@ -79,8 +79,7 @@ public final class ZSorter extends QuartzPlugin implements Listener{
      */
     protected ZSorter(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file)
     {
-        //super(loader, description, dataFolder, file);	//Waiting for QuartzLib to implement this constructor.
-        super();
+        super(loader, description, dataFolder, file);	//Waiting for QuartzLib to implement this constructor.
     }
 	
 	private final String dataPath = this.getDataFolder() + "\\zsorter.json";

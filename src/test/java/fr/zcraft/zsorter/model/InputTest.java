@@ -26,22 +26,22 @@ public class InputTest extends ZSorterTest{
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(inventory0, null);
+			new Input(holder0, null);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(inventory0, -45);
+			new Input(holder0, -45);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(inventory0, -1);
+			new Input(holder0, -1);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Input(inventory0, 0);
+			new Input(holder0, 0);
 		});
 
-		new Input(inventory0, 1);
+		new Input(holder0, 1);
 	}
 	
 	/**
@@ -51,10 +51,10 @@ public class InputTest extends ZSorterTest{
 	public void sortTest(){
 		
 		//Create a list of inputs and test if they are ordered by priority
-		Input i0 = new Input(inventory0, 1);
-		Input i1 = new Input(inventory1, 2);
-		Input i2 = new Input(inventory2, 45);
-		Input i3 = new Input(inventory3, 72);
+		Input i0 = new Input(holder0, 1);
+		Input i1 = new Input(holder1, 2);
+		Input i2 = new Input(holder2, 45);
+		Input i3 = new Input(holder3, 72);
 		List<Input> list = Arrays.asList(i3,i1,i2,i0);
 		Collections.sort(list);
 		Assert.assertEquals(Arrays.asList(i0,i1,i2,i3), list);

@@ -44,16 +44,16 @@ public class SorterTest extends ZSorterTest {
 		
 		//Create a sorter, add input inventories and test if the inputs are empty
 		Sorter sorter = new Sorter("inputsTestSorter", "Description");
-		Input i2 = sorter.setInput(inventory2, 45);
-		Input i1 = sorter.setInput(inventory1, 2);
-		Input i0 = sorter.setInput(inventory0, 1);
-		Input i3 = sorter.setInput(inventory3, 72);
+		Input i2 = sorter.setInput(holder2, 45);
+		Input i1 = sorter.setInput(holder1, 2);
+		Input i0 = sorter.setInput(holder0, 1);
+		Input i3 = sorter.setInput(holder3, 72);
 		
 		//Test if the inputs are sorted
 		Assert.assertEquals(Arrays.asList(i0,i1,i2,i3), sorter.getInputs());
 		
 		//Remove one input and test if the inputs are sorted
-		sorter.removeInput(inventory1);
+		sorter.removeInput(holder1);
 		Assert.assertEquals(Arrays.asList(i0,i2,i3), sorter.getInputs());
 	}
 	
@@ -66,14 +66,14 @@ public class SorterTest extends ZSorterTest {
 		
 		//Create a sorter, add output inventories and test if the overflows are sorted
 		Sorter sorter = new Sorter("outputsTestSorter", "Description");
-		Output o2 = sorter.setOutput(inventory2, 45, new ArrayList<Material>());
-		Output o1 = sorter.setOutput(inventory1, 2, new ArrayList<Material>());
-		Output o0 = sorter.setOutput(inventory0, 1, new ArrayList<Material>());
-		Output o3 = sorter.setOutput(inventory3, 72, new ArrayList<Material>());
+		Output o2 = sorter.setOutput(holder2, 45, new ArrayList<Material>());
+		Output o1 = sorter.setOutput(holder1, 2, new ArrayList<Material>());
+		Output o0 = sorter.setOutput(holder0, 1, new ArrayList<Material>());
+		Output o3 = sorter.setOutput(holder3, 72, new ArrayList<Material>());
 		Assert.assertEquals(Arrays.asList(o0, o1, o2, o3), sorter.getOverflows());
 		
 		//Remove one output and test if the overflows are sorted
-		sorter.removeOutput(inventory1);
+		sorter.removeOutput(holder1);
 		Assert.assertEquals(Arrays.asList(o0, o2, o3), sorter.getOverflows());
 	}
 	
@@ -86,16 +86,16 @@ public class SorterTest extends ZSorterTest {
 		
 		//Create a sorter, add an output, commit and test if the sorter has an overflow
 		Sorter sorter = new Sorter("hasOverflowTestSorter", "Description");
-		sorter.setOutput(inventory0, 1, new ArrayList<Material>());
+		sorter.setOutput(holder0, 1, new ArrayList<Material>());
 		Assert.assertEquals(true, sorter.hasOverflow());
 		
 		//Add an output, commit and test if the sorter has an overflow
-		sorter.setOutput(inventory1, 4, Arrays.asList(Material.AIR));
+		sorter.setOutput(holder1, 4, Arrays.asList(Material.AIR));
 		sorter.commit();
 		Assert.assertEquals(true, sorter.hasOverflow());
 		
 		//Remove an output, commit and test if the sorter has no overflow
-		sorter.removeOutput(inventory0);
+		sorter.removeOutput(holder0);
 		sorter.commit();
 		Assert.assertEquals(false, sorter.hasOverflow());
 	}
@@ -111,22 +111,22 @@ public class SorterTest extends ZSorterTest {
 		Assert.assertEquals(new ArrayList<Output>(), sorter.findOutputs(Material.IRON_BLOCK));
 		
 		//Test when the sorter has one output of cobblestone
-		Output coobleStoneOutput1 = sorter.setOutput(inventory0, 2, Arrays.asList(Material.COBBLESTONE));
+		Output coobleStoneOutput1 = sorter.setOutput(holder0, 2, Arrays.asList(Material.COBBLESTONE));
 		Assert.assertEquals(new ArrayList<Output>(), sorter.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput1), sorter.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the sorter has one output of cobblestone and one of iron_block
-		Output ironBlockOutput = sorter.setOutput(inventory1, 1, Arrays.asList(Material.IRON_BLOCK));
+		Output ironBlockOutput = sorter.setOutput(holder1, 1, Arrays.asList(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(ironBlockOutput), sorter.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput1), sorter.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the sorter has two output of cobblestone and one of iron_block
-		Output coobleStoneOutput2 = sorter.setOutput(inventory2, 1, Arrays.asList(Material.COBBLESTONE));
+		Output coobleStoneOutput2 = sorter.setOutput(holder2, 1, Arrays.asList(Material.COBBLESTONE));
 		Assert.assertEquals(Arrays.asList(ironBlockOutput), sorter.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput2, coobleStoneOutput1), sorter.findOutputs(Material.COBBLESTONE));
 		
 		//Test when the sorter has two output of cobblestone, one of iron_block and one overflow
-		Output overflow = sorter.setOutput(inventory3, 10, Arrays.asList());
+		Output overflow = sorter.setOutput(holder3, 10, Arrays.asList());
 		Assert.assertEquals(Arrays.asList(ironBlockOutput, overflow), sorter.findOutputs(Material.IRON_BLOCK));
 		Assert.assertEquals(Arrays.asList(coobleStoneOutput2, coobleStoneOutput1, overflow), sorter.findOutputs(Material.COBBLESTONE));
 		

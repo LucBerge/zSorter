@@ -1,13 +1,20 @@
 package fr.zcraft.zsorter;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.inventory.InventoryHolder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
+import be.seeseemelk.mockbukkit.Coordinate;
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import fr.zcraft.zsorter.model.SorterManager;
+import be.seeseemelk.mockbukkit.WorldMock;
+import be.seeseemelk.mockbukkit.block.BlockMock;
+import be.seeseemelk.mockbukkit.block.state.ChestMock;
+import be.seeseemelk.mockbukkit.inventory.ChestInventoryMock;
+import be.seeseemelk.mockbukkit.inventory.SimpleInventoryMock;
 
 /**
  * Super class of unit test.<br>
@@ -19,8 +26,7 @@ public class ZSorterTest {
 	protected ServerMock server;
 	protected ZSorter plugin;
 	
-	protected SorterManager manager;
-	protected InventoryHolder inventory0, inventory1, inventory2, inventory3;
+	protected InventoryHolder holder0, holder1, holder2, holder3;
 	
 	/**
 	 * Load the manager and the inventories.
@@ -37,11 +43,18 @@ public class ZSorterTest {
 	{
 	    server = MockBukkit.mock();
 	    plugin = (ZSorter) MockBukkit.load(ZSorter.class);
-		manager = new SorterManager();
-		/*inventory0 = server.createInventory(null, 9);
-		inventory1 = server.createInventory(null, 9);
-		inventory2 = server.createInventory(null, 9);
-		inventory3 = server.createInventory(null, 9);*/
+		WorldMock world = server.addSimpleWorld("world");
+	    
+		holder0 = createInventoryHolderAtCoordinate(world, new Coordinate(0,0,0));
+		holder1 = createInventoryHolderAtCoordinate(world, new Coordinate(0,0,2));
+		holder2 = createInventoryHolderAtCoordinate(world, new Coordinate(0,0,4));
+		holder3 = createInventoryHolderAtCoordinate(world, new Coordinate(0,0,6));
+	}
+	
+	private InventoryHolder createInventoryHolderAtCoordinate(WorldMock world, Coordinate coordinate) {
+		Location location = new Location(world, coordinate.x, coordinate.y, coordinate.z);
+		BlockMock block = new BlockMock(Material.CHEST, location);
+		return (InventoryHolder) block.getState();
 	}
 
 	/**

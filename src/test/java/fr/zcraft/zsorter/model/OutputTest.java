@@ -28,22 +28,22 @@ public class OutputTest  extends ZSorterTest{
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(inventory0, null);
+			new Output(holder0, null);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(inventory0, -45);
+			new Output(holder0, -45);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(inventory0, -1);
+			new Output(holder0, -1);
 		});
 
 		Assert.assertThrows(IllegalArgumentException.class, () -> {
-			new Output(inventory0, 0);
+			new Output(holder0, 0);
 		});
 
-		new Output(inventory0, 1);
+		new Output(holder0, 1);
 	}
 	
 	/**
@@ -52,10 +52,10 @@ public class OutputTest  extends ZSorterTest{
 	@Test
 	public void sortTest(){		
 		//Create a list of outputs and test if they are ordered by priority
-		Output o0 = new Output(inventory0, 1);
-		Output o1 = new Output(inventory1, 2);
-		Output o2 = new Output(inventory2, 45);
-		Output o3 = new Output(inventory3, 72);
+		Output o0 = new Output(holder0, 1);
+		Output o1 = new Output(holder1, 2);
+		Output o2 = new Output(holder2, 45);
+		Output o3 = new Output(holder3, 72);
 		List<Output> list = Arrays.asList(o3,o1,o2,o0);
 		Collections.sort(list);
 		Assert.assertEquals(Arrays.asList(o0,o1,o2,o3), list);
@@ -67,7 +67,7 @@ public class OutputTest  extends ZSorterTest{
 	@Test
 	public void materialsTest() {
 		//Create an output, add materials and test if they are order by name
-		Output output = new Output(inventory0, 1);
+		Output output = new Output(holder0, 1);
 		output.setMaterials(Arrays.asList(Material.CARROT, Material.PAPER, Material.ICE));
 		Assert.assertEquals(Arrays.asList(Material.CARROT, Material.ICE, Material.PAPER), output.getMaterials());
 	}
@@ -78,7 +78,7 @@ public class OutputTest  extends ZSorterTest{
 	@Test
 	public void isOverflowTest() {		
 		//Create an output and test if it is an overflow
-		Output output = new Output(inventory0, 1);
+		Output output = new Output(holder0, 1);
 		Assert.assertEquals(true, output.isOverflow());
 
 		//Set materials and test if it is not an overflow
