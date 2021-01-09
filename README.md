@@ -1,4 +1,5 @@
 ![Build & Test](https://github.com/zDevelopers/zSorter/workflows/Build%20&%20Test/badge.svg)
+[![codecov](https://codecov.io/gh/zDevelopers/zSorter/branch/master/graph/badge.svg?token=217EGYLQA7)](https://codecov.io/gh/zDevelopers/zSorter)
 
 # zSorter
 
