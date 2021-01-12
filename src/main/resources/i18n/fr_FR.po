@@ -54,17 +54,14 @@ msgstr "Ce contenant n'est plus une entrée."
 msgid "This holder is not an input."
 msgstr "Ce contenant n'est pas une entrée."
 
-msgid "An input must be a holder."
-msgstr "Une entrée doit être un contenant."
+msgid "This block must be a holder."
+msgstr "Ce bloc doit être un contenant."
 
 msgid "This holder is no longer an output."
 msgstr "Ce contenant n'est plus une sortie."
 
 msgid "This holder is not an output."
 msgstr "Ce contenant n'est pas une sortie."
-
-msgid "An output must be a holder."
-msgstr "Une sortie doit être un contenant."
 
 msgid "A sorter name and an input priority are required."
 msgstr "Un nom de trieur et une priorité d'entrée sont requis."
