@@ -1,17 +1,14 @@
 package fr.zcraft.zsorter.commands;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.bukkit.command.CommandSender;
 
-import fr.zcraft.quartzlib.components.commands.Command;
 import fr.zcraft.quartzlib.components.commands.CommandException;
 import fr.zcraft.quartzlib.components.commands.CommandInfo;
 import fr.zcraft.quartzlib.components.i18n.I;
-import fr.zcraft.quartzlib.components.rawtext.RawText;
 import fr.zcraft.quartzlib.components.rawtext.RawTextPart;
 import fr.zcraft.quartzlib.tools.commands.PaginatedTextView;
 import fr.zcraft.quartzlib.tools.text.RawMessage;

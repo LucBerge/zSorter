@@ -2,14 +2,18 @@ package fr.zcraft.zsorter.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.zsorter.ZSorterException;
@@ -194,15 +198,43 @@ public class SorterManager implements Serializable{
 	 * Compute the sorter associated with this holder.
 	 * Don't do anything if the holder is not an input or an output.
 	 * @param holder - Holder of the sorter to compute.
+	 * @param triggerPlayer - The player who triggered this event. {@code null} if it is not a player.
 	 * @param checkContent - Defines the rule to apply for the output full flag. {@code true} to define the flag regarding the output content, {@code false} to set it to {@code false} anyway.
 	 * @return {@code true} if the sorter has been computed, {@code false} otherwise.
 	 */
-	public boolean computeSorter(InventoryHolder holder, boolean checkContent) {
+	public boolean computeSorter(InventoryHolder holder, HumanEntity triggerPlayer, boolean checkContent) {
 		boolean computed = false;
 		Sorter sorter = holderToSorter.get(holder);							//Get the sorter associated with this holder
 		if(sorter != null && sorter.isEnable()) {							//If sorter found and enable
 			Input input = sorter.getInventoryToInput().get(holder);				//Get the input linked to this holder
 			if(input != null) {													//If input found
+				
+				if(triggerPlayer != null) {																	//If player triggered this event
+					Set<Material> alreadyWarned = new HashSet<Material>();
+	    			for(ItemStack itemStack: input.getHolder().getInventory().getContents()) {					//For each item in the input inventory
+	    				if(itemStack != null) {																		//If the item is not null
+	    					if(sorter.getCloggingUpMaterials().contains(itemStack.getType())) {							//If the material is clogging up the input
+	    						if(!alreadyWarned.contains(itemStack.getType())) {											//If the material has not already been warned
+	    							alreadyWarned.add(itemStack.getType());														//Add it to the warned list
+	    							triggerPlayer.sendMessage("§c" + I.t("The following material cannot be sorted  : {0}", itemStack.getType().name().toLowerCase()));
+	    						}
+	    					}
+	    					else {																						//If the material is not clogging up yet
+	    						//Add it to the materialToPlayer list
+	    						Set<HumanEntity> players = sorter.getMaterialToPlayers().get(itemStack.getType());				//Get the current list of players to warn in this case
+	    						if(players == null) {																		//If no players to warn yet
+	    							players = new HashSet<HumanEntity>();															//Create a new set
+	    							players.add(triggerPlayer);																	//Add the trigger player
+	    							sorter.getMaterialToPlayers().put(itemStack.getType(), players);							//Add the set for the given material
+	    						}
+	    						else {																						//If some players to warn
+	    							players.add(triggerPlayer);																	//Add the player to the set
+	    						}
+	    					}
+	    				}
+	    			}
+	    		}
+				
 				sorter.setToCompute(true);										//Set the sorter to compute
 				SortTask.getInstance().start();									//Start the task
 				computed = true;

@@ -6,11 +6,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -52,6 +54,7 @@ public class Sorter implements Serializable, PostProcessable{
 	private transient Map<InventoryHolder, Output> holderToOutput;
 	private transient Map<Material, List<Output>> materialToOutputs;
 	private transient List<Output> overflows;
+	private transient Map<Material, Set<HumanEntity>> materialToPlayers;	
 	
 	private List<Input> inputs;
 	private List<Output> outputs;
@@ -82,6 +85,7 @@ public class Sorter implements Serializable, PostProcessable{
 		this.holderToOutput = new HashMap<InventoryHolder, Output>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();
+		this.materialToPlayers = new TreeMap<Material, Set<HumanEntity>>();
 		
 		this.inputs = new ArrayList<Input>();
 		this.outputs = new ArrayList<Output>();
@@ -163,8 +167,8 @@ public class Sorter implements Serializable, PostProcessable{
 	}
 
 	/**
-	 * Sets the sorter speed of the sorter.
-	 * @param speed - Speed sorter of the sorter.
+	 * Sets the speed of the sorter.
+	 * @param speed - Speed of the sorter.
 	 */
 	public void setSpeed(int speed) {
 		this.speed = speed;
@@ -212,6 +216,24 @@ public class Sorter implements Serializable, PostProcessable{
 	 */
 	public List<Output> getOverflows() {
 		return overflows;
+	}
+
+	
+	
+	/**
+	 * Sets the map linking the materials with the players who placed it.
+	 * @param materialToPlayers - New mapping value.
+	 */
+	public void setMaterialToPlayers(Map<Material, Set<HumanEntity>> materialToPlayers) {
+		this.materialToPlayers = materialToPlayers;
+	}
+
+	/**
+	 * Returns the map linking the materials with the players who placed it.
+	 * @return Material to players mapping.
+	 */
+	public Map<Material, Set<HumanEntity>> getMaterialToPlayers() {
+		return materialToPlayers;
 	}
 
 	/**
@@ -371,7 +393,7 @@ public class Sorter implements Serializable, PostProcessable{
     					ItemStack itemStackToTransfer = itemStack.clone();																//Clone the item to keep the metadata
     					if(itemStackToTransfer.getAmount() > speed)																		//If the number of items in the stack is over the speed limit
 							itemStackToTransfer.setAmount(speed);																			//Set to the speed limit
-    					List<Output> outputs = findOutputs(itemStack.getType());														//Find the outputs for this item
+    					List<Output> outputs = findOutputs(itemStack.getType());														//Find the outputs for this item including the overflows
     					for(Output output:outputs) {																					//For each possible output
        						Inventory outputInventory = output.getHolder().getInventory().getHolder().getInventory();
     		    			int amountToTransfer = itemStackToTransfer.getAmount();															//Get the amount to transfer
@@ -404,6 +426,14 @@ public class Sorter implements Serializable, PostProcessable{
     						}
     					
     					//Run only if this item is clogging up.
+    					
+						Set<HumanEntity> players = materialToPlayers.get(itemStack.getType());											//Get the set of players to warn when this material is clogging up
+						if(players != null) {																						//If players to warn
+							for(HumanEntity player:players) {
+		    					player.sendMessage("§c" + I.t("The {0}s you recently added to the sorter \"{1}\" can unfortunately not be sorted. All the outputs are full.", itemStack.getType().name().toLowerCase(), name));
+							}
+							materialToPlayers.remove(itemStack.getType());																//Remove the entry (All the players have been warned)
+						}
 
 						if(!input.isCloggedUp())																			//If the input is not clogging up
 							input.setCloggedUp(true); 																			//Set the input to clogged up
@@ -415,6 +445,7 @@ public class Sorter implements Serializable, PostProcessable{
     		
     		//Run only if no item has been sorted. Either because there is nothing to sort or because all the outputs are full.
     		
+    		materialToPlayers.clear();	//Clear the players to warn
     		toCompute = false;
 		}
 	}

@@ -12,9 +12,6 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import be.seeseemelk.mockbukkit.WorldMock;
 import be.seeseemelk.mockbukkit.block.BlockMock;
-import be.seeseemelk.mockbukkit.block.state.ChestMock;
-import be.seeseemelk.mockbukkit.inventory.ChestInventoryMock;
-import be.seeseemelk.mockbukkit.inventory.SimpleInventoryMock;
 
 /**
  * Super class of unit test.<br>
