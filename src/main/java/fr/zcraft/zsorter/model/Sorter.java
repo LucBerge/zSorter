@@ -424,29 +424,38 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @param mode - The mode to display the sorter.
 	 * @return Sorter as RawText.
 	 */
-	public RawText toRawText(DisplayMode mode) {
-		RawTextPart text = new RawText("")
-    			.then(name)
-    				.style(ChatColor.GOLD)
-    			.then(isEnable() ? " ON" : " OFF")
-    				.color(enable ? ChatColor.GREEN : ChatColor.RED)
-	    			.hover(new RawText()
-	        				.then(I.t("Toggle the sorter {0}", name)))
-	        			.command(ToggleCommand.class, name)
-		        .then(toCompute ? " RUNNING" : "")
-		        	.color(ChatColor.AQUA)
-    			.then(" (" + description + ") ")
-    				.color(ChatColor.GRAY)
-    				.hover(new RawText()
-	        				.then(I.t("Change the description")))
-	        			.suggest(UpdateCommand.class, name)
-    			.then("\n  " + I.t("speed: {0}", speed))
-					.color(ChatColor.GRAY)
-					.hover(new RawText()
-	        				.then(I.t("Change the sorting speed")))
-	        			.suggest(SpeedCommand.class, name)
-        		.then("\n  " + I.t("{0} input(s):", holderToInput.size()) + "\n  ")
-    				.color(ChatColor.GRAY);
+	public ArrayList<RawTextPart> toRawText(DisplayMode mode) {
+		ArrayList<RawTextPart> result = new ArrayList<RawTextPart>();
+		
+		result.add(new RawText("")
+				.then(name)
+				.style(ChatColor.GOLD)
+				.then(isEnable() ? " ON" : " OFF")
+				.color(enable ? ChatColor.GREEN : ChatColor.RED)
+				.hover(new RawText()
+						.then(I.t("Toggle the sorter {0}", name)))
+				.command(ToggleCommand.class, name)
+				.then(toCompute ? " RUNNING" : "")
+				.color(ChatColor.AQUA)
+				.then(" (" + description + ") ")
+				.color(ChatColor.GRAY)
+				.hover(new RawText()
+						.then(I.t("Change the description")))
+				.suggest(UpdateCommand.class, name)
+				);
+		
+		result.add(new RawText("  ")
+				.then(I.t("speed: {0}", speed))
+				.color(ChatColor.GRAY)
+				.hover(new RawText()
+						.then(I.t("Change the sorting speed")))
+				.suggest(SpeedCommand.class, name)
+				);
+		
+		result.add(new RawText("  ")
+				.then(I.t("{0} input(s):", holderToInput.size()))
+				.color(ChatColor.GRAY)
+				);
 		
 		List<Input> inputs = holderToInput
 				.values()
@@ -454,31 +463,34 @@ public class Sorter implements Serializable, PostProcessable{
 				.sorted()
 				.collect(Collectors.toList());				
 				
+		RawText text = new RawText("  ");
 		for(Input input:inputs) {
 			text
 				.then("  " + input.getPriority())
+				.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
+				.hover(new RawText()
+					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getHolder().getInventory().getLocation().getX(), input.getHolder().getInventory().getLocation().getY(), input.getHolder().getInventory().getLocation().getZ()))
 					.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
-					.hover(
-						new RawText()
-							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getHolder().getInventory().getLocation().getX(), input.getHolder().getInventory().getLocation().getY(), input.getHolder().getInventory().getLocation().getZ()))
-								.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
-					);
+				);
     	}
+		result.add(text);
 
-    	text
-    		.then("\n  " + I.t("{0} overflow(s):", overflows.size()) + "\n  ")
-    			.color(ChatColor.GRAY);
-				
+		result.add(new RawText("  ")
+				.then(I.t("{0} overflow(s):", overflows.size()))
+				.color(ChatColor.GRAY)
+				);
+
+		text = new RawText("  ");
 		for(Output overflow:overflows) {
 			text
 				.then("  " + overflow.getPriority())
+				.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
+				.hover(new RawText()
+					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", overflow.getHolder().getInventory().getLocation().getX(), overflow.getHolder().getInventory().getLocation().getY(), overflow.getHolder().getInventory().getLocation().getZ()))
 					.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
-					.hover(
-						new RawText()
-							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", overflow.getHolder().getInventory().getLocation().getX(), overflow.getHolder().getInventory().getLocation().getY(), overflow.getHolder().getInventory().getLocation().getZ()))
-								.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
-					);
+				);
 		}
+		result.add(text);
 		
 		//if display by output
 		if(mode == DisplayMode.OUTPUTS) {
@@ -488,20 +500,22 @@ public class Sorter implements Serializable, PostProcessable{
 					.filter(o -> !o.isOverflow())
 					.sorted()
 					.collect(Collectors.toList());
-			
-	    	text
-	    		.then("\n  " + I.t("{0} output(s):", outputs.size()))
-	    			.color(ChatColor.GRAY);	
+
+			result.add(new RawText("  ")
+					.then(I.t("{0} output(s):", outputs.size()))
+	    			.color(ChatColor.GRAY)
+					);
 	    	
 	    	for(Output output:outputs) {
+	    		text = new RawText("    ");
 	    		text
-	    			.then("\n    " + output.getPriority())
-						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-	    				.hover(
-	    	    			new RawText()
-	        					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
-	        						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-	        			);
+	    			.then(Integer.toString(output.getPriority()))
+	    			.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+	    			.hover(
+	    				new RawText()
+	    				.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
+	    				.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+	    			);
 	    		
 	    		List<Material> materials = output.getMaterials()
 	    											.stream()
@@ -511,13 +525,14 @@ public class Sorter implements Serializable, PostProcessable{
 	    		for(Material material:materials) {
 	    			text
 	    				.then(" " + material.name().toLowerCase())
-	    					.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
-		    				.hover(
-		        	    		new RawText()
-		            				.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
-		            					.color(ChatColor.RED)
-		            		);
+	    				.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
+	    				.hover(
+	    					new RawText()
+	    					.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
+	    					.color(ChatColor.RED)
+	    				);
 	    		}
+	    		result.add(text);
 			}
     	}
 		//If display by items
@@ -531,34 +546,37 @@ public class Sorter implements Serializable, PostProcessable{
 														.distinct()
 														.sorted((m1, m2) -> m1.name().compareTo(m2.name()))
 														.collect(Collectors.toList());
-    		
-	    	text
-	    		.then("\n  " + I.t("{0} material(s):", sortedMaterials.size()))
-	    			.color(ChatColor.GRAY);
+
+			result.add(new RawText("  ")
+					.then(I.t("{0} material(s):", sortedMaterials.size()))
+					.color(ChatColor.GRAY)
+					);
 	    	
 	    	for(Material material:sortedMaterials) {
+	    		text = new RawText("    ");
 	    		text
-					.then("\n    " + material.name().toLowerCase())
-						.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
-			    		.hover(
-		        	    	new RawText()
-		            			.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
-		            				.color(ChatColor.RED)
-		            	);
-				
+	    			.then(material.name().toLowerCase())
+	    			.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
+	    			.hover(
+	    				new RawText()
+	    				.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
+	    				.color(ChatColor.RED)
+	    			);
+
 				for(Output output: materialToOutputs.get(material)) {
 					text
-	    				.then("  " + output.getPriority())
+						.then(" " + output.getPriority())
+						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+						.hover(
+							new RawText()
+							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
 							.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-							.hover(
-									new RawText()
-									.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
-										.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-							);
+						);
 				}
+		    	result.add(text);
 	    	}
     	}
-    	return text.build();
+    	return result;
 	}
 
 	@Override
