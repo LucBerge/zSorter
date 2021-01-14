@@ -239,9 +239,9 @@ public class SorterManager implements Serializable{
 				SortTask.getInstance().start();									//Start the task
 				computed = true;
 			}
-			else {
+			else {															//If the holder is not an input
 				Output output = sorter.getInventoryToOutput().get(holder);		//Get the output linked to this holder
-				if(output != null) {											//If output found
+				if(output != null) {											//If the holder is an output
 					
 					boolean clogging = output.getMaterials()
 							.stream()
@@ -254,6 +254,9 @@ public class SorterManager implements Serializable{
 					output.setFull(state);
 					
 					if(clogging || output.isOverflow()) {						//If one of the output material was clogging up the inputs or if it is an overflow
+						for(Material material:output.getMaterials())				//For each material
+							sorter.getCloggingUpMaterials().remove(material);			//Not clogging up anymore
+						
 						sorter.setToCompute(true);									//Set the sorter to compute
 						SortTask.getInstance().start();								//Start the task
 						computed = true;
