@@ -4,8 +4,8 @@
 
 Branch | Workflow | Coverage |
 -------|----------|----------|
-Master | ![Release](https://img.shields.io/github/workflow/status/zDevelopers/zSorter/Release/master?label=release) | [![Coverage](https://img.shields.io/codecov/c/github/zDevelopers/zSorter/master?token=217EGYLQA7)](https://codecov.io/gh/zDevelopers/zSorter) |
-Dev    | ![Test](https://img.shields.io/github/workflow/status/zDevelopers/zSorter/Test/master?label=test) | [![Coverage](https://img.shields.io/codecov/c/github/zDevelopers/zSorter/dev?token=217EGYLQA7)](https://codecov.io/gh/zDevelopers/zSorter) |
+Master | ![Release](https://img.shields.io/github/workflow/status/zDevelopers/zSorter/Release?label=release) | [![Coverage](https://img.shields.io/codecov/c/github/zDevelopers/zSorter/master?token=217EGYLQA7)](https://codecov.io/gh/zDevelopers/zSorter) |
+Dev    | ![Test](https://img.shields.io/github/workflow/status/zDevelopers/zSorter/Test?label=test) | [![Coverage](https://img.shields.io/codecov/c/github/zDevelopers/zSorter/dev?token=217EGYLQA7)](https://codecov.io/gh/zDevelopers/zSorter) |
 
 # zSorter
 
