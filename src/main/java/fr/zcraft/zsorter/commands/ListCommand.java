@@ -11,6 +11,7 @@ import fr.zcraft.quartzlib.components.i18n.I;
 import fr.zcraft.quartzlib.components.rawtext.RawText;
 import fr.zcraft.quartzlib.components.rawtext.RawTextPart;
 import fr.zcraft.zsorter.ZSorter;
+import fr.zcraft.zsorter.model.DisplayMode;
 import fr.zcraft.zsorter.model.Sorter;
 
 /**
@@ -45,7 +46,7 @@ public class ListCommand extends ZSorterCommands{
         				.color(ChatColor.GOLD)
             			.hover(new RawText()
             				.then(I.t("Show the informations of the sorter {0}", sorter.getName())))
-            			.command(InfoCommand.class, sorter.getName())
+            			.command(InfoCommand.class, sorter.getName(), DisplayMode.ITEMS.toString())
             		.then(sorter.isEnable() ? " ON" : " OFF")
             			.color(sorter.isEnable() ? ChatColor.GREEN : ChatColor.RED)
 		    			.hover(new RawText()

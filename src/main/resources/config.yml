@@ -1,5 +1,5 @@
 #Plugin language
-language: fr_FR
+language: fr-FR
 
 #Maximum of sorters per map
 max_sorters: 100

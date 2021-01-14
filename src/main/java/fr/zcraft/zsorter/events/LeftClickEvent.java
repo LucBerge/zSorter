@@ -27,7 +27,7 @@ public class LeftClickEvent implements Listener{
 	 */
 	@EventHandler
 	public void onPlayerInteractEvent(PlayerInteractEvent e) {
-		if(ZSorter.getInstance().isEnable()) {																//If the plugin is not enable
+		if(ZSorter.getInstance().isEnable() && e.getItem() != null) {										//If the plugin is enableed and the player holds an item in his hand
 			if(e.getAction() == Action.LEFT_CLICK_BLOCK) {														//The player left click on a block
 				Sorter sorter = ZSorter.getInstance().getSorterManager().getPlayerToSorter().get(e.getPlayer());	//Get the sorter the player
 				if(sorter != null){																					//If sorter found

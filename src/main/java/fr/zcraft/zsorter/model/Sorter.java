@@ -6,11 +6,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -52,6 +54,7 @@ public class Sorter implements Serializable, PostProcessable{
 	private transient Map<InventoryHolder, Output> holderToOutput;
 	private transient Map<Material, List<Output>> materialToOutputs;
 	private transient List<Output> overflows;
+	private transient Map<Material, Set<HumanEntity>> materialToPlayers;	
 	
 	private List<Input> inputs;
 	private List<Output> outputs;
@@ -82,6 +85,7 @@ public class Sorter implements Serializable, PostProcessable{
 		this.holderToOutput = new HashMap<InventoryHolder, Output>();
 		this.materialToOutputs = new TreeMap<Material, List<Output>>();
 		this.overflows = new ArrayList<Output>();
+		this.materialToPlayers = new TreeMap<Material, Set<HumanEntity>>();
 		
 		this.inputs = new ArrayList<Input>();
 		this.outputs = new ArrayList<Output>();
@@ -163,8 +167,8 @@ public class Sorter implements Serializable, PostProcessable{
 	}
 
 	/**
-	 * Sets the sorter speed of the sorter.
-	 * @param speed - Speed sorter of the sorter.
+	 * Sets the speed of the sorter.
+	 * @param speed - Speed of the sorter.
 	 */
 	public void setSpeed(int speed) {
 		this.speed = speed;
@@ -212,6 +216,24 @@ public class Sorter implements Serializable, PostProcessable{
 	 */
 	public List<Output> getOverflows() {
 		return overflows;
+	}
+
+	
+	
+	/**
+	 * Sets the map linking the materials with the players who placed it.
+	 * @param materialToPlayers - New mapping value.
+	 */
+	public void setMaterialToPlayers(Map<Material, Set<HumanEntity>> materialToPlayers) {
+		this.materialToPlayers = materialToPlayers;
+	}
+
+	/**
+	 * Returns the map linking the materials with the players who placed it.
+	 * @return Material to players mapping.
+	 */
+	public Map<Material, Set<HumanEntity>> getMaterialToPlayers() {
+		return materialToPlayers;
 	}
 
 	/**
@@ -371,7 +393,7 @@ public class Sorter implements Serializable, PostProcessable{
     					ItemStack itemStackToTransfer = itemStack.clone();																//Clone the item to keep the metadata
     					if(itemStackToTransfer.getAmount() > speed)																		//If the number of items in the stack is over the speed limit
 							itemStackToTransfer.setAmount(speed);																			//Set to the speed limit
-    					List<Output> outputs = findOutputs(itemStack.getType());														//Find the outputs for this item
+    					List<Output> outputs = findOutputs(itemStack.getType());														//Find the outputs for this item including the overflows
     					for(Output output:outputs) {																					//For each possible output
        						Inventory outputInventory = output.getHolder().getInventory().getHolder().getInventory();
     		    			int amountToTransfer = itemStackToTransfer.getAmount();															//Get the amount to transfer
@@ -404,6 +426,14 @@ public class Sorter implements Serializable, PostProcessable{
     						}
     					
     					//Run only if this item is clogging up.
+    					
+						Set<HumanEntity> players = materialToPlayers.get(itemStack.getType());											//Get the set of players to warn when this material is clogging up
+						if(players != null) {																						//If players to warn
+							for(HumanEntity player:players) {
+		    					player.sendMessage("§c" + I.t("The {0}s you recently added to the sorter \"{1}\" can unfortunately not be sorted. All the outputs are full.", itemStack.getType().name().toLowerCase(), name));
+							}
+							materialToPlayers.remove(itemStack.getType());																//Remove the entry (All the players have been warned)
+						}
 
 						if(!input.isCloggedUp())																			//If the input is not clogging up
 							input.setCloggedUp(true); 																			//Set the input to clogged up
@@ -415,6 +445,7 @@ public class Sorter implements Serializable, PostProcessable{
     		
     		//Run only if no item has been sorted. Either because there is nothing to sort or because all the outputs are full.
     		
+    		materialToPlayers.clear();	//Clear the players to warn
     		toCompute = false;
 		}
 	}
@@ -424,29 +455,38 @@ public class Sorter implements Serializable, PostProcessable{
 	 * @param mode - The mode to display the sorter.
 	 * @return Sorter as RawText.
 	 */
-	public RawText toRawText(DisplayMode mode) {
-		RawTextPart text = new RawText("")
-    			.then(name)
-    				.style(ChatColor.GOLD)
-    			.then(isEnable() ? " ON" : " OFF")
-    				.color(enable ? ChatColor.GREEN : ChatColor.RED)
-	    			.hover(new RawText()
-	        				.then(I.t("Toggle the sorter {0}", name)))
-	        			.command(ToggleCommand.class, name)
-		        .then(toCompute ? " RUNNING" : "")
-		        	.color(ChatColor.AQUA)
-    			.then(" (" + description + ") ")
-    				.color(ChatColor.GRAY)
-    				.hover(new RawText()
-	        				.then(I.t("Change the description")))
-	        			.suggest(UpdateCommand.class, name)
-    			.then("\n  " + I.t("speed: {0}", speed))
-					.color(ChatColor.GRAY)
-					.hover(new RawText()
-	        				.then(I.t("Change the sorting speed")))
-	        			.suggest(SpeedCommand.class, name)
-        		.then("\n  " + I.t("{0} input(s):", holderToInput.size()) + "\n  ")
-    				.color(ChatColor.GRAY);
+	public ArrayList<RawTextPart> toRawText(DisplayMode mode) {
+		ArrayList<RawTextPart> result = new ArrayList<RawTextPart>();
+		
+		result.add(new RawText("")
+				.then(name)
+				.style(ChatColor.GOLD)
+				.then(isEnable() ? " ON" : " OFF")
+				.color(enable ? ChatColor.GREEN : ChatColor.RED)
+				.hover(new RawText()
+						.then(I.t("Toggle the sorter {0}", name)))
+				.command(ToggleCommand.class, name)
+				.then(toCompute ? " RUNNING" : "")
+				.color(ChatColor.AQUA)
+				.then(" (" + description + ") ")
+				.color(ChatColor.GRAY)
+				.hover(new RawText()
+						.then(I.t("Change the description")))
+				.suggest(UpdateCommand.class, name)
+				);
+		
+		result.add(new RawText("  ")
+				.then(I.t("speed: {0}", speed))
+				.color(ChatColor.GRAY)
+				.hover(new RawText()
+						.then(I.t("Change the sorting speed")))
+				.suggest(SpeedCommand.class, name)
+				);
+		
+		result.add(new RawText("  ")
+				.then(I.t("{0} input(s):", holderToInput.size()))
+				.color(ChatColor.GRAY)
+				);
 		
 		List<Input> inputs = holderToInput
 				.values()
@@ -454,31 +494,34 @@ public class Sorter implements Serializable, PostProcessable{
 				.sorted()
 				.collect(Collectors.toList());				
 				
+		RawText text = new RawText("  ");
 		for(Input input:inputs) {
 			text
 				.then("  " + input.getPriority())
+				.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
+				.hover(new RawText()
+					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getHolder().getInventory().getLocation().getX(), input.getHolder().getInventory().getLocation().getY(), input.getHolder().getInventory().getLocation().getZ()))
 					.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
-					.hover(
-						new RawText()
-							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", input.getHolder().getInventory().getLocation().getX(), input.getHolder().getInventory().getLocation().getY(), input.getHolder().getInventory().getLocation().getZ()))
-								.color(input.isCloggedUp() ? ChatColor.RED : ChatColor.AQUA)
-					);
+				);
     	}
+		result.add(text);
 
-    	text
-    		.then("\n  " + I.t("{0} overflow(s):", overflows.size()) + "\n  ")
-    			.color(ChatColor.GRAY);
-				
+		result.add(new RawText("  ")
+				.then(I.t("{0} overflow(s):", overflows.size()))
+				.color(ChatColor.GRAY)
+				);
+
+		text = new RawText("  ");
 		for(Output overflow:overflows) {
 			text
 				.then("  " + overflow.getPriority())
+				.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
+				.hover(new RawText()
+					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", overflow.getHolder().getInventory().getLocation().getX(), overflow.getHolder().getInventory().getLocation().getY(), overflow.getHolder().getInventory().getLocation().getZ()))
 					.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
-					.hover(
-						new RawText()
-							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", overflow.getHolder().getInventory().getLocation().getX(), overflow.getHolder().getInventory().getLocation().getY(), overflow.getHolder().getInventory().getLocation().getZ()))
-								.color(overflow.isFull() ? ChatColor.RED : ChatColor.AQUA)
-					);
+				);
 		}
+		result.add(text);
 		
 		//if display by output
 		if(mode == DisplayMode.OUTPUTS) {
@@ -488,20 +531,22 @@ public class Sorter implements Serializable, PostProcessable{
 					.filter(o -> !o.isOverflow())
 					.sorted()
 					.collect(Collectors.toList());
-			
-	    	text
-	    		.then("\n  " + I.t("{0} output(s):", outputs.size()))
-	    			.color(ChatColor.GRAY);	
+
+			result.add(new RawText("  ")
+					.then(I.t("{0} output(s):", outputs.size()))
+	    			.color(ChatColor.GRAY)
+					);
 	    	
 	    	for(Output output:outputs) {
+	    		text = new RawText("    ");
 	    		text
-	    			.then("\n    " + output.getPriority())
-						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-	    				.hover(
-	    	    			new RawText()
-	        					.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
-	        						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-	        			);
+	    			.then(Integer.toString(output.getPriority()))
+	    			.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+	    			.hover(
+	    				new RawText()
+	    				.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
+	    				.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+	    			);
 	    		
 	    		List<Material> materials = output.getMaterials()
 	    											.stream()
@@ -511,13 +556,14 @@ public class Sorter implements Serializable, PostProcessable{
 	    		for(Material material:materials) {
 	    			text
 	    				.then(" " + material.name().toLowerCase())
-	    					.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
-		    				.hover(
-		        	    		new RawText()
-		            				.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
-		            					.color(ChatColor.RED)
-		            		);
+	    				.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
+	    				.hover(
+	    					new RawText()
+	    					.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
+	    					.color(ChatColor.RED)
+	    				);
 	    		}
+	    		result.add(text);
 			}
     	}
 		//If display by items
@@ -531,34 +577,37 @@ public class Sorter implements Serializable, PostProcessable{
 														.distinct()
 														.sorted((m1, m2) -> m1.name().compareTo(m2.name()))
 														.collect(Collectors.toList());
-    		
-	    	text
-	    		.then("\n  " + I.t("{0} material(s):", sortedMaterials.size()))
-	    			.color(ChatColor.GRAY);
+
+			result.add(new RawText("  ")
+					.then(I.t("{0} material(s):", sortedMaterials.size()))
+					.color(ChatColor.GRAY)
+					);
 	    	
 	    	for(Material material:sortedMaterials) {
+	    		text = new RawText("    ");
 	    		text
-					.then("\n    " + material.name().toLowerCase())
-						.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
-			    		.hover(
-		        	    	new RawText()
-		            			.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
-		            				.color(ChatColor.RED)
-		            	);
-				
+	    			.then(material.name().toLowerCase())
+	    			.color(cloggingUpMaterials.contains(material) ? ChatColor.RED : ChatColor.GREEN)
+	    			.hover(
+	    				new RawText()
+	    				.then(cloggingUpMaterials.contains(material) ? I.t("This material is clogging up one of the inputs") : "")
+	    				.color(ChatColor.RED)
+	    			);
+
 				for(Output output: materialToOutputs.get(material)) {
 					text
-	    				.then("  " + output.getPriority())
+						.then(" " + output.getPriority())
+						.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
+						.hover(
+							new RawText()
+							.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
 							.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-							.hover(
-									new RawText()
-									.then(String.format("X=%1$,.0f\nY=%2$,.0f\nZ=%3$,.0f", output.getHolder().getInventory().getLocation().getX(), output.getHolder().getInventory().getLocation().getY(), output.getHolder().getInventory().getLocation().getZ()))
-										.color(output.isFull() ? ChatColor.RED : ChatColor.AQUA)
-							);
+						);
 				}
+		    	result.add(text);
 	    	}
     	}
-    	return text.build();
+    	return result;
 	}
 
 	@Override

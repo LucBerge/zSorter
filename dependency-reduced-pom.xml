@@ -59,10 +59,6 @@
       <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
     </repository>
     <repository>
-      <id>zDevelopers</id>
-      <url>http://maven.carrade.eu/artifactory/snapshots</url>
-    </repository>
-    <repository>
       <id>zdevelopers-quartzlib</id>
       <url>https://maven.zcraft.fr/QuartzLib</url>
     </repository>
@@ -103,10 +99,6 @@
         <exclusion>
           <artifactId>commons-io</artifactId>
           <groupId>commons-io</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>annotations</artifactId>
-          <groupId>org.jetbrains</groupId>
         </exclusion>
       </exclusions>
     </dependency>

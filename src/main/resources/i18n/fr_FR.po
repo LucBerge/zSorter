@@ -54,17 +54,14 @@ msgstr "Ce contenant n'est plus une entrée."
 msgid "This holder is not an input."
 msgstr "Ce contenant n'est pas une entrée."
 
-msgid "An input must be a holder."
-msgstr "Une entrée doit être un contenant."
+msgid "This block must be a holder."
+msgstr "Ce bloc doit être un contenant."
 
 msgid "This holder is no longer an output."
 msgstr "Ce contenant n'est plus une sortie."
 
 msgid "This holder is not an output."
 msgstr "Ce contenant n'est pas une sortie."
-
-msgid "An output must be a holder."
-msgstr "Une sortie doit être un contenant."
 
 msgid "A sorter name and an input priority are required."
 msgstr "Un nom de trieur et une priorité d'entrée sont requis."
@@ -172,4 +169,10 @@ msgid "The magic effect has been applied on the sorter {0} for {1} ticks."
 msgstr "L'effet magique a été appliqué sur le trieur {0} pour {1} ticks."
 
 msgid "The magic effect has stopped."
-msgstr "l'effet magique est fini."
+msgstr "L'effet magique est fini."
+
+msgid "The following material cannot be sorted  : {0}"
+msgstr "Le materiaux suivant ne peut pas être trié : {0}"
+
+msgid "The {0}s you recently added to the sorter \"{1}\" can unfortunately not be sorted. All the outputs are full."
+msgstr "Les {0} que vous avez récemment ajouté au trieur \"{1}\" ne peuvent malheureusement pas être triés. Toutes les sorties sont pleines."

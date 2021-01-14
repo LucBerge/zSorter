@@ -1,14 +1,11 @@
 package fr.zcraft.zsorter.model;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -128,28 +125,25 @@ public class SorterManagerTest extends ZSorterTest{
 	public void gsonSerializationTest() throws ZSorterException, FileNotFoundException, IOException, ClassNotFoundException {
 		SorterManager manager = new SorterManager();
 		Sorter sorter = manager.createSorter("test", "Simple test sorter");
-		manager.setInput("test", inventory0, 1);
-		manager.setOutput("test", inventory1, 1, Arrays.asList(Material.IRON_INGOT));
-		manager.setOutput("test", inventory2, 1, Arrays.asList());
+		manager.setInput("test", holder0, 1);
+		manager.setOutput("test", holder1, 1, Arrays.asList(Material.IRON_INGOT));
+		manager.setOutput("test", holder2, 1, Arrays.asList());
 		
 		sorter.setSpeed(64);
 
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapterFactory(new PostProcessAdapterFactory());
-		gsonBuilder.registerTypeHierarchyAdapter(Inventory.class, new InventoryHolderAdapter());
+		gsonBuilder.registerTypeHierarchyAdapter(InventoryHolder.class, new InventoryHolderAdapter());
 		gsonBuilder.registerTypeAdapter(SorterManager.class, new SorterManagerAdapter());
 		
 		Gson customGson = gsonBuilder.create();
 		
 		//Serialization
-		FileWriter fr = new FileWriter("serializationTest.dat");
-		fr.write(customGson.toJson(manager));
-		fr.close();
+		String json = customGson.toJson(manager);
+		System.out.println("Value = " + json);
 
 		//Dezerialisation
-		BufferedReader br = new BufferedReader(new FileReader("serializationTest.dat"));
-		SorterManager deserializedManager = customGson.fromJson(br, SorterManager.class);
-		br.close();
+		SorterManager deserializedManager = customGson.fromJson(json, SorterManager.class);
 		
 		Assert.assertEquals(manager, deserializedManager);
 	}

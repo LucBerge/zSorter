@@ -2,7 +2,12 @@ package fr.zcraft.zsorter.model.serializer;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
+
+import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -42,6 +47,7 @@ public class SorterManagerAdapter implements JsonSerializer<SorterManager>, Json
 		
 		while (iterator.hasNext()) {
 			Sorter sorter = iterator.next();
+			sorter.setMaterialToPlayers(new HashMap<Material, Set<HumanEntity>>());
 			manager.getNameToSorter().putIfAbsent(sorter.getName(), sorter);
 			for(Input input:sorter.getInventoryToInput().values()) {
 				manager.getInventoryToSorter().putIfAbsent(input.getHolder(), sorter);

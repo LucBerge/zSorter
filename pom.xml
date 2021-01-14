@@ -6,7 +6,7 @@
 
     <groupId>fr.zcraft.zSorter</groupId>
     <artifactId>zSorter</artifactId>
-    <version>0.4</version>
+    <version>0.5</version>
 
     <packaging>jar</packaging>
 
@@ -73,10 +73,6 @@
             <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
         </repository>
         <repository>
-            <id>zDevelopers</id>
-            <url>http://maven.carrade.eu/artifactory/snapshots</url>
-        </repository>
-        <repository>
 	        <id>zdevelopers-quartzlib</id>
 	        <url>https://maven.zcraft.fr/QuartzLib</url>
 	    </repository>
@@ -92,7 +88,7 @@
         <dependency>
 	        <groupId>fr.zcraft</groupId>
 	        <artifactId>quartzlib</artifactId>
-	        <version>0.0.1</version>
+	        <version>0.0.2</version>
 	    </dependency>
         
 		<!-- https://mvnrepository.com/artifact/junit/junit -->
