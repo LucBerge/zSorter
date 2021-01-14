@@ -1,6 +1,15 @@
 ![Build & Test](https://github.com/zDevelopers/zSorter/workflows/Build%20&%20Test/badge.svg)
 [![codecov](https://codecov.io/gh/zDevelopers/zSorter/branch/master/graph/badge.svg?token=217EGYLQA7)](https://codecov.io/gh/zDevelopers/zSorter)
 
+## Project status
+
+[![Release](https://img.shields.io/github/v/release/zDevelopers/zSorter)](https://github.com/zDevelopers/zSorter/releases)
+
+Branch | Workflow | Coverage |
+-------|----------|----------|
+Master | ![Release](https://img.shields.io/github/workflow/status/zDevelopers/zSorter/Release/master?label=release) | [![Coverage](https://img.shields.io/codecov/c/github/zDevelopers/zSorter/master?token=217EGYLQA7)](https://codecov.io/gh/zDevelopers/zSorter) |
+Dev    | ![Test](https://img.shields.io/github/workflow/status/zDevelopers/zSorter/Test/master?label=test) | [![Coverage](https://img.shields.io/codecov/c/github/zDevelopers/zSorter/dev?token=217EGYLQA7)](https://codecov.io/gh/zDevelopers/zSorter) |
+
 # zSorter
 
 The zSorter plugin allows you to manager sorting system in game. It is an alternate solution to standard slow and laggy systems.
