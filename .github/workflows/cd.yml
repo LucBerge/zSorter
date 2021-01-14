@@ -21,10 +21,11 @@ jobs:
         settings-path: ${{ github.workspace }} # location for the settings.xml file
       
     - name: Get version
-        run: |
-          VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-          echo "::set-env name=PACKAGE_VERSION::$VERSION"
-        id: get_version
+      run: |
+        VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+        echo "::set-env name=PACKAGE_VERSION::$VERSION"
+      env:
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: 'true'
       
     - name: Package with Maven
       run: mvn -B package --file pom.xml
